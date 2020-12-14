@@ -1,12 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
-import {
-  StyleSheet,
-  SafeAreaView,
-  FlatList,
-  StatusBar,
-  Button
-} from "react-native";
+import { StyleSheet, SafeAreaView, FlatList, StatusBar } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import EditScreenInfo from "../components/EditScreenInfo";
@@ -14,18 +7,18 @@ import { Text, View } from "../components/Themed";
 
 import api from "../services/api/axios";
 
-const Item = ({ title }) =>
+const Item = ({ title, description }) =>
   <View style={styles.item}>
     <Text style={styles.title}>
-      {title}
+      {description && `${description} - `} {title}
     </Text>
   </View>;
 
-export default function TabOneScreen({ navigation }) {
+export default function CategoriesScreen({ navigation, route }) {
+
   const [data, setData] = React.useState([]);
 
   navigation.setOptions({
-    title: "Home",
     headerTintColor: "#ffffff",
     headerStyle: {
       backgroundColor: "#d44b42",
@@ -34,21 +27,12 @@ export default function TabOneScreen({ navigation }) {
     },
     headerTitleStyle: {
       fontSize: 18
-    },
-    headerRight: () =>
-      <TouchableOpacity
-        style={{ marginRight: 15 }}
-        onPress={() => {
-          navigation.navigate("Pesquisar");
-        }}
-      >
-        <Ionicons name="ios-search" size={25} color="#fff" />
-      </TouchableOpacity>
+    }
   });
 
   const getCollections = async () => {
     try {
-      const response = await api.get("collections");
+      const response = await api.get(`category/${route.params.id}/songs`);
       if (response) {
         setData(response.data);
       }
@@ -63,18 +47,16 @@ export default function TabOneScreen({ navigation }) {
 
   const renderItem = ({ item }) => {
     return (
-      <View style={{ width: "50%", flexDirection: "column" }}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Categorias", {
-              id: item.id,
-              title: item.nome
-            });
-          }}
-        >
-          <Item title={item.nome} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("Musica", {
+            id: item.id,
+            title: item.nome,
+          });
+        }}
+      >
+        <Item title={item.nome} description={item.numero} />
+      </TouchableOpacity>
     );
   };
 
@@ -83,7 +65,6 @@ export default function TabOneScreen({ navigation }) {
       <SafeAreaView style={styles.containerSafe}>
         <FlatList
           data={data}
-          numColumns={3}
           renderItem={renderItem}
           keyExtractor={item => item.id}
         />
@@ -99,9 +80,8 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   title: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff"
+    fontSize: 14,
+    fontWeight: "bold"
     // marginTop: 30
   },
   separator: {
@@ -116,13 +96,10 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0
   },
   item: {
-    backgroundColor: "#d44b42",
-    padding: 10,
-    marginVertical: 6,
-    marginHorizontal: 10,
-    flex: 1,
-    alignItems: "center",
-    borderRadius: 7
+    backgroundColor: "#f5f5f5",
+    padding: 12,
+    marginVertical: 8,
+    marginHorizontal: 16
   }
   // title: {
   //   fontSize: 32,

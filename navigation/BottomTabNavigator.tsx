@@ -1,13 +1,23 @@
-import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import * as React from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import * as React from "react";
 
-import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
-import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
+import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
+import TabOneScreen from "../screens/TabOneScreen";
+import CategoriesScreen from "../screens/CategoriesScreen";
+import SongsScreen from "../screens/SongsScreen";
+import Songscreen from "../screens/SongScreen";
+import SearchScreen from "../screens/SearchScreen";
+import TabTwoScreen from "../screens/TabTwoScreen";
+import TabConfigsScreen from "../screens/TabConfigsScreen";
+import {
+  BottomTabParamList,
+  TabOneParamList,
+  TabTwoParamList,
+  TabConfigsParamList
+} from "../types";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -17,19 +27,33 @@ export default function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
-      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}>
+      tabBarOptions={{
+        activeTintColor: Colors[colorScheme].tint,
+        inactiveTintColor: "#d44b42"
+      }}
+    >
       <BottomTab.Screen
-        name="TabOne"
+        name="Início"
         component={TabOneNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) =>
+            <TabBarIcon name="ios-apps" color={color} />
         }}
       />
       <BottomTab.Screen
-        name="TabTwo"
+        name="Lista"
         component={TabTwoNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) =>
+            <TabBarIcon name="ios-list-outline" color={color} />
+        }}
+      />
+      <BottomTab.Screen
+        name="Configurações"
+        component={TabConfigsNavigator}
+        options={{
+          tabBarIcon: ({ color }) =>
+            <TabBarIcon name="ios-settings-outline" color={color} />
         }}
       />
     </BottomTab.Navigator>
@@ -52,7 +76,32 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="TabOneScreen"
         component={TabOneScreen}
-        options={{ headerTitle: 'Tab One Title' }}
+        options={{ headerTitle: "Coletanea ICM" }}
+      />
+      <TabOneStack.Screen
+        name="Categorias"
+        component={CategoriesScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="Musicas"
+        component={SongsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="Musica"
+        component={Songscreen}
+        options={({ route }) => ({ 
+          title: route.params.title,
+        })}
+      />
+      <TabOneStack.Screen
+        name="Pesquisar"
+        component={SearchScreen}
       />
     </TabOneStack.Navigator>
   );
@@ -66,8 +115,22 @@ function TabTwoNavigator() {
       <TabTwoStack.Screen
         name="TabTwoScreen"
         component={TabTwoScreen}
-        options={{ headerTitle: 'Tab Two Title' }}
+        options={{ headerTitle: "Guia" }}
       />
     </TabTwoStack.Navigator>
+  );
+}
+
+const TabConfigsStack = createStackNavigator<TabConfigsParamList>();
+
+function TabConfigsNavigator() {
+  return (
+    <TabConfigsStack.Navigator>
+      <TabConfigsStack.Screen
+        name="TabConfigsScreen"
+        component={TabConfigsScreen}
+        options={{ headerTitle: "Configurações" }}
+      />
+    </TabConfigsStack.Navigator>
   );
 }

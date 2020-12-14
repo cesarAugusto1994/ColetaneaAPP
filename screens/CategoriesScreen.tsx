@@ -1,12 +1,5 @@
-import { Ionicons } from "@expo/vector-icons";
 import * as React from "react";
-import {
-  StyleSheet,
-  SafeAreaView,
-  FlatList,
-  StatusBar,
-  Button
-} from "react-native";
+import { StyleSheet, SafeAreaView, FlatList, StatusBar } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import EditScreenInfo from "../components/EditScreenInfo";
@@ -21,11 +14,10 @@ const Item = ({ title }) =>
     </Text>
   </View>;
 
-export default function TabOneScreen({ navigation }) {
+export default function CategoriesScreen({ navigation, route }) {
   const [data, setData] = React.useState([]);
 
   navigation.setOptions({
-    title: "Home",
     headerTintColor: "#ffffff",
     headerStyle: {
       backgroundColor: "#d44b42",
@@ -34,21 +26,14 @@ export default function TabOneScreen({ navigation }) {
     },
     headerTitleStyle: {
       fontSize: 18
-    },
-    headerRight: () =>
-      <TouchableOpacity
-        style={{ marginRight: 15 }}
-        onPress={() => {
-          navigation.navigate("Pesquisar");
-        }}
-      >
-        <Ionicons name="ios-search" size={25} color="#fff" />
-      </TouchableOpacity>
+    }
   });
 
   const getCollections = async () => {
     try {
-      const response = await api.get("collections");
+      const response = await api.get(
+        `collection/${route.params.id}/categories`
+      );
       if (response) {
         setData(response.data);
       }
@@ -66,7 +51,7 @@ export default function TabOneScreen({ navigation }) {
       <View style={{ width: "50%", flexDirection: "column" }}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Categorias", {
+            navigation.navigate("Musicas", {
               id: item.id,
               title: item.nome
             });
@@ -83,8 +68,8 @@ export default function TabOneScreen({ navigation }) {
       <SafeAreaView style={styles.containerSafe}>
         <FlatList
           data={data}
-          numColumns={3}
           renderItem={renderItem}
+          numColumns={2}
           keyExtractor={item => item.id}
         />
       </SafeAreaView>
@@ -99,9 +84,9 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "bold",
-    color: "#fff"
+    alignSelf: 'center'
     // marginTop: 30
   },
   separator: {
@@ -116,13 +101,14 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0
   },
   item: {
-    backgroundColor: "#d44b42",
-    padding: 10,
-    marginVertical: 6,
-    marginHorizontal: 10,
-    flex: 1,
+    backgroundColor: "#f5f5f5",
+    padding: 12,
+    marginVertical: 8,
+    marginHorizontal: 16,
     alignItems: "center",
-    borderRadius: 7
+    textAlign: 'center',
+    borderRadius: 7,
+    flex: 1
   }
   // title: {
   //   fontSize: 32,
