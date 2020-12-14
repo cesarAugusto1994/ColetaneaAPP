@@ -5,7 +5,8 @@ import {
   SafeAreaView,
   FlatList,
   StatusBar,
-  Button
+  Button,
+  ActivityIndicator
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -22,10 +23,11 @@ const Item = ({ title }) =>
   </View>;
 
 export default function TabOneScreen({ navigation }) {
+
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(false)
 
   navigation.setOptions({
-    title: "Home",
     headerTintColor: "#ffffff",
     headerStyle: {
       backgroundColor: "#d44b42",
@@ -39,7 +41,10 @@ export default function TabOneScreen({ navigation }) {
       <TouchableOpacity
         style={{ marginRight: 15 }}
         onPress={() => {
-          navigation.navigate("Pesquisar");
+          navigation.navigate("Verse", {
+            id: item.id,
+            title: item.name
+          });
         }}
       >
         <Ionicons name="ios-search" size={25} color="#fff" />
@@ -48,12 +53,16 @@ export default function TabOneScreen({ navigation }) {
 
   const getCollections = async () => {
     try {
-      const response = await api.get("collections");
+      setLoading(true)
+      const response = await api.get("books");
+      console.log("response", JSON.stringify(response.data));
+      setLoading(false)
       if (response) {
         setData(response.data);
       }
     } catch (error) {
-      console.log("error", JSON.stringify(error));
+      setLoading(false)
+      console.log("error", JSON.stringify(error.message));
     }
   };
 
@@ -66,13 +75,13 @@ export default function TabOneScreen({ navigation }) {
       <View style={{ width: "50%", flexDirection: "column" }}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Categorias", {
+            navigation.navigate("Verse", {
               id: item.id,
-              title: item.nome
+              title: item.name
             });
           }}
         >
-          <Item title={item.nome} />
+          <Item title={item.name} />
         </TouchableOpacity>
       </View>
     );
@@ -82,16 +91,15 @@ export default function TabOneScreen({ navigation }) {
     <View style={styles.container}>
       <SafeAreaView style={styles.containerSafe}>
         {
-          data.length ?
-            <FlatList
-              data={data}
-              numColumns={3}
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-            />
-            : <Text>Nada Encontrado.</Text>
+          loading && <ActivityIndicator size="large" color="#d44b42" />
         }
-
+        {/* <TouchableOpacity onPress={() => getCollections()}><Text>Atualizar</Text></TouchableOpacity> */}
+        <FlatList
+          data={data}
+          numColumns={3}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
       </SafeAreaView>
     </View>
   );

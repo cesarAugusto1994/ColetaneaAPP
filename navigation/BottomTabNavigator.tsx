@@ -12,11 +12,15 @@ import Songscreen from "../screens/SongScreen";
 import SearchScreen from "../screens/SearchScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import TabConfigsScreen from "../screens/TabConfigsScreen";
+import BookScreen from "../screens/BookScreen";
+import VerseScreen from "../screens/VerseScreen";
+
 import {
   BottomTabParamList,
   TabOneParamList,
   TabTwoParamList,
-  TabConfigsParamList
+  TabConfigsParamList,
+  TabBookParamList
 } from "../types";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -38,6 +42,14 @@ export default function BottomTabNavigator() {
         options={{
           tabBarIcon: ({ color }) =>
             <TabBarIcon name="ios-apps" color={color} />
+        }}
+      />
+      <BottomTab.Screen
+        name="Book"
+        component={TabBookNavigator}
+        options={{
+          tabBarIcon: ({ color }) =>
+            <TabBarIcon name="ios-book-outline" color={color} />
         }}
       />
       <BottomTab.Screen
@@ -104,6 +116,27 @@ function TabOneNavigator() {
         component={SearchScreen}
       />
     </TabOneStack.Navigator>
+  );
+}
+
+const TabBookStack = createStackNavigator<TabBookParamList>();
+
+function TabBookNavigator() {
+  return (
+    <TabBookStack.Navigator>
+      <TabBookStack.Screen
+        name="BookScreen"
+        component={BookScreen}
+        options={{ headerTitle: "Bíblia" }}
+      />
+      <TabBookStack.Screen
+        name="Verse"
+        component={VerseScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+        })}
+      />
+    </TabBookStack.Navigator>
   );
 }
 

@@ -5,7 +5,8 @@ import {
   SafeAreaView,
   FlatList,
   StatusBar,
-  Button
+  Button,
+  ActivityIndicator
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
@@ -14,18 +15,19 @@ import { Text, View } from "../components/Themed";
 
 import api from "../services/api/axios";
 
-const Item = ({ title }) =>
+const Item = ({ item }) =>
   <View style={styles.item}>
     <Text style={styles.title}>
-      {title}
+    {item.chapter}.{item.verse} {item.text}
     </Text>
   </View>;
 
-export default function TabOneScreen({ navigation }) {
+export default function TabOneScreen({ navigation, route }) {
+
   const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(false)
 
   navigation.setOptions({
-    title: "Home",
     headerTintColor: "#ffffff",
     headerStyle: {
       backgroundColor: "#d44b42",
@@ -48,12 +50,16 @@ export default function TabOneScreen({ navigation }) {
 
   const getCollections = async () => {
     try {
-      const response = await api.get("collections");
+      setLoading(true)
+      const response = await api.get(`books/${route.params.id}/verses`);
+      console.log("response", JSON.stringify(response.data));
+      setLoading(false)
       if (response) {
         setData(response.data);
       }
     } catch (error) {
-      console.log("error", JSON.stringify(error));
+      setLoading(false)
+      console.log("error", JSON.stringify(error.message));
     }
   };
 
@@ -63,18 +69,7 @@ export default function TabOneScreen({ navigation }) {
 
   const renderItem = ({ item }) => {
     return (
-      <View style={{ width: "50%", flexDirection: "column" }}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Categorias", {
-              id: item.id,
-              title: item.nome
-            });
-          }}
-        >
-          <Item title={item.nome} />
-        </TouchableOpacity>
-      </View>
+      <Item item={item} />
     );
   };
 
@@ -82,16 +77,14 @@ export default function TabOneScreen({ navigation }) {
     <View style={styles.container}>
       <SafeAreaView style={styles.containerSafe}>
         {
-          data.length ?
-            <FlatList
-              data={data}
-              numColumns={3}
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-            />
-            : <Text>Nada Encontrado.</Text>
+          loading && <ActivityIndicator size="large" color="#d44b42" />
         }
-
+        {/* <TouchableOpacity onPress={() => getCollections()}><Text>Atualizar</Text></TouchableOpacity> */}
+        <FlatList
+          data={data.verses}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
       </SafeAreaView>
     </View>
   );
@@ -105,8 +98,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff"
+    // fontWeight: "bold",
+    // color: "#fff"
     // marginTop: 30
   },
   separator: {
@@ -121,12 +114,12 @@ const styles = StyleSheet.create({
     marginTop: StatusBar.currentHeight || 0
   },
   item: {
-    backgroundColor: "#d44b42",
-    padding: 10,
+    backgroundColor: "#f5f5f5",
+    padding: 5,
     marginVertical: 6,
     marginHorizontal: 10,
     flex: 1,
-    alignItems: "center",
+    // alignItems: "center",
     borderRadius: 7
   }
   // title: {

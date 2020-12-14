@@ -20,3 +20,7 @@ export type TabTwoParamList = {
 export type TabConfigsParamList = {
   TabConfigsScreen: undefined;
 };
+
+export type TabBookParamList = {
+  BookScreen: undefined;
+};
