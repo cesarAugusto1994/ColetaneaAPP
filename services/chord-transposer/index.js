@@ -95,10 +95,10 @@ class Chord {
     }
     toString() {
         if (this.bass) {
-            return this.root + this.suffix + "/" + this.bass;
+            return `<span class="chord">${this.root + this.suffix + "/" + this.bass}</span>`;
         }
         else {
-            return this.root + this.suffix;
+            return `<span class="chord">${this.root + this.suffix}</span>`;
         }
     }
     static parse(token) {

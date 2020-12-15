@@ -55,20 +55,14 @@ const FirstRoute = ({ data }) => {
   }
 
   const getWords = () => {
+
     if (!data.letra) {
       return "<p>Letra não encontrada.</p>";
     }
 
     const w = Transposer.transpose(data.letra).fromKey(originalTom).toKey(tom).toString();
 
-    // const text = data.letra;
-
-    // const output = text.replace(
-    //   "(?m)(^| )([A-G](##?|bb?)?((sus|maj|min|aug|dim)\\d?)?(/[A-G](##?|bb?)?)?)( (?!\\w)|$)",
-    //   "[$2]"
-    // );
-
-    // console.log(output);
+    console.log({ w })
 
     return `<span>${w}</span>`;
   };
@@ -156,7 +150,8 @@ const FirstRoute = ({ data }) => {
           {data.letra
             ? <HTMLView
               value={getWords()}
-              stylesheet={{ span: { fontSize: spanFontSize } }}
+              // style={{backgroundColor: '#333'}}
+              stylesheet={{ span: { fontSize: spanFontSize } }}              
             />
             : <Text>Letra não encontrada.</Text>}
         </ScrollView>
