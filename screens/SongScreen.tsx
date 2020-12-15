@@ -83,16 +83,7 @@ const FirstRoute = ({ data }) => {
 
   return (
     <SafeAreaView style={styles.containerSafe}>
-      <View
-        style={[
-          styles.scene,
-          {
-            backgroundColor: "#f5f5f5",
-            height: Dimensions.get("screen").height
-          }
-        ]}
-      >
-        <View style={{ flexDirection: "row" }}>
+      <View style={styles.navbar}>
           <View style={{ flex: 0.5 }}>
             <Text style={styles.descriptionsSong}>
               Número: {data.numero}
@@ -135,23 +126,22 @@ const FirstRoute = ({ data }) => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* <Text>{Transposer.transpose(data.letra).toString()}</Text> */}
-        {/* <WebView source={{html: Transposer.transpose(data.letra).toString()}} /> */}
-        {/* <WebView automaticallyAdjustContentInsets={false} style={{backgroundColor: '#cfc'}} html={Transposer.transpose(data.letra).toString()} /> */}
+      <View
+        style={[
+          styles.scene,
+          {
+            backgroundColor: "transparent",
+            height: Dimensions.get("screen").height
+          }
+        ]}
+      >
         <ScrollView
           contentContainerStyle={{ paddingVertical: 20 }}
-        // showsVerticalScrollIndicator={false}
-        // pinchGestureEnabled
-        // maximumZoomScale={10}
-        // minimumZoomScale={3}
-        // onGestureEvent={handleOnGestureEvent}
         >
           {data.letra
             ? <HTMLView
               value={getWords()}
-              // style={{backgroundColor: '#333'}}
-              stylesheet={{ span: { fontSize: spanFontSize } }}              
+              stylesheet={{ span: { fontSize: spanFontSize } }}
             />
             : <Text>Letra não encontrada.</Text>}
         </ScrollView>
@@ -291,13 +281,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
+  navbar: { flexDirection: "row", width: '100%', padding: 10 },
   title: {
     fontSize: 14
-    // fontWeight: "bold"
-    // marginTop: 30
   },
   scene: {
-    flex: 1
+    flex: 1,
+    marginLeft: 15,
   },
   descriptionsSong: {
     fontSize: 14
@@ -307,14 +297,11 @@ const styles = StyleSheet.create({
     height: 1,
     width: "80%"
   },
-
   containerSafe: {
-    margin: 15,
     flex: 1,
-    width: "100%"
+    width: "100%",
   },
   item: {
-    backgroundColor: "#f5f5f5",
     padding: 5,
     marginVertical: 8,
     marginHorizontal: 16
@@ -338,7 +325,4 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold"
   }
-  // title: {
-  //   fontSize: 32,
-  // },
 });
