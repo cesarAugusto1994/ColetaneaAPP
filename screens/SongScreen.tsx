@@ -7,14 +7,14 @@ import {
   Dimensions
 } from "react-native";
 import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
-import { transpose } from "chord-transposer";
-import WebView from "react-native-webview";
+import { Ionicons } from "@expo/vector-icons";
 import HTMLView from "react-native-htmlview";
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import api from "../services/api/axios";
-import { Ionicons } from "@expo/vector-icons";
+import Transposer from "../services/chord-transposer";
+
+const _ = require('lodash')
 
 const Item = ({ title }) =>
   <View style={styles.item}>
@@ -23,53 +23,43 @@ const Item = ({ title }) =>
     </Text>
   </View>;
 
-const tones = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+const tones = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B"];
 
 const FirstRoute = ({ data }) => {
   const [spanFontSize, setspanFontSize] = React.useState(15);
   const [favorite, setFavorite] = React.useState(false);
 
-  const [originalTom, setOriginalTom] = React.useState(data.tom);
+  const [originalTom] = React.useState(data.tom);
   const [tom, setTom] = React.useState(data.tom);
 
-  // const arrayWalk = (key) => {
-  //   if (key) {
-  //     const currentIndex = _.findIndex(tones, tom)
-  //     const nextIndex = (currentIndex + 1) % tones.length
-  //     return tones[nextIndex]
-  //   }
+  const arrayWalk = () => {
+    const currentIndex = tones.indexOf(tom)
+    const nextIndex = (currentIndex + 1) % tones.length
+    if (!tones[nextIndex]) {
+      const firstItem = tones[0]
+      setTom(firstItem);
+      return
+    }
+    setTom(tones[nextIndex]);
+  }
 
-  //   const currentIndex = tones.indexOf(tom)
-  //   const nextIndex = (currentIndex + 1) % tones.length
-  //   return tones[nextIndex]
-  // }
-
-  // const arrayReverseWalk = (key) => {
-  //   if (key) {
-  //     const currentIndex = _.findIndex(tones, tom)
-  //     const nextIndex = (currentIndex - 1) % tones.length
-  //     return tones[nextIndex]
-  //   }
-
-  //   const currentIndex = tones.indexOf(tom)
-  //   const nextIndex = (currentIndex - 1) % tones.length
-  //   return tones[nextIndex]
-  // }
-
-  const changeTom = () => {
-    setTom("C");
-
-    // const a = arrayWalk()
-
-    // console.log(a)
-  };
+  const arrayReverseWalk = () => {
+    const currentIndex = tones.indexOf(tom)
+    const nextIndex = (currentIndex - 1) % tones.length
+    if (!tones[nextIndex]) {
+      const lastItem = _.last(tones)
+      setTom(lastItem);
+      return
+    }
+    setTom(tones[nextIndex]);
+  }
 
   const getWords = () => {
     if (!data.letra) {
       return "<p>Letra não encontrada.</p>";
     }
 
-    const w = transpose(data.letra).fromKey(originalTom).toKey(tom).toString();
+    const w = Transposer.transpose(data.letra).fromKey(originalTom).toKey(tom).toString();
 
     // const text = data.letra;
 
@@ -137,10 +127,10 @@ const FirstRoute = ({ data }) => {
               <Text style={{ fontSize: 18 }}>+</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.btnDown} onPress={changeTom}>
+            <TouchableOpacity style={styles.btnDown} onPress={arrayReverseWalk}>
               <Text style={{ fontSize: 18 }}>{`<`}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btnUp} onPress={changeTom}>
+            <TouchableOpacity style={styles.btnUp} onPress={arrayWalk}>
               <Text style={{ fontSize: 18 }}>{`>`}</Text>
             </TouchableOpacity>
 
@@ -157,17 +147,17 @@ const FirstRoute = ({ data }) => {
         {/* <WebView automaticallyAdjustContentInsets={false} style={{backgroundColor: '#cfc'}} html={Transposer.transpose(data.letra).toString()} /> */}
         <ScrollView
           contentContainerStyle={{ paddingVertical: 20 }}
-          // showsVerticalScrollIndicator={false}
-          // pinchGestureEnabled
-          // maximumZoomScale={10}
-          // minimumZoomScale={3}
-          // onGestureEvent={handleOnGestureEvent}
+        // showsVerticalScrollIndicator={false}
+        // pinchGestureEnabled
+        // maximumZoomScale={10}
+        // minimumZoomScale={3}
+        // onGestureEvent={handleOnGestureEvent}
         >
           {data.letra
             ? <HTMLView
-                value={getWords()}
-                stylesheet={{ span: { fontSize: spanFontSize } }}
-              />
+              value={getWords()}
+              stylesheet={{ span: { fontSize: spanFontSize } }}
+            />
             : <Text>Letra não encontrada.</Text>}
         </ScrollView>
       </View>
@@ -197,7 +187,7 @@ const SecondRoute = ({ data }) => {
 const ThirdRoute = ({ data }) => {
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={() => {}}>
+      <TouchableOpacity onPress={() => { }}>
         <Item title={item.nome} />
       </TouchableOpacity>
     );
@@ -208,28 +198,28 @@ const ThirdRoute = ({ data }) => {
       <SafeAreaView style={styles.containerSafe}>
         {data.musica_anexos && data.musica_anexos.length > 0
           ? <FlatList
-              data={data.musica_anexos}
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-            />
+            data={data.musica_anexos}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+          />
           : <Text>Nenhum anexo encontrado.</Text>}
 
         <Text style={styles.comments}>Comentários</Text>
 
         {data.comentarios && data.comentarios.length > 0
           ? <FlatList
-              data={data.comentarios}
-              renderItem={({ item }) =>
-                <View style={styles.item}>
-                  <Text style={styles.title}>
-                    {item.usuarios.nome}
-                  </Text>
-                  <Text style={styles.title}>
-                    {item.comentario}
-                  </Text>
-                </View>}
-              keyExtractor={item => item.id}
-            />
+            data={data.comentarios}
+            renderItem={({ item }) =>
+              <View style={styles.item}>
+                <Text style={styles.title}>
+                  {item.usuarios.nome}
+                </Text>
+                <Text style={styles.title}>
+                  {item.comentario}
+                </Text>
+              </View>}
+            keyExtractor={item => item.id}
+          />
           : <Text>Nenhum comentário encontrado.</Text>}
       </SafeAreaView>
     </View>
@@ -294,7 +284,7 @@ export default function CategoriesScreen({ route, navigation }) {
           {...props}
           indicatorStyle={{ backgroundColor: "white" }}
           style={{ backgroundColor: "#d44b42", height: 40 }}
-          // indicatorStyle={{backgroundColor: "#555555"}}
+        // indicatorStyle={{backgroundColor: "#555555"}}
         />}
     />
   );

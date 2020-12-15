@@ -5,7 +5,9 @@ import {
   SafeAreaView,
   FlatList,
   StatusBar,
-  Button
+  Button,
+  RefreshControl,
+  ScrollView
 } from "react-native";
 import { Avatar, Card, Image, ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -47,13 +49,22 @@ export default function TabOneScreen({ navigation }) {
       </TouchableOpacity>
   });
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    getCollections()
+  }, [])
+
   const getCollections = async () => {
+    setRefreshing(true);
     try {
       const response = await api.get("collections");
       if (response) {
         setData(response.data);
+        setRefreshing(false);
       }
     } catch (error) {
+      setRefreshing(false);
       console.log("error", JSON.stringify(error));
     }
   };
@@ -61,23 +72,6 @@ export default function TabOneScreen({ navigation }) {
   React.useEffect(() => {
     getCollections();
   }, []);
-
-  const renderItem2 = ({ item }) => {
-    return (
-      <View style={{ width: "50%", flexDirection: "column" }}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Categorias", {
-              id: item.id,
-              title: item.nome
-            });
-          }}
-        >
-          <Item title={item.nome} />
-        </TouchableOpacity>
-      </View>
-    );
-  };
 
   const keyExtractor = (item, index) => index.toString()
 
@@ -88,7 +82,7 @@ export default function TabOneScreen({ navigation }) {
         title: item.nome
       });
     }}>
-      <Avatar size="medium" title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} />
+      <Avatar size="medium" title={item.nome.substring(0, 2)} source={{ uri: item.avatar_url }} />
       <ListItem.Content>
         <ListItem.Title>{item.nome}</ListItem.Title>
         {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
@@ -98,8 +92,14 @@ export default function TabOneScreen({ navigation }) {
   )
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.containerSafe}>
+
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {
           data.length ?
             <FlatList
@@ -108,50 +108,45 @@ export default function TabOneScreen({ navigation }) {
               renderItem={renderItem}
               keyExtractor={keyExtractor}
             />
-            : 
+            :
             <>
-            <Card.Title>NADA ENCONTRADO.</Card.Title>
-              <Card.Divider/>
-              <View style={{position:"relative",alignItems:"center"}}>
+              <Card.Title>NADA ENCONTRADO.</Card.Title>
+              <Card.Divider />
+              <View style={{ position: "relative", alignItems: "center" }}>
                 <Avatar
                   rounded
                   size="large"
-                  icon={{name: 'home', type: 'font-awesome'}}
+                  icon={{ name: 'home', type: 'font-awesome' }}
                   onPress={() => console.log("Works!")}
                   activeOpacity={0.7}
-                  // containerStyle={{flex: 5, marginRight: 60}}
+                // containerStyle={{flex: 5, marginRight: 60}}
                 />
               </View>
             </>
         }
+      </ScrollView>
+    </SafeAreaView>
 
-      </SafeAreaView>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%'
   },
   title: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff"
-    // marginTop: 30
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: "80%"
-  },
-
-  containerSafe: {
-    flex: 1,
-    width: "100%",
-    // marginTop: StatusBar.currentHeight || 0
   },
   item: {
     backgroundColor: "#d44b42",
@@ -162,7 +157,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 7
   }
-  // title: {
-  //   fontSize: 32,
-  // },
 });

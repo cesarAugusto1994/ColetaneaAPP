@@ -1,19 +1,7 @@
 import * as React from "react";
-import { StyleSheet, SafeAreaView, FlatList, StatusBar } from "react-native";
-import { Avatar, ListItem } from "react-native-elements";
-import { TouchableOpacity } from "react-native-gesture-handler";
-
-import EditScreenInfo from "../components/EditScreenInfo";
-import { Text, View } from "../components/Themed";
-
+import { StyleSheet, SafeAreaView, FlatList, ScrollView, RefreshControl } from "react-native";
+import { ListItem } from "react-native-elements";
 import api from "../services/api/axios";
-
-const Item = ({ title }) =>
-  <View style={styles.item}>
-    <Text style={styles.title}>
-      {title}
-    </Text>
-  </View>;
 
 export default function CategoriesScreen({ navigation, route }) {
   const [data, setData] = React.useState([]);
@@ -31,14 +19,17 @@ export default function CategoriesScreen({ navigation, route }) {
   });
 
   const getCollections = async () => {
+    setRefreshing(true);
     try {
       const response = await api.get(
         `collection/${route.params.id}/categories`
       );
       if (response) {
         setData(response.data);
+        setRefreshing(false);
       }
     } catch (error) {
+      setRefreshing(false);
       console.log("error", JSON.stringify(error));
     }
   };
@@ -47,22 +38,11 @@ export default function CategoriesScreen({ navigation, route }) {
     getCollections();
   }, []);
 
-  const renderItem2 = ({ item }) => {
-    return (
-      <View style={{ width: "50%", flexDirection: "column" }}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Musicas", {
-              id: item.id,
-              title: item.nome
-            });
-          }}
-        >
-          <Item title={item.nome} />
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    getCollections()
+  }, [])
 
   const keyExtractor = (item, index) => index.toString()
 
@@ -73,52 +53,50 @@ export default function CategoriesScreen({ navigation, route }) {
         title: item.nome
       });
     }}>
-      {/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
       <ListItem.Content>
         <ListItem.Title>{item.nome}</ListItem.Title>
-        {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
       </ListItem.Content>
       <ListItem.Chevron />
     </ListItem>
   )
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.containerSafe}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <FlatList
           data={data}
           renderItem={renderItem}
           scrollEnabled
           keyExtractor={keyExtractor}
         />
+        </ScrollView>
       </SafeAreaView>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#f5f5f5",
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%'
   },
   title: {
     fontSize: 14,
     fontWeight: "bold",
     alignSelf: 'center'
-    // marginTop: 30
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: "80%"
-  },
-
-  containerSafe: {
-    flex: 1,
-    width: "100%",
-    // marginTop: StatusBar.currentHeight || 0
   },
   item: {
     backgroundColor: "#f5f5f5",
@@ -130,7 +108,4 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     flex: 1
   }
-  // title: {
-  //   fontSize: 32,
-  // },
 });

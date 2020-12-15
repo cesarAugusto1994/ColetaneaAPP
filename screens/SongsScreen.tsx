@@ -1,11 +1,8 @@
 import * as React from "react";
-import { StyleSheet, SafeAreaView, FlatList, StatusBar } from "react-native";
+import { StyleSheet, SafeAreaView, FlatList, ScrollView, RefreshControl } from "react-native";
 import { ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
-
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
-
 import api from "../services/api/axios";
 
 const Item = ({ title, description }) =>
@@ -31,13 +28,22 @@ export default function CategoriesScreen({ navigation, route }) {
     }
   });
 
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    getCollections()
+  }, [])
+
   const getCollections = async () => {
+    setRefreshing(true);
     try {
       const response = await api.get(`category/${route.params.id}/songs`);
       if (response) {
         setData(response.data);
+        setRefreshing(false);
       }
     } catch (error) {
+      setRefreshing(false);
       console.log("error", JSON.stringify(error));
     }
   };
@@ -81,30 +87,36 @@ export default function CategoriesScreen({ navigation, route }) {
 
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={styles.containerSafe}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <FlatList
           data={data}
           scrollEnabled
           renderItem={renderItem}
           keyExtractor={keyExtractor}
         />
+        </ScrollView>
       </SafeAreaView>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#f5f5f5"
+  },
+  scrollView: {
+    flex: 1,
+    width: '100%'
   },
   title: {
     fontSize: 14,
     fontWeight: "bold"
-    // marginTop: 30
   },
   separator: {
     marginVertical: 30,
@@ -115,7 +127,6 @@ const styles = StyleSheet.create({
   containerSafe: {
     flex: 1,
     width: "100%",
-    // marginTop: StatusBar.currentHeight || 0
   },
   item: {
     backgroundColor: "#f5f5f5",
@@ -123,7 +134,4 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16
   }
-  // title: {
-  //   fontSize: 32,
-  // },
 });
