@@ -7,6 +7,7 @@ import {
   StatusBar,
   Button
 } from "react-native";
+import { Avatar, Card, Image, ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import EditScreenInfo from "../components/EditScreenInfo";
@@ -61,7 +62,7 @@ export default function TabOneScreen({ navigation }) {
     getCollections();
   }, []);
 
-  const renderItem = ({ item }) => {
+  const renderItem2 = ({ item }) => {
     return (
       <View style={{ width: "50%", flexDirection: "column" }}>
         <TouchableOpacity
@@ -78,6 +79,24 @@ export default function TabOneScreen({ navigation }) {
     );
   };
 
+  const keyExtractor = (item, index) => index.toString()
+
+  const renderItem = ({ item }) => (
+    <ListItem bottomDivider onPress={() => {
+      navigation.navigate("Categorias", {
+        id: item.id,
+        title: item.nome
+      });
+    }}>
+      <Avatar size="medium" title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} />
+      <ListItem.Content>
+        <ListItem.Title>{item.nome}</ListItem.Title>
+        {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
+      </ListItem.Content>
+      <ListItem.Chevron />
+    </ListItem>
+  )
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.containerSafe}>
@@ -85,11 +104,25 @@ export default function TabOneScreen({ navigation }) {
           data.length ?
             <FlatList
               data={data}
-              numColumns={3}
+              scrollEnabled
               renderItem={renderItem}
-              keyExtractor={item => item.id}
+              keyExtractor={keyExtractor}
             />
-            : <Text>Nada Encontrado.</Text>
+            : 
+            <>
+            <Card.Title>NADA ENCONTRADO.</Card.Title>
+              <Card.Divider/>
+              <View style={{position:"relative",alignItems:"center"}}>
+                <Avatar
+                  rounded
+                  size="large"
+                  icon={{name: 'home', type: 'font-awesome'}}
+                  onPress={() => console.log("Works!")}
+                  activeOpacity={0.7}
+                  // containerStyle={{flex: 5, marginRight: 60}}
+                />
+              </View>
+            </>
         }
 
       </SafeAreaView>
@@ -118,7 +151,7 @@ const styles = StyleSheet.create({
   containerSafe: {
     flex: 1,
     width: "100%",
-    marginTop: StatusBar.currentHeight || 0
+    // marginTop: StatusBar.currentHeight || 0
   },
   item: {
     backgroundColor: "#d44b42",

@@ -23,27 +23,64 @@ const Item = ({ title }) =>
     </Text>
   </View>;
 
+const tones = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
 const FirstRoute = ({ data }) => {
   const [spanFontSize, setspanFontSize] = React.useState(15);
   const [favorite, setFavorite] = React.useState(false);
 
+  const [originalTom, setOriginalTom] = React.useState(data.tom);
+  const [tom, setTom] = React.useState(data.tom);
+
+  // const arrayWalk = (key) => {
+  //   if (key) {
+  //     const currentIndex = _.findIndex(tones, tom)
+  //     const nextIndex = (currentIndex + 1) % tones.length
+  //     return tones[nextIndex]
+  //   }
+
+  //   const currentIndex = tones.indexOf(tom)
+  //   const nextIndex = (currentIndex + 1) % tones.length
+  //   return tones[nextIndex]
+  // }
+
+  // const arrayReverseWalk = (key) => {
+  //   if (key) {
+  //     const currentIndex = _.findIndex(tones, tom)
+  //     const nextIndex = (currentIndex - 1) % tones.length
+  //     return tones[nextIndex]
+  //   }
+
+  //   const currentIndex = tones.indexOf(tom)
+  //   const nextIndex = (currentIndex - 1) % tones.length
+  //   return tones[nextIndex]
+  // }
+
+  const changeTom = () => {
+    setTom("C");
+
+    // const a = arrayWalk()
+
+    // console.log(a)
+  };
+
   const getWords = () => {
-    // if(!data.letra) {
-    //   return '<p>Letra não encontrada.</p>'
-    // }
+    if (!data.letra) {
+      return "<p>Letra não encontrada.</p>";
+    }
 
-    // const w = transpose(data.letra).fromKey('D').toKey('F').toString()
+    const w = transpose(data.letra).fromKey(originalTom).toKey(tom).toString();
 
-    const text = data.letra;
+    // const text = data.letra;
 
-    const output = text.replace(
-      "(?m)(^| )([A-G](##?|bb?)?((sus|maj|min|aug|dim)\\d?)?(/[A-G](##?|bb?)?)?)( (?!\\w)|$)",
-      "[$2]"
-    );
+    // const output = text.replace(
+    //   "(?m)(^| )([A-G](##?|bb?)?((sus|maj|min|aug|dim)\\d?)?(/[A-G](##?|bb?)?)?)( (?!\\w)|$)",
+    //   "[$2]"
+    // );
 
     // console.log(output);
 
-    return `<span>${output}</span>`;
+    return `<span>${w}</span>`;
   };
 
   const changeTextSizeDown = () => {
@@ -61,15 +98,18 @@ const FirstRoute = ({ data }) => {
   };
 
   return (
-    <View
-      style={[
-        styles.scene,
-        { backgroundColor: "#fff", height: Dimensions.get("screen").height }
-      ]}
-    >
-      <SafeAreaView style={styles.containerSafe}>
+    <SafeAreaView style={styles.containerSafe}>
+      <View
+        style={[
+          styles.scene,
+          {
+            backgroundColor: "#f5f5f5",
+            height: Dimensions.get("screen").height
+          }
+        ]}
+      >
         <View style={{ flexDirection: "row" }}>
-          <View style={{ flex: 0.7 }}>
+          <View style={{ flex: 0.5 }}>
             <Text style={styles.descriptionsSong}>
               Número: {data.numero}
             </Text>
@@ -80,7 +120,7 @@ const FirstRoute = ({ data }) => {
 
           <View
             style={{
-              flex: 0.2,
+              flex: 0.5,
               flexDirection: "row",
               alignSelf: "flex-end",
               right: 0,
@@ -96,6 +136,14 @@ const FirstRoute = ({ data }) => {
             <TouchableOpacity style={styles.btnUp} onPress={changeTextSizeUp}>
               <Text style={{ fontSize: 18 }}>+</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.btnDown} onPress={changeTom}>
+              <Text style={{ fontSize: 18 }}>{`<`}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.btnUp} onPress={changeTom}>
+              <Text style={{ fontSize: 18 }}>{`>`}</Text>
+            </TouchableOpacity>
+
             <TouchableOpacity style={styles.btnUp} onPress={handleFavorite}>
               {favorite
                 ? <Ionicons name="ios-star" color="#ffd000" size={20} />
@@ -122,8 +170,8 @@ const FirstRoute = ({ data }) => {
               />
             : <Text>Letra não encontrada.</Text>}
         </ScrollView>
-      </SafeAreaView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -240,7 +288,7 @@ export default function CategoriesScreen({ route, navigation }) {
       onIndexChange={setIndex}
       initialLayout={initialLayout}
       tabBarPosition="top"
-      style={{ backgroundColor: "#333" }}
+      // style={{ backgroundColor: "#333" }}
       renderTabBar={props =>
         <TabBar
           {...props}
@@ -276,7 +324,7 @@ const styles = StyleSheet.create({
   },
 
   containerSafe: {
-    padding: 15,
+    margin: 15,
     flex: 1,
     width: "100%"
   },
@@ -301,7 +349,7 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   comments: {
-    alignSelf: 'center',
+    alignSelf: "center",
     fontSize: 20,
     fontWeight: "bold"
   }

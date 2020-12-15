@@ -13,6 +13,8 @@ import SearchScreen from "../screens/SearchScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import TabConfigsScreen from "../screens/TabConfigsScreen";
 import BookScreen from "../screens/BookScreen";
+import BooksScreen from "../screens/BooksScreen";
+import ChaptersScreen from "../screens/ChaptersScreen";
 import VerseScreen from "../screens/VerseScreen";
 
 import {
@@ -45,7 +47,7 @@ export default function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Book"
+        name="Bíblias"
         component={TabBookNavigator}
         options={{
           tabBarIcon: ({ color }) =>
@@ -127,7 +129,21 @@ function TabBookNavigator() {
       <TabBookStack.Screen
         name="BookScreen"
         component={BookScreen}
-        options={{ headerTitle: "Bíblia" }}
+        options={{ headerTitle: "Bíblias" }}
+      />
+      <TabBookStack.Screen
+        name="Books"
+        component={BooksScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+        })}
+      />
+      <TabBookStack.Screen
+        name="Chapters"
+        component={ChaptersScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+        })}
       />
       <TabBookStack.Screen
         name="Verse"

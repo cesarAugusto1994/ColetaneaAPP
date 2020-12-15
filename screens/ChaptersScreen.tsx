@@ -8,20 +8,11 @@ import {
   Button,
   ActivityIndicator
 } from "react-native";
-import { ListItem } from "react-native-elements";
+import { Avatar, ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
-
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
-
 import api from "../services/api/axios";
-
-const Item = ({ item }) =>
-  <View style={styles.item}>
-    <Text style={styles.title}>
-    {item.chapter}.{item.verse} {item.text}
-    </Text>
-  </View>;
+const _ = require('lodash')
 
 export default function TabOneScreen({ navigation, route }) {
 
@@ -42,7 +33,11 @@ export default function TabOneScreen({ navigation, route }) {
       <TouchableOpacity
         style={{ marginRight: 15 }}
         onPress={() => {
-          // navigation.navigate("Pesquisar");
+          navigation.navigate("Verse", {
+            id: item.liv_id,
+            version: route.params.id,
+            title: item.name
+          });
         }}
       >
         <Ionicons name="ios-search" size={25} color="#fff" />
@@ -50,37 +45,38 @@ export default function TabOneScreen({ navigation, route }) {
   });
 
   const getCollections = async () => {
-    try {
-      setLoading(true)
-      const response = await api.get(`versions/${route.params.version}/books/${route.params.id}/chapter/${route.params.chapter}/verses`);
-      console.log("response", `versions/${route.params.version}/books/${route.params.id}/chapter/${route.params.chapter}/verses`);
-      setLoading(false)
-      if (response) {
-        setData(response.data);
-      }
-    } catch (error) {
-      setLoading(false)
-      console.log("error", JSON.stringify(error));
-    }
+
+    const qtde = route.params.qtde_chapters
+
+    const range = _.range(1, qtde+1)
+
+    setData(range)
+
+    console.log({range})
+
   };
 
   React.useEffect(() => {
     getCollections();
   }, []);
 
-  const renderItem2 = ({ item }) => {
-    return (
-      <Item item={item} />
-    );
-  };
-
   const keyExtractor = (item, index) => index.toString()
 
   const renderItem = ({ item }) => (
-    <ListItem>
+    <ListItem bottomDivider onPress={() => {
+      navigation.navigate("Verse", {
+        id: route.params.id,
+        version: route.params.version,
+        title: `${route.params.title} ${item}`,
+        chapter: item
+      });
+    }}>
+      {/* <Avatar size="medium" title={item.liv_nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
       <ListItem.Content>
-        <ListItem.Title>{item.ver_versiculo}. {item.ver_texto}</ListItem.Title>
+        <ListItem.Title>Capítulo {item}</ListItem.Title>
+        {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
       </ListItem.Content>
+      <ListItem.Chevron />
     </ListItem>
   )
 
@@ -109,8 +105,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    // fontWeight: "bold",
-    // color: "#fff"
+    fontWeight: "bold",
+    color: "#fff"
     // marginTop: 30
   },
   separator: {
@@ -125,12 +121,12 @@ const styles = StyleSheet.create({
     // marginTop: StatusBar.currentHeight || 0
   },
   item: {
-    backgroundColor: "#f5f5f5",
-    padding: 5,
+    backgroundColor: "#d44b42",
+    padding: 10,
     marginVertical: 6,
     marginHorizontal: 10,
     flex: 1,
-    // alignItems: "center",
+    alignItems: "center",
     borderRadius: 7
   }
   // title: {

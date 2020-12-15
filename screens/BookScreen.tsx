@@ -8,9 +8,9 @@ import {
   Button,
   ActivityIndicator
 } from "react-native";
+import { Avatar, ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
 import api from "../services/api/axios";
@@ -54,7 +54,7 @@ export default function TabOneScreen({ navigation }) {
   const getCollections = async () => {
     try {
       setLoading(true)
-      const response = await api.get("books");
+      const response = await api.get("versions");
       console.log("response", JSON.stringify(response.data));
       setLoading(false)
       if (response) {
@@ -70,22 +70,40 @@ export default function TabOneScreen({ navigation }) {
     getCollections();
   }, []);
 
-  const renderItem = ({ item }) => {
+  const renderItem2 = ({ item }) => {
     return (
       <View style={{ width: "50%", flexDirection: "column" }}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Verse", {
-              id: item.id,
-              title: item.name
+            navigation.navigate("Books", {
+              id: item.vrs_id,
+              title: item.liv_nome
             });
           }}
         >
-          <Item title={item.name} />
+          <Item title={item.liv_nome} />
         </TouchableOpacity>
       </View>
     );
   };
+
+  const keyExtractor = (item, index) => index.toString()
+
+  const renderItem = ({ item }) => (
+    <ListItem bottomDivider onPress={() => {
+      navigation.navigate("Books", {
+        id: item.vrs_id,
+        title: item.vrs_nome
+      });
+    }}>
+      {/* <Avatar size="medium" title={item.liv_nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
+      <ListItem.Content>
+        <ListItem.Title>{item.vrs_nome}</ListItem.Title>
+        {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
+      </ListItem.Content>
+      <ListItem.Chevron />
+    </ListItem>
+  )
 
   return (
     <View style={styles.container}>
@@ -96,9 +114,8 @@ export default function TabOneScreen({ navigation }) {
         {/* <TouchableOpacity onPress={() => getCollections()}><Text>Atualizar</Text></TouchableOpacity> */}
         <FlatList
           data={data}
-          numColumns={3}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={keyExtractor}
         />
       </SafeAreaView>
     </View>
@@ -126,7 +143,7 @@ const styles = StyleSheet.create({
   containerSafe: {
     flex: 1,
     width: "100%",
-    marginTop: StatusBar.currentHeight || 0
+    // marginTop: StatusBar.currentHeight || 0
   },
   item: {
     backgroundColor: "#d44b42",

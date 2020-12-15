@@ -1,5 +1,6 @@
 import * as React from "react";
 import { StyleSheet, SafeAreaView, FlatList, StatusBar } from "react-native";
+import { ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 import EditScreenInfo from "../components/EditScreenInfo";
@@ -45,7 +46,7 @@ export default function CategoriesScreen({ navigation, route }) {
     getCollections();
   }, []);
 
-  const renderItem = ({ item }) => {
+  const renderItem2 = ({ item }) => {
     return (
       <TouchableOpacity
         onPress={() => {
@@ -60,13 +61,33 @@ export default function CategoriesScreen({ navigation, route }) {
     );
   };
 
+  const keyExtractor = (item, index) => index.toString()
+
+  const renderItem = ({ item }) => (
+    <ListItem bottomDivider onPress={() => {
+      navigation.navigate("Musica", {
+        id: item.id,
+        title: item.nome
+      });
+    }}>
+      {/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
+      <ListItem.Content>
+        <ListItem.Title>{item.nome}</ListItem.Title>
+        <ListItem.Subtitle>Tonalidade: {item.tom}</ListItem.Subtitle>
+      </ListItem.Content>
+      <ListItem.Chevron />
+    </ListItem>
+  )
+
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.containerSafe}>
         <FlatList
           data={data}
+          scrollEnabled
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={keyExtractor}
         />
       </SafeAreaView>
     </View>
@@ -77,7 +98,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    backgroundColor: "#f5f5f5"
   },
   title: {
     fontSize: 14,
@@ -93,7 +115,7 @@ const styles = StyleSheet.create({
   containerSafe: {
     flex: 1,
     width: "100%",
-    marginTop: StatusBar.currentHeight || 0
+    // marginTop: StatusBar.currentHeight || 0
   },
   item: {
     backgroundColor: "#f5f5f5",
