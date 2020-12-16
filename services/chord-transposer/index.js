@@ -16,9 +16,10 @@ const CHORD_REGEX = XRegExp(`^${ROOT_PATTERN}${SUFFIX_PATTERN}${BASS_PATTERN}$`)
 const MINOR_CHORD_REGEX = XRegExp(`^${ROOT_PATTERN}${MINOR_PATTERN}.*$`);
 /** Fluent API for transposing text containing chords. */
 class Transposer {
-    constructor(text) {
+    constructor(text, showChord) {
+        this.showChord = showChord
         if (typeof text === "string") {
-            this.tokens = tokenize(text);
+            this.tokens = tokenize(text, undefined, showChord);
         }
         else if (text instanceof Array) {
             this.tokens = text;
@@ -27,8 +28,8 @@ class Transposer {
             throw new Error('Invalid argument (must be text or parsed text).');
         }
     }
-    static transpose(text) {
-        return new Transposer(text);
+    static transpose(text, showChord) {
+        return new Transposer(text, showChord);
     }
     /** Get the key of the text. If not explicitly set, it will be guessed from the first chord. */
     getKey() {
@@ -51,7 +52,7 @@ class Transposer {
     up(semitones) {
         const key = this.getKey();
         const newKey = transposeKey(key, semitones);
-        const tokens = transposeTokens(this.tokens, key, newKey);
+        const tokens = transposeTokens(this.tokens, key, newKey, this.showChord);
         return new Transposer(tokens).fromKey(newKey);
     }
     down(semitones) {
@@ -60,7 +61,7 @@ class Transposer {
     toKey(toKey) {
         const key = this.getKey();
         const newKey = KeySignatures.valueOf(toKey);
-        const tokens = transposeTokens(this.tokens, key, newKey);
+        const tokens = transposeTokens(this.tokens, key, newKey, this.showChord);
         return new Transposer(tokens).fromKey(newKey);
     }
     /** Returns a string representation of the text. */
@@ -88,22 +89,27 @@ function transposeKey(currentKey, semitones) {
  * bass: C
  */
 class Chord {
-    constructor(root, suffix, bass) {
+    constructor(root, suffix, bass, showChord) {
         this.root = root;
         this.suffix = suffix;
         this.bass = bass;
+        this.showChord = showChord;
     }
     toString() {
+
+        if(this.showChord !== true) return ""
+            
         if (this.bass) {
-            return `<span style="red">${this.root + this.suffix + "/" + this.bass}</span>`;
+            return `<i>${this.root + this.suffix + "/" + this.bass}</i>`;
         }
         else {
-            return `<span style="#cfc">${this.root + this.suffix}</span>`;
+            return `<i>${this.root + this.suffix}</i>`;
         }
+
     }
-    static parse(token) {
+    static parse(token, showChord) {
         const result = XRegExp.exec(token, CHORD_REGEX);
-        return new Chord(result.root, result.suffix, result.bass);
+        return new Chord(result.root, result.suffix, result.bass, showChord);
     }
 }
 /** Tokenize the given text into chords.
@@ -112,10 +118,13 @@ class Chord {
  *  the given threshold in order for the line to be transposed. The threshold
  *  is set to 0.5 by default.
  */
-function tokenize(text, threshold) {
+function tokenize(text, threshold, showChord) {
     if (threshold === undefined) {
         threshold = 0.5;
     }
+
+    if(!showChord) text = text.replace(/\|/g, "")
+
     const lines = text.split("\n");
     const newText = [];
     for (let line of lines) {
@@ -127,7 +136,7 @@ function tokenize(text, threshold) {
         for (let token of tokens) {
             let isTokenEmpty = token.trim() === "";
             if (!isTokenEmpty && CHORD_REGEX.test(token)) {
-                const chord = Chord.parse(token);
+                const chord = Chord.parse(token, showChord);
                 newLine.push(chord);
                 chordCount++;
                 lastTokenWasString = false;
@@ -146,7 +155,7 @@ function tokenize(text, threshold) {
             }
         }
         if (chordCount / tokenCount >= threshold) {
-            newText.push(newLine);
+            if(showChord) newText.push(newLine);
         }
         else {
             newText.push([line]);
@@ -157,7 +166,7 @@ function tokenize(text, threshold) {
 /**
  * Transposes the given parsed text (by the parse() function) to another key.
  */
-function transposeTokens(tokens, fromKey, toKey) {
+function transposeTokens(tokens, fromKey, toKey, showChord) {
     const transpositionMap = createTranspositionMap(fromKey, toKey);
     let result = [];
     for (let line of tokens) {
@@ -181,7 +190,7 @@ function transposeTokens(tokens, fromKey, toKey) {
                 }
             }
             else {
-                const transposedChord = new Chord(transpositionMap.get(token.root), token.suffix, transpositionMap.get(token.bass));
+                const transposedChord = new Chord(transpositionMap.get(token.root), token.suffix, transpositionMap.get(token.bass), showChord);
                 const originalChordLen = token.toString().length;
                 const transposedChordLen = transposedChord.toString().length;
                 // Handle length differences between chord and transposed chord.

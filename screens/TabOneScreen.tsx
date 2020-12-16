@@ -109,20 +109,10 @@ export default function TabOneScreen({ navigation }) {
               keyExtractor={keyExtractor}
             />
             :
-            <>
-              <Card.Title>NADA ENCONTRADO.</Card.Title>
+            <View style={styles.notfound}>
+              <Card.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</Card.Title>
               <Card.Divider />
-              <View style={{ position: "relative", alignItems: "center" }}>
-                <Avatar
-                  rounded
-                  size="large"
-                  icon={{ name: 'home', type: 'font-awesome' }}
-                  onPress={() => console.log("Works!")}
-                  activeOpacity={0.7}
-                // containerStyle={{flex: 5, marginRight: 60}}
-                />
-              </View>
-            </>
+            </View>
         }
       </ScrollView>
     </SafeAreaView>
@@ -133,6 +123,15 @@ export default function TabOneScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  notfound: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: "#f5f5f5"
+  },
+  notfoundTitle: {
+    fontSize: 18,
   },
   scrollView: {
     flex: 1,
