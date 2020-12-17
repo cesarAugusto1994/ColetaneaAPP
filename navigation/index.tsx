@@ -8,6 +8,7 @@ import { RootStackParamList } from '../types';
 import SignInNavigator from '../screens/SigninScreen';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
+import {isSignedIn} from '../services/services/auth';
 
 // If you are not familiar with React Navigation, we recommend going through the
 // "Fundamentals" guide: https://reactnavigation.org/docs/getting-started
@@ -25,15 +26,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 // Read more here: https://reactnavigation.org/docs/modal
 const Stack = createStackNavigator<RootStackParamList>();
 
-const logged = true
+const logged = false
 
 function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {
-        logged ? <Stack.Screen name="Root" component={BottomTabNavigator} /> : <Stack.Screen name="SingIn" component={SignInNavigator} />
+        isSignedIn() ? <Stack.Screen name="Root" component={BottomTabNavigator} /> : <Stack.Screen name="SingIn" component={SignInNavigator} />
       }
-      
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );

@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { StyleSheet, SafeAreaView, ScrollView, FlatList, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { Parser, Chord, Chordify } from 'react-chord-parser';
 import HTMLView from 'react-native-htmlview';
 import { Text, View } from '../components/Themed';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import api from '../services/api/axios';
 import Transposer from '../services/chord-transposer';
+import { getToken } from '../services/services/auth';
+import { Card, ListItem } from 'react-native-elements';
 
 const _ = require('lodash');
 
@@ -23,30 +26,30 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 	const [spanFontSize, setspanFontSize] = React.useState(15);
 	const [favorite, setFavorite] = React.useState(false);
 	const [showChord, setShowChord] = React.useState(true);
-  const [darkMode, setDarkMode] = React.useState(false);
-  
-  const [chordColor, setChordColor] = React.useState('#fcba03');
+	const [darkMode, setDarkMode] = React.useState(false);
+
+	const [chordColor, setChordColor] = React.useState('#fcba03');
 
 	const [originalTom] = React.useState(data.tom);
-  const [tom, setTom] = React.useState(data.tom);
-  
-  const getNextTone = () => {
+	const [tom, setTom] = React.useState(data.tom);
+
+	const getNextTone = () => {
 		const currentIndex = tones.indexOf(tom);
 		const nextIndex = (currentIndex + 1) % tones.length;
 		if (!tones[nextIndex]) {
-			return tones[0]
+			return tones[0];
 		}
-		return tones[nextIndex]
-  };
-  
-  const getPreviousTone = () => {
+		return tones[nextIndex];
+	};
+
+	const getPreviousTone = () => {
 		const currentIndex = tones.indexOf(tom);
 		const nextIndex = (currentIndex - 1) % tones.length;
 		if (!tones[nextIndex]) {
 			const lastItem = _.last(tones);
-			return lastItem
+			return lastItem;
 		}
-		return tones[nextIndex]
+		return tones[nextIndex];
 	};
 
 	const arrayWalk = () => {
@@ -101,27 +104,26 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 
 	const handleDarkMode = () => {
 		setDarkMode(!darkMode);
-  };
-  
-  const handleChordColor = () => {
-    const currentIndex = colors.indexOf(chordColor);
+	};
+
+	const handleChordColor = () => {
+		const currentIndex = colors.indexOf(chordColor);
 		const nextIndex = (currentIndex + 1) % colors.length;
 		if (!colors[nextIndex]) {
 			setChordColor(colors[0]);
 			return;
 		}
 		setChordColor(colors[nextIndex]);
-  };
-  
-  const getNextChordColor = () => {
+	};
+
+	const getNextChordColor = () => {
 		const currentIndex = colors.indexOf(chordColor);
 		const nextIndex = (currentIndex + 1) % colors.length;
 		if (!colors[nextIndex]) {
-			return colors[0]
+			return colors[0];
 		}
-		return colors[nextIndex]
-  };
-
+		return colors[nextIndex];
+	};
 
 	return (
 		<SafeAreaView style={[styles.containerSafe, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
@@ -144,19 +146,26 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 						styles.scene,
 						{
 							flex: 0.8,
-              height: Dimensions.get('screen').height,
-              backgroundColor: darkMode ? '#000000' : '#FFFFFF',
-            },
-            {  }
+							height: Dimensions.get('screen').height,
+							backgroundColor: darkMode ? '#000000' : '#FFFFFF',
+						},
+						{},
 					]}
 				>
-					<ScrollView contentContainerStyle={{ paddingVertical: 20 }} showsVerticalScrollIndicator={false}>
+					<ScrollView
+						contentContainerStyle={{ paddingVertical: 20, marginLeft: 15 }}
+						showsVerticalScrollIndicator={false}
+					>
 						{data.letra
 							? <HTMLView
-                  value={getWords()}
+									value={getWords()}
 									stylesheet={{
-                    span: { fontSize: spanFontSize, color: !darkMode ? '#000000' : '#FFFFFF', marginBottom: 300 },
-                    i: { color: chordColor, fontWeight: 'bold' }
+										span: {
+											fontSize: spanFontSize,
+											color: !darkMode ? '#000000' : '#FFFFFF',
+											marginBottom: 300,
+										},
+										i: { color: chordColor, fontWeight: 'bold' },
 									}}
 								/>
 							: <Text>Letra não encontrada.</Text>}
@@ -174,8 +183,8 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 						// position: 'absolute',
 						top: '20%',
 
-            width: 25,
-            backgroundColor: darkMode ? '#000000' : '#FFFFFF',
+						width: 25,
+						backgroundColor: darkMode ? '#000000' : '#FFFFFF',
 						// height: 50,
 						// alignItems: 'center',
 						// justifyContent: 'center',
@@ -190,12 +199,16 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 
 					{showChord &&
 						<TouchableOpacity style={styles.btnDown} onPress={arrayReverseWalk}>
-							<Text style={{ fontSize: 14 }}>{getPreviousTone()}</Text>
+							<Text style={{ fontSize: 14 }}>
+								{getPreviousTone()}
+							</Text>
 						</TouchableOpacity>}
 
 					{showChord &&
 						<TouchableOpacity style={styles.btnUp} onPress={arrayWalk}>
-							<Text style={{ fontSize: 14 }}>{getNextTone()}</Text>
+							<Text style={{ fontSize: 14 }}>
+								{getNextTone()}
+							</Text>
 						</TouchableOpacity>}
 
 					<TouchableOpacity style={styles.btnUp} onPress={handleDarkMode}>
@@ -216,14 +229,13 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 							: <Ionicons name="ios-star-outline" size={15} />}
 					</TouchableOpacity>
 
-          <TouchableOpacity style={styles.btnUp} onPress={handleChordColor}>
-            <Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
+					<TouchableOpacity style={styles.btnUp} onPress={handleChordColor}>
+						<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
 					</TouchableOpacity>
 
-          <TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
-            <Ionicons name="expand-outline" size={15} />
+					<TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
+						<Ionicons name="expand-outline" size={15} />
 					</TouchableOpacity>
-          
 				</View>
 			</View>
 		</SafeAreaView>
@@ -250,23 +262,33 @@ const SecondRoute = ({ data }) => {
 };
 
 const ThirdRoute = ({ data }) => {
-	const renderItem = ({ item }) => {
-		return (
-			<TouchableOpacity onPress={() => {}}>
-				<Item title={item.nome} />
-			</TouchableOpacity>
-		);
-	};
+	const keyExtractor = (item, index) => index.toString();
+
+	const renderItem = ({ item }) =>
+		<ListItem bottomDivider>
+			{/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
+			<ListItem.Content>
+				<ListItem.Title>
+					{item.name}
+				</ListItem.Title>
+				<ListItem.Subtitle>
+					Tam: {item.size} kbs
+				</ListItem.Subtitle>
+			</ListItem.Content>
+		</ListItem>;
 
 	return (
-		<View style={[styles.scene, { backgroundColor: '#f5f5f5' }]}>
-			<SafeAreaView style={styles.containerSafe}>
-				{data.musica_anexos && data.musica_anexos.length > 0
-					? <FlatList data={data.musica_anexos} renderItem={renderItem} keyExtractor={item => item.id} />
-					: <Text>Nenhum anexo encontrado.</Text>}
+		<SafeAreaView style={styles.containerSafe}>
+			<View style={[styles.scene, { backgroundColor: '#f5f5f5' }]}>
+				{data.anexos && data.anexos.length > 0
+					? <FlatList data={data.anexos} renderItem={renderItem} keyExtractor={keyExtractor} />
+					: <View style={styles.notfound}>
+							<Card.Title style={styles.notfoundTitle}>NENHUM ARQUIVO ENCONTRADO.</Card.Title>
+							<Card.Divider />
+						</View>}
 
+				{/* 
 				<Text style={styles.comments}>Comentários</Text>
-
 				{data.comentarios && data.comentarios.length > 0
 					? <FlatList
 							data={data.comentarios}
@@ -281,16 +303,16 @@ const ThirdRoute = ({ data }) => {
 								</View>}
 							keyExtractor={item => item.id}
 						/>
-					: <Text>Nenhum comentário encontrado.</Text>}
-			</SafeAreaView>
-		</View>
+					: <Text>Nenhum comentário encontrado.</Text>} */}
+			</View>
+		</SafeAreaView>
 	);
 };
 const initialLayout = { width: Dimensions.get('window').width };
 
 export default function CategoriesScreen({ route, navigation }) {
-  const [data, setData] = React.useState([]);
-  const [showHeader, setShowHeader] = React.useState(true);
+	const [data, setData] = React.useState([]);
+	const [showHeader, setShowHeader] = React.useState(true);
 
 	navigation.setOptions({
 		headerTintColor: '#ffffff',
@@ -301,19 +323,23 @@ export default function CategoriesScreen({ route, navigation }) {
 		},
 		headerTitleStyle: {
 			fontSize: 18,
-    },
-    headerShown: showHeader,
-    gesturesEnabled: false,
-        tabBarVisible: false,
-  });
-  
-  const handleShowHeader = () => {
-    setShowHeader(!showHeader)
-  }
+		},
+		headerShown: showHeader,
+		gesturesEnabled: false,
+		tabBarVisible: false,
+	});
+
+	const handleShowHeader = () => {
+		setShowHeader(!showHeader);
+	};
 
 	const getCollections = async () => {
 		try {
-			const response = await api.get(`song/${route.params.id}`);
+			const response = await api.get(`musicas/${route.params.id}`, {
+				headers: {
+					Authorization: await getToken(),
+				},
+			});
 			if (response) {
 				console.log(response.data);
 				setData(response.data);
@@ -371,7 +397,16 @@ const styles = StyleSheet.create({
 	},
 	scene: {
 		flex: 1,
-		marginLeft: 15,
+		// marginLeft: 15,
+	},
+	notfound: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#f5f5f5',
+	},
+	notfoundTitle: {
+		fontSize: 18,
 	},
 	descriptionsSong: {
 		fontSize: 14,

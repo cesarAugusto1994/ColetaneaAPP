@@ -11,10 +11,8 @@ import {
 } from "react-native";
 import { Avatar, Card, Image, ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
-
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
-
+import {getToken} from '../services/services/auth';
 import api from "../services/api/axios";
 
 const Item = ({ title }) =>
@@ -58,14 +56,19 @@ export default function TabOneScreen({ navigation }) {
   const getCollections = async () => {
     setRefreshing(true);
     try {
-      const response = await api.get("collections");
+      const response = await api.get("colecoes", {
+        headers: {
+          Authorization: await getToken()
+        }
+      });
       if (response) {
         setData(response.data);
         setRefreshing(false);
       }
     } catch (error) {
       setRefreshing(false);
-      console.log("error", JSON.stringify(error));
+      console.log("error", JSON.stringify(error.config));
+      
     }
   };
 

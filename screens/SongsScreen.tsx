@@ -4,6 +4,7 @@ import { ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Text, View } from "../components/Themed";
 import api from "../services/api/axios";
+import {getToken} from '../services/services/auth';
 
 const Item = ({ title, description }) =>
   <View style={styles.item}>
@@ -37,7 +38,11 @@ export default function CategoriesScreen({ navigation, route }) {
   const getCollections = async () => {
     setRefreshing(true);
     try {
-      const response = await api.get(`category/${route.params.id}/songs`);
+      const response = await api.get(`categoria-musicas/${route.params.id}`, {
+        headers: {
+          Authorization: await getToken()
+        }
+      });
       if (response) {
         setData(response.data);
         setRefreshing(false);
@@ -52,21 +57,6 @@ export default function CategoriesScreen({ navigation, route }) {
     getCollections();
   }, []);
 
-  const renderItem2 = ({ item }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate("Musica", {
-            id: item.id,
-            title: item.nome,
-          });
-        }}
-      >
-        <Item title={item.nome} description={item.numero} />
-      </TouchableOpacity>
-    );
-  };
-
   const keyExtractor = (item, index) => index.toString()
 
   const renderItem = ({ item }) => (
@@ -80,6 +70,7 @@ export default function CategoriesScreen({ navigation, route }) {
       <ListItem.Content>
         <ListItem.Title>{item.nome}</ListItem.Title>
         <ListItem.Subtitle>Tonalidade: {item.tom}</ListItem.Subtitle>
+        {item.numero && <ListItem.Subtitle>Número: {item.numero}</ListItem.Subtitle>}
       </ListItem.Content>
       <ListItem.Chevron />
     </ListItem>
@@ -90,9 +81,9 @@ export default function CategoriesScreen({ navigation, route }) {
     <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        // refreshControl={
+        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        // }
       >
         <FlatList
           data={data}

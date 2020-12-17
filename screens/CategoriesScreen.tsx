@@ -1,6 +1,7 @@
 import * as React from "react";
 import { StyleSheet, SafeAreaView, FlatList, ScrollView, RefreshControl } from "react-native";
 import { ListItem } from "react-native-elements";
+import {getToken} from '../services/services/auth';
 import api from "../services/api/axios";
 
 export default function CategoriesScreen({ navigation, route }) {
@@ -22,7 +23,12 @@ export default function CategoriesScreen({ navigation, route }) {
     setRefreshing(true);
     try {
       const response = await api.get(
-        `collection/${route.params.id}/categories`
+        `colecao-categorias/${route.params.id}`,
+        {
+          headers: {
+            Authorization: await getToken()
+          }
+        }
       );
       if (response) {
         setData(response.data);
