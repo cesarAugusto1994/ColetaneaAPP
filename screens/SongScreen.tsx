@@ -9,6 +9,7 @@ import api from '../services/api/axios';
 import Transposer from '../services/chord-transposer';
 import { getToken } from '../services/services/auth';
 import { Card, ListItem } from 'react-native-elements';
+import * as FileSystem from 'expo-file-system';
 
 const _ = require('lodash');
 
@@ -262,10 +263,31 @@ const SecondRoute = ({ data }) => {
 };
 
 const ThirdRoute = ({ data }) => {
+	const [downloadProgress, setDownloadProgress] = React.useState(0);
+
+	const callback = downloadProgress => {
+		const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
+		setDownloadProgress(progress);
+	};
+
+	const downloadResumable = FileSystem.createDownloadResumable(
+		'http://techslides.com/demos/sample-videos/small.mp4',
+		FileSystem.documentDirectory + 'small.mp4',
+		{},
+		callback
+	);
+
+	// try {
+	// 	const { uri } = await downloadResumable.downloadAsync();
+	// 	console.log('Finished downloading to ', uri);
+	// } catch (e) {
+	// 	console.error(e);
+	// }
+
 	const keyExtractor = (item, index) => index.toString();
 
 	const renderItem = ({ item }) =>
-		<ListItem bottomDivider>
+		<ListItem bottomDivider onPress={() => {}}>
 			{/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
 			<ListItem.Content>
 				<ListItem.Title>
