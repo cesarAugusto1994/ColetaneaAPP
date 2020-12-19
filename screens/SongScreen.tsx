@@ -79,8 +79,8 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 		if (!data.letra) {
 			return '<p>Letra não encontrada.</p>';
 		}
-
 		const w = Transposer.transpose(data.letra, showChord).fromKey(originalTom).toKey(tom).toString();
+		console.log(w)
 		return `<span>${w}</span>`;
 	};
 
@@ -99,7 +99,6 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 	};
 
 	const handleShowChord = () => {
-		console.log('fioi');
 		setShowChord(!showChord);
 	};
 
@@ -125,6 +124,17 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 		}
 		return colors[nextIndex];
 	};
+
+	let styleSheetWebView = {
+		i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize, },
+		span: {
+			fontSize: spanFontSize,
+			color: !darkMode ? '#000000' : '#FFFFFF',
+			// color: chordColor,
+			marginBottom: 300,		
+			i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize, },	
+		},
+	}
 
 	return (
 		<SafeAreaView style={[styles.containerSafe, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
@@ -160,14 +170,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 						{data.letra
 							? <HTMLView
 									value={getWords()}
-									stylesheet={{
-										span: {
-											fontSize: spanFontSize,
-											color: !darkMode ? '#000000' : '#FFFFFF',
-											marginBottom: 300,
-										},
-										i: { color: chordColor, fontWeight: 'bold' },
-									}}
+									stylesheet={styleSheetWebView}
 								/>
 							: <Text>Letra não encontrada.</Text>}
 					</ScrollView>

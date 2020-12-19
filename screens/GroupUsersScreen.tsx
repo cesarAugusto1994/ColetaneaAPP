@@ -8,13 +8,12 @@ import {
 	Button,
 	Dimensions,
 	RefreshControl,
-  ScrollView,
-  TouchableOpacity
+	ScrollView,
+	TouchableOpacity,
 } from 'react-native';
-import { Avatar, Image, ListItem, Card as CardRNE } from 'react-native-elements';
+import { Avatar, Image, ListItem, Card } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
-import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
 const { width } = Dimensions.get('screen');
@@ -26,11 +25,11 @@ const Item = ({ title }) =>
 		</Text>
 	</View>;
 
-export default function TabOneScreen({ navigation }) {
+export default function GroupScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 
 	navigation.setOptions({
-		title: 'Home',
+		title: 'Participantes',
 		headerTintColor: '#ffffff',
 		headerStyle: {
 			backgroundColor: '#d44b42',
@@ -51,12 +50,12 @@ export default function TabOneScreen({ navigation }) {
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get('grupos', {
+			const response = await api.get(`grupos/${route.params.id}`, {
 				headers: {
 					Authorization: await getToken(),
 				},
-      });
-      console.log(response)
+			});
+			console.log(response.data);
 			if (response) {
 				setData(response.data);
 				setRefreshing(false);
@@ -77,13 +76,13 @@ export default function TabOneScreen({ navigation }) {
 		<ListItem
 			bottomDivider
 			onPress={() => {
-				navigation.navigate('Group', {
+				navigation.navigate('Categorias', {
 					id: item.id,
 					title: item.nome,
 				});
 			}}
 		>
-			<Avatar size="medium" title={item.nome.substring(0, 2)} source={{ uri: item.avatar_url }} />
+			<Avatar rounded  size="medium" title={item.nome.substring(0, 2)} source={{ uri: item.avatar_url }} />
 			<ListItem.Content>
 				<ListItem.Title>
 					{item.nome}
@@ -93,7 +92,6 @@ export default function TabOneScreen({ navigation }) {
 		</ListItem>;
 
 	const renderArticles = () => {
-    
 		if (!data.length) return <Text>Nada</Text>;
 
 		return (
@@ -109,13 +107,32 @@ export default function TabOneScreen({ navigation }) {
 		);
 	};
 
+	if (!data) return <Text>Nada</Text>;
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView
 				contentContainerStyle={styles.scrollView}
 				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
-				{data.length
+
+				<Card containerStyle={{ padding: 0 }}>
+					{data.usuarios && data.usuarios?.map((u, i) =>
+						<ListItem key={i} bottomDivider>
+							<Avatar title={u.username.substring(0, 2)} source={{ uri: u.avatar ? `http://192.168.15.16:1337${u.avatar.formats.thumbnail.url}` : null }} />
+							<ListItem.Content>
+								<ListItem.Title>
+									{u.username}
+								</ListItem.Title>
+								<ListItem.Subtitle>
+									{u.subtitle}
+								</ListItem.Subtitle>
+							</ListItem.Content>
+						</ListItem>
+					)}
+				</Card>
+
+				{/* {data.length
 				?	// ? <Block flex center style={styles.home}>
 					// 		{renderArticles()}
 					// 	</Block>
@@ -129,7 +146,7 @@ export default function TabOneScreen({ navigation }) {
 							<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
 							<CardRNE.Divider />
 						</View>
-        }
+        } */}
 			</ScrollView>
 		</SafeAreaView>
 	);

@@ -29,19 +29,6 @@ export default function TabOneScreen({ navigation, route }) {
     headerTitleStyle: {
       fontSize: 18
     },
-    headerRight: () =>
-      <TouchableOpacity
-        style={{ marginRight: 15 }}
-        onPress={() => {
-          navigation.navigate("Verse", {
-            id: item.liv_id,
-            version: route.params.id,
-            title: item.name
-          });
-        }}
-      >
-        <Ionicons name="ios-search" size={25} color="#fff" />
-      </TouchableOpacity>
   });
 
   const getCollections = async () => {

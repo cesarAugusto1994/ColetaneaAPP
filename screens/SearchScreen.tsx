@@ -15,6 +15,7 @@ import * as _ from "lodash";
 import api from "../services/api/axios";
 import { RootStackParamList } from "../types";
 import { DrawerActions } from "@react-navigation/native";
+import { SearchBar, Card, ListItem } from 'react-native-elements';
 
 const Item = ({item}) =>
   <View style={styles.item}>
@@ -41,6 +42,8 @@ export default function NotFoundScreen({
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
 
+  const [search, setsearch] = React.useState('');
+
   navigation.setOptions({
     headerTintColor: "#ffffff",
     headerStyle: {
@@ -55,7 +58,7 @@ export default function NotFoundScreen({
 
   const getSongs = async text => {
     try {
-      const response = await api.get(`songs/search/${text}`);
+      const response = await api.get(`musicas/search/${text}`);
       if (response) {
         console.log(response.data);
         setData(response.data);
@@ -69,7 +72,7 @@ export default function NotFoundScreen({
     
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem2 = ({ item }) => {
     return (
       <View>
         <TouchableOpacity
@@ -86,24 +89,45 @@ export default function NotFoundScreen({
     );
   };
 
+  const keyExtractor = (item, index) => index.toString()
+
+  const renderItem = ({ item }) => (
+    <ListItem bottomDivider onPress={() => {
+      navigation.navigate("Musica", {
+        id: item.id,
+        title: item.nome
+      });
+    }}>
+      <ListItem.Content>
+        <ListItem.Title>{item.nome}</ListItem.Title>
+      </ListItem.Content>
+      <ListItem.Chevron />
+    </ListItem>
+  )
+
   const onChangeText = async text => {
     setLoading(true)
     await getSongs(text);
   };
 
+  const handleSearch = text => {
+    setsearch(text)
+  }
+
   const debouncedSearch = _.debounce(onChangeText, 2000);
 
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="Digite a pesquisa"
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          width: "100%"
+      <SearchBar
+        lightTheme 
+        containerStyle={{width: '100%'}}
+        style={{width: '100%'}}
+        placeholder="Pesquisar..."
+        onChangeText={text => {
+          debouncedSearch(text)
+          handleSearch(text)  
         }}
-        onChangeText={debouncedSearch}
+        value={search}
       />
 
       <SafeAreaView style={styles.containerSafe}>
@@ -115,9 +139,12 @@ export default function NotFoundScreen({
               <FlatList
               data={data}
               renderItem={renderItem}
-              keyExtractor={item => item.id}
+              keyExtractor={keyExtractor}
             /> :
-              <Text>Nenhum registro encontrado.</Text>
+              <View style={styles.notfound}>
+                <Card.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</Card.Title>
+                <Card.Divider />
+              </View>
             }
           </>}
       </SafeAreaView>
@@ -128,15 +155,23 @@ export default function NotFoundScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
     padding: 20
   },
+  notfound: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	notfoundTitle: {
+		fontSize: 18,
+	},
   containerSafe: {
     flex: 1,
     width: "100%"
-    // marginTop: StatusBar.currentHeight || 0
   },
   title: {
     fontSize: 14,

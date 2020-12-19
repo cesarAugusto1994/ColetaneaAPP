@@ -8,15 +8,15 @@ import {
 	Button,
 	Dimensions,
 	RefreshControl,
-  ScrollView,
-  TouchableOpacity
+	ScrollView,
+	TouchableOpacity,
 } from 'react-native';
-import { Avatar, Image, ListItem, Card as CardRNE } from 'react-native-elements';
+import { Avatar, Image, ListItem, Card } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
-import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
+import moment from 'moment'
 const { width } = Dimensions.get('screen');
 
 const Item = ({ title }) =>
@@ -26,11 +26,11 @@ const Item = ({ title }) =>
 		</Text>
 	</View>;
 
-export default function TabOneScreen({ navigation }) {
+export default function GroupScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 
 	navigation.setOptions({
-		title: 'Home',
+		title: 'Listas',
 		headerTintColor: '#ffffff',
 		headerStyle: {
 			backgroundColor: '#d44b42',
@@ -40,6 +40,15 @@ export default function TabOneScreen({ navigation }) {
 		headerTitleStyle: {
 			fontSize: 18,
 		},
+		headerRight: () =>
+			<TouchableOpacity
+				style={{ marginRight: 15 }}
+				onPress={() => {
+					navigation.navigate('GroupListAdd');
+				}}
+			>
+				<Ionicons name="ios-add-outline" size={25} color="#fff" />
+			</TouchableOpacity>
 	});
 
 	const [refreshing, setRefreshing] = React.useState(false);
@@ -51,12 +60,12 @@ export default function TabOneScreen({ navigation }) {
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get('grupos', {
+			const response = await api.get(`grupo-listas`, {
 				headers: {
 					Authorization: await getToken(),
 				},
-      });
-      console.log(response)
+			});
+			console.log(response.data);
 			if (response) {
 				setData(response.data);
 				setRefreshing(false);
@@ -77,7 +86,7 @@ export default function TabOneScreen({ navigation }) {
 		<ListItem
 			bottomDivider
 			onPress={() => {
-				navigation.navigate('Group', {
+				navigation.navigate('Categorias', {
 					id: item.id,
 					title: item.nome,
 				});
@@ -93,7 +102,6 @@ export default function TabOneScreen({ navigation }) {
 		</ListItem>;
 
 	const renderArticles = () => {
-    
 		if (!data.length) return <Text>Nada</Text>;
 
 		return (
@@ -109,27 +117,32 @@ export default function TabOneScreen({ navigation }) {
 		);
 	};
 
+	if (!data) return <Text>Nada</Text>;
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView
 				contentContainerStyle={styles.scrollView}
 				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
-				{data.length
-				?	// ? <Block flex center style={styles.home}>
-					// 		{renderArticles()}
-					// 	</Block>
-					 <FlatList
-						  data={data}
-						  scrollEnabled
-						  renderItem={renderItem}
-						  keyExtractor={keyExtractor}
-						/>
-					:	<View style={styles.notfound}>
-							<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
-							<CardRNE.Divider />
-						</View>
-        }
+
+					{data && data?.map((lista, i) =>
+						<Card containerStyle={{ padding: 0 }}>
+							<ListItem key={i} onPress={() => {
+									navigation.navigate('GroupListsDetails', {
+										id: lista.id,
+										title: `${lista.tipo} do dia ${moment(lista.data).format('DD/MM/YY')}`,
+									});
+								}}>
+									<ListItem.Content>
+										<ListItem.Title>
+											{lista.tipo} do dia {moment(lista.data).format('DD/MM/YY')}
+										</ListItem.Title>
+									</ListItem.Content>
+								</ListItem>
+						</Card>
+					)}
+
 			</ScrollView>
 		</SafeAreaView>
 	);

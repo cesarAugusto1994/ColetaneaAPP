@@ -8,15 +8,16 @@ import {
 	Button,
 	Dimensions,
 	RefreshControl,
-  ScrollView,
-  TouchableOpacity
+	ScrollView,
+	TouchableOpacity,
 } from 'react-native';
-import { Avatar, Image, ListItem, Card as CardRNE } from 'react-native-elements';
+import { Avatar, Image, ListItem, Card } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
-import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+import moment from 'moment'
 const { width } = Dimensions.get('screen');
 
 const Item = ({ title }) =>
@@ -26,11 +27,11 @@ const Item = ({ title }) =>
 		</Text>
 	</View>;
 
-export default function TabOneScreen({ navigation }) {
+export default function GroupScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 
 	navigation.setOptions({
-		title: 'Home',
+		title: 'Grupo',
 		headerTintColor: '#ffffff',
 		headerStyle: {
 			backgroundColor: '#d44b42',
@@ -51,12 +52,12 @@ export default function TabOneScreen({ navigation }) {
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get('grupos', {
+			const response = await api.get(`grupos/${route.params.id}`, {
 				headers: {
 					Authorization: await getToken(),
 				},
-      });
-      console.log(response)
+			});
+			console.log(response.data);
 			if (response) {
 				setData(response.data);
 				setRefreshing(false);
@@ -77,7 +78,7 @@ export default function TabOneScreen({ navigation }) {
 		<ListItem
 			bottomDivider
 			onPress={() => {
-				navigation.navigate('Group', {
+				navigation.navigate('Categorias', {
 					id: item.id,
 					title: item.nome,
 				});
@@ -93,7 +94,6 @@ export default function TabOneScreen({ navigation }) {
 		</ListItem>;
 
 	const renderArticles = () => {
-    
 		if (!data.length) return <Text>Nada</Text>;
 
 		return (
@@ -109,13 +109,79 @@ export default function TabOneScreen({ navigation }) {
 		);
 	};
 
+	if (!data) return <Text>Nada</Text>;
+
 	return (
 		<SafeAreaView style={styles.container}>
 			<ScrollView
 				contentContainerStyle={styles.scrollView}
 				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
-				{data.length
+				<View style={{ flexDirection: 'row', height: '12%' }}>
+					<View
+						style={{
+							flex: 0.5,
+							alignContent: 'center',
+							alignSelf: 'center',
+							justifyContent: 'center',
+							alignItems: 'center',
+							borderRightWidth: 1,
+							borderRightColor: '#f5f5f5',
+						}}
+					>
+						<TouchableOpacity
+							onPress={() => {
+								navigation.navigate('GroupUsers', {
+									id: data.id,
+									title: data.nome,
+								});
+							}}
+						>
+							<View style={{ alignItems: 'center' }}>
+								<Text style={{ fontSize: 18 }}>
+									{data.usuarios ? data.usuarios.length : 0}
+								</Text>
+								<Text>Participantes</Text>
+							</View>
+						</TouchableOpacity>
+					</View>
+					<View
+						style={{ flex: 0.5, justifyContent: 'center', alignItems: 'center', borderLeftColor: '#333' }}
+					>
+						<TouchableOpacity onPress={() => {
+							navigation.navigate('GroupLists', {
+								id: data.id,
+								title: data.nome,
+							});
+						}}>
+							<View style={{ alignItems: 'center' }}>
+								<Text style={{ fontSize: 18 }}>
+									{data.listas ? data.listas.length : 0}
+								</Text>
+								<Text>Listas</Text>
+							</View>
+						</TouchableOpacity>
+					</View>
+				</View>
+
+				<Card>
+					<Card.Title>Próximos Eventos</Card.Title>
+					<Card.Divider/>
+					{data.eventos && data.eventos?.map((u, i) =>
+					<ListItem key={i}>
+						<ListItem.Content>
+							<ListItem.Title>
+								{u.Tipo} em {moment(u.data).format('DD/MM/YYYY')} ás {moment(u.data).format('HH:mm')}
+							</ListItem.Title>
+							<ListItem.Subtitle>
+								{u.descricao}
+							</ListItem.Subtitle>
+						</ListItem.Content>
+					</ListItem>
+					)}
+				</Card>
+
+				{/* {data.length
 				?	// ? <Block flex center style={styles.home}>
 					// 		{renderArticles()}
 					// 	</Block>
@@ -129,7 +195,7 @@ export default function TabOneScreen({ navigation }) {
 							<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
 							<CardRNE.Divider />
 						</View>
-        }
+        } */}
 			</ScrollView>
 		</SafeAreaView>
 	);

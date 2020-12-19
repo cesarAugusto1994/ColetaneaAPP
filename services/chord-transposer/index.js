@@ -97,7 +97,7 @@ class Chord {
     }
     toString() {
 
-        if(this.showChord !== true) return ""
+        if(this.showChord !== true) return "<i></i>"
             
         if (this.bass) {
             return `<i>${this.root + this.suffix + "/" + this.bass}</i>`;

@@ -4,14 +4,10 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
-  StatusBar,
-  Button,
   ActivityIndicator
 } from "react-native";
 import { ListItem } from "react-native-elements";
 import { TouchableOpacity } from "react-native-gesture-handler";
-
-import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
 import api from "../services/api/axios";
@@ -38,22 +34,13 @@ export default function TabOneScreen({ navigation, route }) {
     headerTitleStyle: {
       fontSize: 18
     },
-    headerRight: () =>
-      <TouchableOpacity
-        style={{ marginRight: 15 }}
-        onPress={() => {
-          // navigation.navigate("Pesquisar");
-        }}
-      >
-        <Ionicons name="ios-search" size={25} color="#fff" />
-      </TouchableOpacity>
   });
 
   const getCollections = async () => {
     try {
       setLoading(true)
-      const response = await api.get(`versions/${route.params.version}/books/${route.params.id}/chapter/${route.params.chapter}/verses`);
-      console.log("response", `versions/${route.params.version}/books/${route.params.id}/chapter/${route.params.chapter}/verses`);
+      const response = await api.get(`versao/${route.params.version}/livro/${route.params.id}/capitulo/${route.params.chapter}/versiculos`);
+      console.log({response})
       setLoading(false)
       if (response) {
         setData(response.data);
@@ -79,7 +66,7 @@ export default function TabOneScreen({ navigation, route }) {
   const renderItem = ({ item }) => (
     <ListItem>
       <ListItem.Content>
-        <ListItem.Title>{item.ver_versiculo}. {item.ver_texto}</ListItem.Title>
+        <ListItem.Title>{item.versiculo}. {item.texto}</ListItem.Title>
       </ListItem.Content>
     </ListItem>
   )

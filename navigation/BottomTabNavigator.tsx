@@ -17,6 +17,12 @@ import BooksScreen from "../screens/BooksScreen";
 import ChaptersScreen from "../screens/ChaptersScreen";
 import VerseScreen from "../screens/VerseScreen";
 
+import GroupScreen from "../screens/GroupScreen";
+import GroupUsersScreen from "../screens/GroupUsersScreen";
+import GroupListsScreen from "../screens/GroupListsScreen";
+import GroupListDetailsScreen from "../screens/GroupListDetailsScreen";
+import GroupListAddScreen from "../screens/GroupListAddScreen";
+
 import {
   BottomTabParamList,
   TabOneParamList,
@@ -55,11 +61,11 @@ export default function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Lista"
+        name="Grupos"
         component={TabTwoNavigator}
         options={{
           tabBarIcon: ({ color }) =>
-            <TabBarIcon name="ios-list-outline" color={color} />
+            <TabBarIcon name="ios-people-outline" color={color} />
         }}
       />
       <BottomTab.Screen
@@ -164,7 +170,49 @@ function TabTwoNavigator() {
       <TabTwoStack.Screen
         name="TabTwoScreen"
         component={TabTwoScreen}
-        options={{ headerTitle: "Guia" }}
+        options={{ headerTitle: "Grupos" }}
+      />
+      <TabBookStack.Screen
+        name="Group"
+        component={GroupScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+        })}
+      />
+      <TabBookStack.Screen
+        name="GroupUsers"
+        component={GroupUsersScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+        })}
+      />
+      <TabBookStack.Screen
+        name="GroupLists"
+        component={GroupListsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+        })}
+      />
+      <TabBookStack.Screen
+        name="GroupListAdd"
+        component={GroupListAddScreen}
+        options={({ route }) => ({ 
+          title: "Nova Lista"
+        })}
+      />
+      <TabBookStack.Screen
+        name="GroupListsDetails"
+        component={GroupListDetailsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+        })}
+      />
+      <TabOneStack.Screen
+        name="Musica"
+        component={Songscreen}
+        options={({ route }) => ({ 
+          title: route.params.title,
+        })}
       />
     </TabTwoStack.Navigator>
   );

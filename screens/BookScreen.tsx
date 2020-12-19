@@ -37,24 +37,12 @@ export default function TabOneScreen({ navigation }) {
     headerTitleStyle: {
       fontSize: 18
     },
-    headerRight: () =>
-      <TouchableOpacity
-        style={{ marginRight: 15 }}
-        onPress={() => {
-          navigation.navigate("Verse", {
-            id: item.id,
-            title: item.name
-          });
-        }}
-      >
-        <Ionicons name="ios-search" size={25} color="#fff" />
-      </TouchableOpacity>
   });
 
   const getCollections = async () => {
     try {
       setLoading(true)
-      const response = await api.get("versions");
+      const response = await api.get("versoes");
       console.log("response", JSON.stringify(response.data));
       setLoading(false)
       if (response) {
@@ -77,11 +65,11 @@ export default function TabOneScreen({ navigation }) {
           onPress={() => {
             navigation.navigate("Books", {
               id: item.vrs_id,
-              title: item.liv_nome
+              title: item.nome
             });
           }}
         >
-          <Item title={item.liv_nome} />
+          <Item title={item.nome} />
         </TouchableOpacity>
       </View>
     );
@@ -92,13 +80,13 @@ export default function TabOneScreen({ navigation }) {
   const renderItem = ({ item }) => (
     <ListItem bottomDivider onPress={() => {
       navigation.navigate("Books", {
-        id: item.vrs_id,
-        title: item.vrs_nome
+        id: item.id,
+        title: item.nome
       });
     }}>
       {/* <Avatar size="medium" title={item.liv_nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
       <ListItem.Content>
-        <ListItem.Title>{item.vrs_nome}</ListItem.Title>
+        <ListItem.Title>{item.nome}</ListItem.Title>
         {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
       </ListItem.Content>
       <ListItem.Chevron />

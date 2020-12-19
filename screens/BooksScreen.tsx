@@ -28,25 +28,12 @@ export default function TabOneScreen({ navigation, route }) {
     headerTitleStyle: {
       fontSize: 18
     },
-    headerRight: () =>
-      <TouchableOpacity
-        style={{ marginRight: 15 }}
-        onPress={() => {
-          navigation.navigate("Verse", {
-            id: item.liv_id,
-            version: route.params.id,
-            title: item.name
-          });
-        }}
-      >
-        <Ionicons name="ios-search" size={25} color="#fff" />
-      </TouchableOpacity>
   });
 
   const getCollections = async () => {
     try {
       setLoading(true)
-      const response = await api.get('books');
+      const response = await api.get('biblias');
       console.log("response", JSON.stringify(response.data));
       setLoading(false)
       if (response) {
@@ -68,15 +55,15 @@ export default function TabOneScreen({ navigation, route }) {
   const renderItem = ({ item }) => (
     <ListItem bottomDivider onPress={() => {
       navigation.navigate("Chapters", {
-        id: item.liv_id,
+        id: item.id,
         version: route.params.id,
-        title: `${item.liv_nome}`,
-        qtde_chapters: item.liv_qtde_capitulos
+        title: `${item.nome}`,
+        qtde_chapters: item.qtde_capitulos
       });
     }}>
       {/* <Avatar size="medium" title={item.liv_nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
       <ListItem.Content>
-        <ListItem.Title>{item.liv_nome}</ListItem.Title>
+        <ListItem.Title>{item.nome}</ListItem.Title>
         {/* <ListItem.Subtitle>{item.subtitle}</ListItem.Subtitle> */}
       </ListItem.Content>
       <ListItem.Chevron />

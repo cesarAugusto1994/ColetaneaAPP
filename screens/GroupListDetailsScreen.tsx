@@ -8,15 +8,15 @@ import {
 	Button,
 	Dimensions,
 	RefreshControl,
-  ScrollView,
-  TouchableOpacity
+	ScrollView,
+	TouchableOpacity,
 } from 'react-native';
-import { Avatar, Image, ListItem, Card as CardRNE } from 'react-native-elements';
+import { Avatar, Image, ListItem, Card } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
-import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
+import moment from 'moment'
 const { width } = Dimensions.get('screen');
 
 const Item = ({ title }) =>
@@ -26,11 +26,11 @@ const Item = ({ title }) =>
 		</Text>
 	</View>;
 
-export default function TabOneScreen({ navigation }) {
+export default function GroupScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 
 	navigation.setOptions({
-		title: 'Home',
+		title: 'Lista',
 		headerTintColor: '#ffffff',
 		headerStyle: {
 			backgroundColor: '#d44b42',
@@ -51,19 +51,19 @@ export default function TabOneScreen({ navigation }) {
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get('grupos', {
+			const response = await api.get(`grupo-listas/${route.params.id}`, {
 				headers: {
 					Authorization: await getToken(),
 				},
-      });
-      console.log(response)
+			});
+			console.log(response.data);
 			if (response) {
 				setData(response.data);
 				setRefreshing(false);
 			}
 		} catch (error) {
 			setRefreshing(false);
-			console.log('error', JSON.stringify(error));
+			console.log('error', JSON.stringify(error.config));
 		}
 	};
 
@@ -71,43 +71,7 @@ export default function TabOneScreen({ navigation }) {
 		getCollections();
 	}, []);
 
-	const keyExtractor = (item, index) => index.toString();
-
-	const renderItem = ({ item }) =>
-		<ListItem
-			bottomDivider
-			onPress={() => {
-				navigation.navigate('Group', {
-					id: item.id,
-					title: item.nome,
-				});
-			}}
-		>
-			<Avatar size="medium" title={item.nome.substring(0, 2)} source={{ uri: item.avatar_url }} />
-			<ListItem.Content>
-				<ListItem.Title>
-					{item.nome}
-				</ListItem.Title>
-			</ListItem.Content>
-			<ListItem.Chevron />
-		</ListItem>;
-
-	const renderArticles = () => {
-    
-		if (!data.length) return <Text>Nada</Text>;
-
-		return (
-			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles}>
-				<Block flex>
-					<Card
-						navigateTo="Categorias"
-						item={{ id: data[0].id, title: data[0].nome, cta: data[0].descricao }}
-						horizontal
-					/>
-				</Block>
-			</ScrollView>
-		);
-	};
+	if (!data) return <Text>Nada</Text>;
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -115,7 +79,29 @@ export default function TabOneScreen({ navigation }) {
 				contentContainerStyle={styles.scrollView}
 				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
-				{data.length
+
+				<Card>
+					<Card.Title>{data.tipo} do dia {moment(data.data).format('DD/MM/YY')}</Card.Title>
+					<Card.Divider/>
+					{data.musicas && data.musicas?.map((musica, i) =>
+						<ListItem key={i} bottomDivider  onPress={() => {
+							navigation.navigate('Musica', {
+								id: musica.id,
+								title: musica.nome,
+							});
+						}}>
+							<ListItem.Content>
+								<ListItem.Title>
+									{musica.nome}
+								</ListItem.Title>
+								<ListItem.Subtitle>
+									{musica.nome}
+								</ListItem.Subtitle>
+							</ListItem.Content>
+						</ListItem>
+					)}
+				</Card>
+				{/* {data.length
 				?	// ? <Block flex center style={styles.home}>
 					// 		{renderArticles()}
 					// 	</Block>
@@ -129,7 +115,7 @@ export default function TabOneScreen({ navigation }) {
 							<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
 							<CardRNE.Divider />
 						</View>
-        }
+        } */}
 			</ScrollView>
 		</SafeAreaView>
 	);
