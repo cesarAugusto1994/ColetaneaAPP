@@ -16,6 +16,7 @@ const CHORD_REGEX = XRegExp(`^${ROOT_PATTERN}${SUFFIX_PATTERN}${BASS_PATTERN}$`)
 const MINOR_CHORD_REGEX = XRegExp(`^${ROOT_PATTERN}${MINOR_PATTERN}.*$`);
 /** Fluent API for transposing text containing chords. */
 class Transposer {
+    allChords = []
     constructor(text, showChord) {
         this.showChord = showChord
         if (typeof text === "string") {
@@ -27,6 +28,7 @@ class Transposer {
         else {
             throw new Error('Invalid argument (must be text or parsed text).');
         }
+        this.getChrods()
     }
     static transpose(text, showChord) {
         return new Transposer(text, showChord);
@@ -44,6 +46,19 @@ class Transposer {
             }
         }
         throw new Error('Given text has no chords');
+    }
+    getChrods() {
+        for (let line of this.tokens) {
+            for (let token of line) {
+                if (token instanceof Chord) {
+                    if(!this.allChords.includes(token.toString()))
+                    this.allChords.push(token.toString());
+                }
+            }
+        }
+    }
+    getAllChords() {
+        return this.allChords
     }
     fromKey(key) {
         this.currentKey = key instanceof KeySignature ? key : KeySignatures.valueOf(key);
@@ -100,10 +115,10 @@ class Chord {
         if(this.showChord !== true) return "<i></i>"
             
         if (this.bass) {
-            return `<i>${this.root + this.suffix + "/" + this.bass}</i>`;
+            return `${this.root + this.suffix + "/" + this.bass}`;
         }
         else {
-            return `<i>${this.root + this.suffix}</i>`;
+            return `${this.root + this.suffix}`;
         }
 
     }
@@ -137,6 +152,7 @@ function tokenize(text, threshold, showChord) {
             let isTokenEmpty = token.trim() === "";
             if (!isTokenEmpty && CHORD_REGEX.test(token)) {
                 const chord = Chord.parse(token, showChord);
+                // console.log({chord})
                 newLine.push(chord);
                 chordCount++;
                 lastTokenWasString = false;

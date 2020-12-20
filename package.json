@@ -52,9 +52,11 @@
     "react-native-restart": "^0.0.20",
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.0",
+    "react-native-svg": "12.1.0",
     "react-native-tab-view": "^2.15.2",
     "react-native-web": "~0.13.12",
     "react-native-webview": "11.0.0",
+    "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "xregexp": "^4.4.1"
   },
   "devDependencies": {

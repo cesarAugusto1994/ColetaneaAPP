@@ -1,16 +1,20 @@
 import * as React from 'react';
-import { StyleSheet, SafeAreaView, ScrollView, FlatList, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView, FlatList, Platform, Dimensions, TouchableOpacity } from 'react-native';
+import WebView from 'react-native-webview';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-import { Parser, Chord, Chordify } from 'react-chord-parser';
 import HTMLView from 'react-native-htmlview';
 import { Text, View } from '../components/Themed';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import api from '../services/api/axios';
 import Transposer from '../services/chord-transposer';
 import { getToken } from '../services/services/auth';
-import { Card, ListItem } from 'react-native-elements';
+import { Button, Card, ListItem } from 'react-native-elements';
+import ChordTab from '../components/ChordTab';
 import * as FileSystem from 'expo-file-system';
+import Animated from 'react-native-reanimated';
+import BottomSheet from 'reanimated-bottom-sheet';
 import moment from 'moment';
+import { TouchableHighlight } from 'react-native-gesture-handler';
 
 const _ = require('lodash');
 
@@ -22,6 +26,12 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 	const [favorite, setFavorite] = React.useState(false);
 	const [showChord, setShowChord] = React.useState(true);
 	const [darkMode, setDarkMode] = React.useState(false);
+	const [openBottomSheet, setOpenBottomSheet] = React.useState(false);
+	const [selectedChord, selectChord] = React.useState(null);
+	const [allChords, setAllChords] = React.useState([]);
+	const [song, setSong] = React.useState('');
+	const [version, setVesrion] = React.useState('normal');
+	const sheetRef = React.useRef(null);
 
 	const [chordColor, setChordColor] = React.useState('#fcba03');
 
@@ -37,6 +47,10 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 		return tones[nextIndex];
 	};
 
+	const setChords = React.useCallback(list => {
+		setAllChords(list);
+	}, []);
+
 	const getPreviousTone = () => {
 		const currentIndex = tones.indexOf(tom);
 		const nextIndex = (currentIndex - 1) % tones.length;
@@ -47,7 +61,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 		return tones[nextIndex];
 	};
 
-	const arrayWalk = () => {
+	const arrayWalk = async () => {
 		const currentIndex = tones.indexOf(tom);
 		const nextIndex = (currentIndex + 1) % tones.length;
 		if (!tones[nextIndex]) {
@@ -56,9 +70,10 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 			return;
 		}
 		setTom(tones[nextIndex]);
+		await handleGetVersion(version, showChord, tones[nextIndex])
 	};
 
-	const arrayReverseWalk = () => {
+	const arrayReverseWalk = async () => {
 		const currentIndex = tones.indexOf(tom);
 		const nextIndex = (currentIndex - 1) % tones.length;
 		if (!tones[nextIndex]) {
@@ -67,33 +82,41 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 			return;
 		}
 		setTom(tones[nextIndex]);
+		await handleGetVersion(version, showChord, tones[nextIndex])
 	};
 
-	const getWords = () => {
-		if (!data.letra) {
-			return '<p>Letra não encontrada.</p>';
-		}
-		const w = Transposer.transpose(data.letra, showChord).fromKey(originalTom).toKey(tom).toString();
-		console.log(w);
-		return `<span>${w}</span>`;
-	};
+	React.useEffect(() => {
+		handleGetVersion('normal');
+	}, []);
+
+	// const getWords = () => {
+	// 	if (!data.letra) {
+	// 		return '<p>Letra não encontrada.</p>';
+	// 	}
+	// 	const transp = Transposer.transpose(data.letra, showChord);
+	// 	const words = transp.fromKey(originalTom).toKey(tom).toString();
+	// 	const a = transp.getAllChords();
+	// 	if (!allChords.length) setChords(a);
+	// 	return `<span>${words}</span>`;
+	// };
 
 	const changeTextSizeDown = () => {
 		if (spanFontSize <= 10) return;
-		setspanFontSize(spanFontSize - 1);
+		setspanFontSize(spanFontSize - 2);
 	};
 
 	const changeTextSizeUp = () => {
 		if (spanFontSize >= 36) return;
-		setspanFontSize(spanFontSize + 1);
+		setspanFontSize(spanFontSize + 2);
 	};
 
 	const handleFavorite = () => {
 		setFavorite(!favorite);
 	};
 
-	const handleShowChord = () => {
+	const handleShowChord = async () => {
 		setShowChord(!showChord);
+		await handleGetVersion(version, !showChord, tom);
 	};
 
 	const handleDarkMode = () => {
@@ -126,9 +149,57 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 			color: !darkMode ? '#000000' : '#FFFFFF',
 			// color: chordColor,
 			marginBottom: 300,
-			i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize },
+			// i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize },
 		},
 	};
+
+	const handleOpenBootmSheet = () => {
+		setOpenBottomSheet(!openBottomSheet);
+	};
+
+	const handleGetVersion = async (currentVersion = 'normal', showAllChords = true, tom = originalTom) => {
+
+		console.log("asdfklç")
+
+		if (!data.letra) {
+			setSong(`<p>Letra não encontrada.</p>`);
+			return;
+		}
+		const transp = Transposer.transpose(
+			currentVersion === 'normal' ? data.letra : data.letra_simplificada,
+			showAllChords
+		);
+		const words = transp.fromKey(originalTom).toKey(tom).toString();
+		const a = transp.getAllChords();
+		if (!allChords.length) setChords(a);
+		setSong(`<span>${words}</span>`);
+	};
+
+	const handleChangeVersion = async () => {
+		setVesrion(version === 'normal' ? 'simplificada' : 'normal');
+		await handleGetVersion(version === 'normal' ? 'simplificada' : 'normal', showChord);
+	};
+
+	const renderContent = () =>
+		<View
+			style={{
+				backgroundColor: '#f5f5f5',
+				padding: 0,
+				height: 200,
+			}}
+		>
+			{allChords.length
+				? <ChordTab
+						onPressClose={() => {
+							selectChord(null);
+							handleOpenBootmSheet();
+						}}
+						selectedChord="Cm"
+						allChords={allChords}
+						closeLabel="Fechar"
+					/>
+				: <Text>Nada</Text>}
+		</View>;
 
 	return (
 		<SafeAreaView style={[styles.containerSafe, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
@@ -142,6 +213,24 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 					<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
 						Toalidade: {data.tom}
 					</Text>
+				</View>
+				<View
+					style={{
+						flex: 0.7,
+						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
+						alignItems: 'flex-end',
+						right: 0,
+					}}
+				>
+					{!data.letra_simplificada
+						? <Text style={[styles.descriptionsSong]}>
+								Versão: {version}{' '}
+							</Text>
+						: <TouchableHighlight onPress={handleChangeVersion}>
+								<Text style={[styles.descriptionsSong]}>
+									Versão: {version} (Trocar)
+								</Text>
+							</TouchableHighlight>}
 				</View>
 			</View>
 
@@ -162,7 +251,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 						showsVerticalScrollIndicator={false}
 					>
 						{data.letra
-							? <HTMLView value={getWords()} stylesheet={styleSheetWebView} />
+							? <HTMLView value={song} stylesheet={styleSheetWebView} />
 							: <Text>Letra não encontrada.</Text>}
 					</ScrollView>
 				</View>
@@ -170,19 +259,12 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 				<View
 					style={{
 						flex: 0.2,
-						// flexDirection: 'column',
-						// alignSelf: 'flex-end',
 						right: 0,
 						marginRight: -15,
 						alignItems: 'center',
-						// position: 'absolute',
 						top: '20%',
-
 						width: 25,
 						backgroundColor: darkMode ? '#000000' : '#FFFFFF',
-						// height: 50,
-						// alignItems: 'center',
-						// justifyContent: 'center',
 					}}
 				>
 					<TouchableOpacity style={styles.btnUp} onPress={changeTextSizeUp}>
@@ -225,15 +307,33 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 							: <Ionicons name="ios-star-outline" size={15} />}
 					</TouchableOpacity>
 
-					<TouchableOpacity style={styles.btnUp} onPress={handleChordColor}>
+					{/* <TouchableOpacity style={styles.btnUp} onPress={handleChordColor}>
 						<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 
 					<TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
 						<Ionicons name="expand-outline" size={15} />
 					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={styles.btnUp}
+						onPress={() => {
+							handleOpenBootmSheet();
+						}}
+					>
+						<Ionicons name="musical-notes-outline" size={15} />
+					</TouchableOpacity>
 				</View>
 			</View>
+
+			{openBottomSheet &&
+				<BottomSheet
+					ref={sheetRef}
+					snapPoints={[200, 200, 0]}
+					borderRadius={10}
+					renderContent={renderContent}
+					enabledContentGestureInteraction={false}
+				/>}
 		</SafeAreaView>
 	);
 };
@@ -248,6 +348,15 @@ const SecondRoute = ({ data }) => {
 			{data.autor &&
 				<Text style={styles.descriptionsSong}>
 					Biografia: {data.autor.biografia}
+				</Text>}
+
+			<Text style={styles.descriptionsSong}>
+				Artista/Cantor: {data.artista ? data.artista.nome : 'Não Informado'}
+			</Text>
+
+			{data.artista &&
+				<Text style={styles.descriptionsSong}>
+					Biografia: {data.artista.biografia}
 				</Text>}
 
 			{data.categoria &&
@@ -267,6 +376,7 @@ const SecondRoute = ({ data }) => {
 
 const ThirdRoute = ({ data }) => {
 	const [downloadProgress, setDownloadProgress] = React.useState(0);
+	const webViewRef = React.useRef(null)
 
 	const callback = downloadProgress => {
 		const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
@@ -312,21 +422,26 @@ const ThirdRoute = ({ data }) => {
 							<Card.Divider />
 						</View>}
 
-				{/* 
-				<Text style={styles.comments}>Comentários</Text>
-				{data.comentarios && data.comentarios.length > 0
+				{/* <Text style={styles.comments}>Videos</Text>
+				{data.videos && data.videos.length > 0
 					? <FlatList
-							data={data.comentarios}
+							data={data.videos}
 							renderItem={({ item }) =>
 								<View style={styles.item}>
 									<Text style={styles.title}>
-										{item.usuarios.nome}
+										{item.titulo}
 									</Text>
-									<Text style={styles.title}>
-										{item.comentario}
-									</Text>
+									<WebView
+										ref={webViewRef}
+										style={{flex:1}}
+										// style={styles.WebViewContainer}
+										scalesPageToFit
+										javaScriptEnabled={true}
+										domStorageEnabled={true}
+										source={{ uri: item.link }}
+									/>
 								</View>}
-							keyExtractor={item => item.id}
+							keyExtractor={item => item.id.toString()}
 						/>
 					: <Text>Nenhum comentário encontrado.</Text>} */}
 			</View>
@@ -363,7 +478,6 @@ export default function CategoriesScreen({ route, navigation }) {
 				},
 			});
 			if (response) {
-				console.log(response.data);
 				setData(response.data);
 			}
 		} catch (error) {
@@ -412,6 +526,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
+	},
+	WebViewContainer: {
+		marginTop: Platform.OS == 'android' ? 20 : 0,
+		width: '100%'
 	},
 	navbar: { flexDirection: 'row', width: '100%', padding: 10 },
 	title: {
