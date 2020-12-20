@@ -10,6 +10,7 @@ import Transposer from '../services/chord-transposer';
 import { getToken } from '../services/services/auth';
 import { Card, ListItem } from 'react-native-elements';
 import * as FileSystem from 'expo-file-system';
+import moment from 'moment';
 
 const _ = require('lodash');
 
@@ -240,7 +241,15 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 const SecondRoute = ({ data }) => {
 	return (
 		<View style={[styles.scene, { backgroundColor: '#f5f5f5', padding: 20 }]}>
-			<Text style={styles.descriptionsSong}>Autor: Não Informado</Text>
+			<Text style={styles.descriptionsSong}>
+				Autor: {data.autor ? data.autor.nome : 'Não Informado'}
+			</Text>
+
+			{data.autor.biografia &&
+				<Text style={styles.descriptionsSong}>
+					Biografia: {data.autor.biografia}
+				</Text>}
+
 			{data.categoria &&
 				<Text style={styles.descriptionsSong}>
 					Categoria: {data.categoria.nome}
@@ -250,7 +259,7 @@ const SecondRoute = ({ data }) => {
 					Coleção: {data.categoria.colecao.nome}
 				</Text>}
 			<Text style={styles.descriptionsSong}>
-				Atualizado Em: {data.cadastro}
+				Atualizado Em: {data.created_at ? moment(data.created_at).format('DD/MM/YY hh:mm:ss') : 'Indefinido'}
 			</Text>
 		</View>
 	);
