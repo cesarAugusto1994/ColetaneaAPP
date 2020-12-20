@@ -1,7 +1,7 @@
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName, Text } from 'react-native';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
 import { RootStackParamList } from '../types';
@@ -26,15 +26,28 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 // Read more here: https://reactnavigation.org/docs/modal
 const Stack = createStackNavigator<RootStackParamList>();
 
-const logged = false
-
 function RootNavigator() {
+
+  const [isLogged, setisLogged] = React.useState(null)
+
+  const getIsLogged = async () => {
+    const response = await isSignedIn()
+    setisLogged(response)
+  }
+
+  React.useEffect(() => {
+    getIsLogged()
+  }, [])
+
+  if(isLogged === null) return <Text>Aguarde....</Text>
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {
-        isSignedIn() ? <Stack.Screen name="Root" component={BottomTabNavigator} /> : <Stack.Screen name="SingIn" component={SignInNavigator} />
+        !isLogged && <Stack.Screen name="SingIn" component={SignInNavigator} />
       }
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      <Stack.Screen name="Root" component={BottomTabNavigator} />
+      <Stack.Screen name="NotFound" component={SignInNavigator} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );
 }

@@ -19,17 +19,17 @@ export default function TabOneScreen({ navigation, route }) {
   const [data, setData] = React.useState([]);
   const [loading, setLoading] = React.useState(false)
 
-  navigation.setOptions({
-    headerTintColor: "#ffffff",
-    headerStyle: {
-      backgroundColor: "#d44b42",
-      borderBottomColor: "#d44b42",
-      borderBottomWidth: 3
-    },
-    headerTitleStyle: {
-      fontSize: 18
-    },
-  });
+  React.useEffect(() => {
+		navigation.setOptions({
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+		});
+	}, []);
 
   const getCollections = async () => {
 

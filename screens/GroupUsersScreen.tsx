@@ -28,18 +28,18 @@ const Item = ({ title }) =>
 export default function GroupScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 
-	navigation.setOptions({
-		title: 'Participantes',
-		headerTintColor: '#ffffff',
-		headerStyle: {
-			backgroundColor: '#d44b42',
-			borderBottomColor: '#d44b42',
-			borderBottomWidth: 3,
-		},
-		headerTitleStyle: {
-			fontSize: 18,
-		},
-	});
+	React.useEffect(() => {
+		navigation.setOptions({
+			title: 'Participantes',
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+		});
+	}, []);
 
 	const [refreshing, setRefreshing] = React.useState(false);
 

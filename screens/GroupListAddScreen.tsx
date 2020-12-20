@@ -6,6 +6,7 @@ import {
 	FlatList,
 	StatusBar,
 	Dimensions,
+	Text,
 	RefreshControl,
 	ScrollView,
 	TouchableOpacity,
@@ -17,7 +18,7 @@ import api from '../services/api/axios';
 import MultiSelect from 'react-native-multiple-select';
 import moment from 'moment';
 // Galio components
-import { Block, Text, Button as GaButton, theme } from 'galio-framework';
+import { Block, Button as GaButton, theme } from 'galio-framework';
 // Argon themed components
 import { argonTheme, tabs } from '../components/constants/';
 import { Select, Icon, Input, Header, Switch } from '../components/galio/';
@@ -41,21 +42,23 @@ export default function GroupScreen({ navigation, route }) {
 	const [refreshing, setRefreshing] = React.useState(false);
 	const [selectedItems, setSelectedItems] = React.useState([]);
 	const [date, setDate] = React.useState(moment());
+	const [selectedValue, setselectedValue] = React.useState('culto');
+	const [items, setItems] = React.useState([]);
 
 	const multiSelect = React.useRef(null);
 
-	navigation.setOptions({
-		title: 'Nova Lista',
-		headerTintColor: '#ffffff',
-		headerStyle: {
-			backgroundColor: '#d44b42',
-			borderBottomColor: '#d44b42',
-			borderBottomWidth: 3,
-		},
-		headerTitleStyle: {
-			fontSize: 18,
-		},
-	});
+	React.useEffect(() => {
+		navigation.setOptions({
+			title: 'Nova Lista',
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+		});
+	}, []);
 
 	const onRefresh = React.useCallback(() => {
 		getCollections();
@@ -86,10 +89,19 @@ export default function GroupScreen({ navigation, route }) {
 
 	const getSongs = async text => {
 		try {
-			const response = await api.get(`musica/${text}`);
+			const response = await api.get(`musicas/search/${text}`);
 			if (response) {
-				console.log(response.data);
-				setData(response.data);
+
+				const prepareddata = response.data.map(i => {
+					return {
+						id: i.id,
+						name: i.nome
+					}
+				})
+
+				console.log({prepareddata})
+
+				setItems(prepareddata);
 				setLoading(false);
 			}
 		} catch (error) {
@@ -97,45 +109,6 @@ export default function GroupScreen({ navigation, route }) {
 			console.log('error', JSON.stringify(error));
 		}
 	};
-
-	const items = [
-		{
-			id: '92iijs7yta',
-			name: 'Ondo',
-		},
-		{
-			id: 'a0s0a8ssbsd',
-			name: 'Ogun',
-		},
-		{
-			id: '16hbajsabsd',
-			name: 'Calabar',
-		},
-		{
-			id: 'nahs75a5sg',
-			name: 'Lagos',
-		},
-		{
-			id: '667atsas',
-			name: 'Maiduguri',
-		},
-		{
-			id: 'hsyasajs',
-			name: 'Anambra',
-		},
-		{
-			id: 'djsjudksjd',
-			name: 'Benue',
-		},
-		{
-			id: 'sdhyaysdj',
-			name: 'Kaduna',
-		},
-		{
-			id: 'suudydjsjd',
-			name: 'Abuja',
-		},
-	];
 
 	const onSelectedItemsChange = selectedItem => {
 		setSelectedItems(selectedItem);
@@ -151,6 +124,10 @@ export default function GroupScreen({ navigation, route }) {
 
 	const openDatePicker = () => {};
 
+	const onValueChange = itemValue => {
+		setselectedValue(itemValue)
+	};
+
 	if (!data) return <Text>Nada</Text>;
 
 	return (
@@ -160,15 +137,22 @@ export default function GroupScreen({ navigation, route }) {
 				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
 				<Block flex style={styles.group}>
+
+					<Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
+						<Text>Descrição se houver: </Text>
+						<Input right placeholder="Descrição" iconContent={<Block />} />
+					</Block>
+
 					<Block style={{ paddingHorizontal: theme.SIZES.BASE, paddingVertical: theme.SIZES.BASE }}>
-						<Picker selectedValue="culto" onValueChange={(itemValue, itemIndex) => {}}>
+						<Text>Para: </Text>
+						<Picker style={{backgroundColor: '#FFF'}} selectedValue={selectedValue} onValueChange={onValueChange}>
 							<Picker.Item label="Culto" value="culto" />
 							<Picker.Item label="Ensaio" value="ensaio" />
 						</Picker>
 					</Block>
-					<Block style={{ paddingHorizontal: theme.SIZES.BASE, paddingVertical: theme.SIZES.BASE }}>
+					{/* <Block style={{ paddingHorizontal: theme.SIZES.BASE, paddingVertical: theme.SIZES.BASE }}>
 						<Text bold size={16}>{moment().format('DD/MM/YYYY')}</Text>
-					</Block>
+					</Block> */}
 
 					{showDatePicker &&
 						<DateTimePicker
@@ -178,13 +162,12 @@ export default function GroupScreen({ navigation, route }) {
 							is24Hour={true}
 							display="calendar"
 							onChange={onChangeDate}
-						/>}
-					x
-					<Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
-						<Input right placeholder="Descrição" iconContent={<Block />} />
-					</Block>
+					/>}
+					
+					
 					
 					<Block style={{ paddingHorizontal: theme.SIZES.BASE, paddingVertical: theme.SIZES.BASE }}>
+						<Text>Selecione aqui os louvores: </Text>
 						<MultiSelect
 							items={items}
 							uniqueKey="id"
@@ -197,14 +180,14 @@ export default function GroupScreen({ navigation, route }) {
 							// altFontFamily="ProximaNova-Light"
 							tagRemoveIconColor="#CCC"
 							tagBorderColor="#CCC"
-							tagTextColor="#CCC"
+							// tagTextColor="#CCC"
 							selectedItemTextColor="#CCC"
 							selectedItemIconColor="#CCC"
 							itemTextColor="#000"
 							displayKey="name"
-							searchInputStyle={{ color: '#CCC' }}
-							submitButtonColor="#CCC"
-							submitButtonText="Submit"
+							// searchInputStyle={{ color: '#CCC' }}
+							submitButtonColor="#333"
+							submitButtonText="Adicionar"
 						/>
 					</Block>
 				</Block>

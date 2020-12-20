@@ -44,17 +44,18 @@ export default function NotFoundScreen({
 
   const [search, setsearch] = React.useState('');
 
-  navigation.setOptions({
-    headerTintColor: "#ffffff",
-    headerStyle: {
-      backgroundColor: "#d44b42",
-      borderBottomColor: "#d44b42",
-      borderBottomWidth: 3
-    },
-    headerTitleStyle: {
-      fontSize: 18
-    }
-  });
+  React.useEffect(() => {
+		navigation.setOptions({
+			title: 'Pesquisar',
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+		});
+	}, []);
 
   const getSongs = async text => {
     try {
@@ -70,23 +71,6 @@ export default function NotFoundScreen({
     }
 
     
-  };
-
-  const renderItem2 = ({ item }) => {
-    return (
-      <View>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Musica", {
-              id: item.id,
-              title: item.nome
-            });
-          }}
-        >
-          <Item item={item} />
-        </TouchableOpacity>
-      </View>
-    );
   };
 
   const keyExtractor = (item, index) => index.toString()

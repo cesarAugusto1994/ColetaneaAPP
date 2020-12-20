@@ -96,7 +96,7 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="TabOneScreen"
         component={TabOneScreen}
-        options={{ headerTitle: "Coletanea ICM" }}
+        options={{ headerTitle: "Coletânea ICM" }}
       />
       <TabOneStack.Screen
         name="Categorias"

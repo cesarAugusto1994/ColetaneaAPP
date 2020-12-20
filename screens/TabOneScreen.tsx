@@ -17,43 +17,51 @@ import { getToken } from '../services/services/auth';
 import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
+import { isSignedIn } from '../services/services/auth';
 const { width } = Dimensions.get('screen');
 
-const Item = ({ title }) =>
-	<View style={styles.item}>
-		<Text style={styles.title}>
-			{title}
-		</Text>
-	</View>;
-
 export default function TabOneScreen({ navigation }) {
+
 	const [data, setData] = React.useState([]);
+  const [refreshing, setRefreshing] = React.useState(false);
+  
+  const checkIsLogged = async () => {
+    const response = await isSignedIn()
+    if(!response) navigation.navigate("NotFound")
+  }
 
-	navigation.setOptions({
-		title: 'Home',
-		headerTintColor: '#ffffff',
-		headerStyle: {
-			backgroundColor: '#d44b42',
-			borderBottomColor: '#d44b42',
-			borderBottomWidth: 3,
-		},
-		headerTitleStyle: {
-			fontSize: 18,
-		},
-		headerRight: () =>
-			<TouchableOpacity
-				style={{ marginRight: 15 }}
-				onPress={() => {
-					navigation.navigate('Pesquisar');
-				}}
-			>
-				<Ionicons name="ios-search" size={25} color="#fff" />
-			</TouchableOpacity>,
-	});
+  React.useEffect(() => {
 
-	const [refreshing, setRefreshing] = React.useState(false);
+    checkIsLogged()
+
+	}, [])
+
+	React.useEffect(() => {
+
+		navigation.setOptions({
+			title: 'Coletânea ICM',
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+			headerRight: () =>
+				<TouchableOpacity
+					style={{ marginRight: 15 }}
+					onPress={() => {
+						navigation.navigate('Pesquisar');
+					}}
+				>
+					<Ionicons name="ios-search" size={25} color="#d44b42" />
+				</TouchableOpacity>,
+		});
+
+	}, [])
 
 	const onRefresh = React.useCallback(() => {
+    checkIsLogged()
 		getCollections();
 	}, []);
 
@@ -79,39 +87,38 @@ export default function TabOneScreen({ navigation }) {
 		getCollections();
 	}, []);
 
-	const keyExtractor = (item, index) => index.toString();
-
-	const renderItem = ({ item }) =>
-		<ListItem
-			bottomDivider
-			onPress={() => {
-				navigation.navigate('Categorias', {
-					id: item.id,
-					title: item.nome,
-				});
-			}}
-		>
-			<Avatar size="medium" title={item.nome.substring(0, 2)} source={{ uri: item.avatar_url }} />
-			<ListItem.Content>
-				<ListItem.Title>
-					{item.nome}
-				</ListItem.Title>
-			</ListItem.Content>
-			<ListItem.Chevron />
-		</ListItem>;
-
 	const renderArticles = () => {
     
-		if (!data.length) return <Text>Nada</Text>;
+		if (!data.length) return <Text>Nada</Text>
 
 		return (
-			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles}>
+			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 				<Block flex>
-					<Card
-						navigateTo="Categorias"
-						item={{ id: data[1].id, title: data[1].nome, cta: data[1].descricao, image: data[1].imagem.formats.thumbnail.url }}
-						horizontal
-					/>
+						{
+							data.map((item, index) => {
+								return (
+									<Card
+                    key={index}
+										navigateTo="Categorias"
+										item={{ id: item.id, title: item.nome, cta: item.descricao, image: item.imagem?.formats.thumbnail.url }}
+										// style={{ marginRight: theme.SIZES.BASE }}
+										// horizontal
+									/>
+								)
+							})
+						}
+					{/* <Block flex row>
+						<Card
+							navigateTo="Categorias"
+							item={{ id: data[1].id, title: data[1].nome, cta: data[1].descricao, image: data[1].imagem.formats.thumbnail.url }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+						<Card
+							navigateTo="Categorias"
+							item={{ id: data[3].id, title: data[3].nome, cta: data[3].descricao, image: data[3].imagem.formats.thumbnail.url }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+					</Block>
 					<Block flex row>
 						<Card
 							navigateTo="Categorias"
@@ -121,39 +128,33 @@ export default function TabOneScreen({ navigation }) {
 						<Card
 							navigateTo="Categorias"
 							item={{ id: data[2].id, title: data[2].nome, cta: data[2].descricao, image: data[2].imagem.formats.thumbnail.url }}
+							style={{ marginRight: theme.SIZES.BASE }}
 						/>
 					</Block>
-					<Card
-						navigateTo="Categorias"
-						item={{ id: data[3].id, title: data[3].nome, cta: data[3].descricao, image: data[3].imagem.formats.thumbnail.url }}
-						horizontal
-					/>
+					
 					<Block flex row>
-					{
-						data[7] && (
-							<Card
-								navigateTo="Categorias"
-								item={{ id: data[7].id, title: data[7].nome, cta: data[7].descricao, image: data[7].imagem?.formats.thumbnail.url }}
-								style={{ marginRight: theme.SIZES.BASE }}
-							/>
-						)
-					}
+						{
+							data[7] && (
+								<Card
+									navigateTo="Categorias"
+									item={{ id: data[7].id, title: data[7].nome, cta: data[7].descricao, image: data[7].imagem?.formats.thumbnail.url }}
+									style={{ marginRight: theme.SIZES.BASE }}
+								/>
+							)
+						}
 
-					{
-						data[6] && (
-							<Card
-								navigateTo="Categorias"
-								item={{ id: data[6].id, title: data[6].nome, cta: data[6].descricao, image: data[6].imagem?.formats.thumbnail.url }}
-								style={{ marginRight: theme.SIZES.BASE }}
-							/>
-						)
-					}
+						{
+							data[6] && (
+								<Card
+									navigateTo="Categorias"
+									item={{ id: data[6].id, title: data[6].nome, cta: data[6].descricao, image: data[6].imagem?.formats.thumbnail.url }}
+									style={{ marginRight: theme.SIZES.BASE }}
+								/>
+							)
+						}
 
-					</Block>
+					</Block> */}
 
-					
-					
-					
 				</Block>
 			</ScrollView>
 		);
@@ -161,20 +162,16 @@ export default function TabOneScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView
-				contentContainerStyle={styles.scrollView}
-				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-			>
-				{data.length
-					? <Block flex center style={styles.home}>
-							{renderArticles()}
-						</Block>
-					:	<View style={styles.notfound}>
-							<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
-							<CardRNE.Divider />
-						</View>
+
+		{data.length
+			? <Block flex center style={styles.home}>
+					{renderArticles()}
+				</Block>
+			:	<View style={styles.notfound}>
+					<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
+					<CardRNE.Divider />
+				</View>
         }
-			</ScrollView>
 		</SafeAreaView>
 	);
 }
@@ -189,6 +186,7 @@ const styles = StyleSheet.create({
 	articles: {
 		width: width - theme.SIZES.BASE * 2,
 		paddingVertical: theme.SIZES.BASE,
+		backgroundColor: '#f6f6f6'
 	},
 	notfound: {
 		flex: 1,

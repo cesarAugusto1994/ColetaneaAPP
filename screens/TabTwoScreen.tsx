@@ -28,21 +28,19 @@ const Item = ({ title }) =>
 
 export default function TabOneScreen({ navigation }) {
 	const [data, setData] = React.useState([]);
-
-	navigation.setOptions({
-		title: 'Home',
-		headerTintColor: '#ffffff',
-		headerStyle: {
-			backgroundColor: '#d44b42',
-			borderBottomColor: '#d44b42',
-			borderBottomWidth: 3,
-		},
-		headerTitleStyle: {
-			fontSize: 18,
-		},
-	});
-
 	const [refreshing, setRefreshing] = React.useState(false);
+
+	React.useEffect(() => {
+		navigation.setOptions({
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+		});
+	}, []);
 
 	const onRefresh = React.useCallback(() => {
 		getCollections();

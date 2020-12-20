@@ -13,13 +13,6 @@ import * as FileSystem from 'expo-file-system';
 
 const _ = require('lodash');
 
-const Item = ({ title }) =>
-	<View style={styles.item}>
-		<Text style={styles.title}>
-			{title}
-		</Text>
-	</View>;
-
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 const colors = ['#fcba03', '#d44b42', '#35d45d', '#3381d4'];
 
@@ -80,7 +73,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 			return '<p>Letra não encontrada.</p>';
 		}
 		const w = Transposer.transpose(data.letra, showChord).fromKey(originalTom).toKey(tom).toString();
-		console.log(w)
+		console.log(w);
 		return `<span>${w}</span>`;
 	};
 
@@ -126,15 +119,15 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 	};
 
 	let styleSheetWebView = {
-		i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize, },
+		i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize },
 		span: {
 			fontSize: spanFontSize,
 			color: !darkMode ? '#000000' : '#FFFFFF',
 			// color: chordColor,
-			marginBottom: 300,		
-			i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize, },	
+			marginBottom: 300,
+			i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize },
 		},
-	}
+	};
 
 	return (
 		<SafeAreaView style={[styles.containerSafe, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
@@ -168,10 +161,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 						showsVerticalScrollIndicator={false}
 					>
 						{data.letra
-							? <HTMLView
-									value={getWords()}
-									stylesheet={styleSheetWebView}
-								/>
+							? <HTMLView value={getWords()} stylesheet={styleSheetWebView} />
 							: <Text>Letra não encontrada.</Text>}
 					</ScrollView>
 				</View>
@@ -194,24 +184,25 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 						// justifyContent: 'center',
 					}}
 				>
-					<TouchableOpacity style={styles.btnDown} onPress={changeTextSizeDown}>
-						<Text style={{ fontSize: 14 }}>A-</Text>
-					</TouchableOpacity>
 					<TouchableOpacity style={styles.btnUp} onPress={changeTextSizeUp}>
 						<Text style={{ fontSize: 14 }}>A+</Text>
 					</TouchableOpacity>
 
-					{showChord &&
-						<TouchableOpacity style={styles.btnDown} onPress={arrayReverseWalk}>
-							<Text style={{ fontSize: 14 }}>
-								{getPreviousTone()}
-							</Text>
-						</TouchableOpacity>}
+					<TouchableOpacity style={styles.btnDown} onPress={changeTextSizeDown}>
+						<Text style={{ fontSize: 14 }}>A-</Text>
+					</TouchableOpacity>
 
 					{showChord &&
 						<TouchableOpacity style={styles.btnUp} onPress={arrayWalk}>
 							<Text style={{ fontSize: 14 }}>
 								{getNextTone()}
+							</Text>
+						</TouchableOpacity>}
+
+					{showChord &&
+						<TouchableOpacity style={styles.btnDown} onPress={arrayReverseWalk}>
+							<Text style={{ fontSize: 14 }}>
+								{getPreviousTone()}
 							</Text>
 						</TouchableOpacity>}
 
@@ -339,20 +330,17 @@ export default function CategoriesScreen({ route, navigation }) {
 	const [data, setData] = React.useState([]);
 	const [showHeader, setShowHeader] = React.useState(true);
 
-	navigation.setOptions({
-		headerTintColor: '#ffffff',
-		headerStyle: {
-			backgroundColor: '#d44b42',
-			borderBottomColor: '#d44b42',
-			borderBottomWidth: 3,
-		},
-		headerTitleStyle: {
-			fontSize: 18,
-		},
-		headerShown: showHeader,
-		gesturesEnabled: false,
-		tabBarVisible: false,
-	});
+	React.useEffect(() => {
+		navigation.setOptions({
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+		});
+	}, []);
 
 	const handleShowHeader = () => {
 		setShowHeader(!showHeader);

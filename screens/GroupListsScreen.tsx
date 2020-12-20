@@ -19,28 +19,21 @@ import { Block, theme, Text } from 'galio-framework';
 import moment from 'moment'
 const { width } = Dimensions.get('screen');
 
-const Item = ({ title }) =>
-	<View style={styles.item}>
-		<Text style={styles.title}>
-			{title}
-		</Text>
-	</View>;
 
 export default function GroupScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 
-	navigation.setOptions({
-		title: 'Listas',
-		headerTintColor: '#ffffff',
-		headerStyle: {
-			backgroundColor: '#d44b42',
-			borderBottomColor: '#d44b42',
-			borderBottomWidth: 3,
-		},
-		headerTitleStyle: {
-			fontSize: 18,
-		},
-		headerRight: () =>
+	React.useEffect(() => {
+		navigation.setOptions({
+			title: 'Listas',
+			headerTintColor: '#d44b42',
+			headerStyle: {
+				borderBottomWidth: 0,
+			},
+			headerTitleStyle: {
+				fontSize: 18,
+			},
+			headerRight: () =>
 			<TouchableOpacity
 				style={{ marginRight: 15 }}
 				onPress={() => {
@@ -49,7 +42,8 @@ export default function GroupScreen({ navigation, route }) {
 			>
 				<Ionicons name="ios-add-outline" size={25} color="#fff" />
 			</TouchableOpacity>
-	});
+		});
+	}, []);
 
 	const [refreshing, setRefreshing] = React.useState(false);
 
@@ -80,43 +74,6 @@ export default function GroupScreen({ navigation, route }) {
 		getCollections();
 	}, []);
 
-	const keyExtractor = (item, index) => index.toString();
-
-	const renderItem = ({ item }) =>
-		<ListItem
-			bottomDivider
-			onPress={() => {
-				navigation.navigate('Categorias', {
-					id: item.id,
-					title: item.nome,
-				});
-			}}
-		>
-			<Avatar size="medium" title={item.nome.substring(0, 2)} source={{ uri: item.avatar_url }} />
-			<ListItem.Content>
-				<ListItem.Title>
-					{item.nome}
-				</ListItem.Title>
-			</ListItem.Content>
-			<ListItem.Chevron />
-		</ListItem>;
-
-	const renderArticles = () => {
-		if (!data.length) return <Text>Nada</Text>;
-
-		return (
-			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles}>
-				<Block flex>
-					<Card
-						navigateTo="Categorias"
-						item={{ id: data[0].id, title: data[0].nome, cta: data[0].descricao }}
-						horizontal
-					/>
-				</Block>
-			</ScrollView>
-		);
-	};
-
 	if (!data) return <Text>Nada</Text>;
 
 	return (
@@ -125,10 +82,9 @@ export default function GroupScreen({ navigation, route }) {
 				contentContainerStyle={styles.scrollView}
 				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
-
 					{data && data?.map((lista, i) =>
-						<Card containerStyle={{ padding: 0 }}>
-							<ListItem key={i} onPress={() => {
+						<Card key={i} containerStyle={{ padding: 0 }}>
+							<ListItem onPress={() => {
 									navigation.navigate('GroupListsDetails', {
 										id: lista.id,
 										title: `${lista.tipo} do dia ${moment(lista.data).format('DD/MM/YY')}`,

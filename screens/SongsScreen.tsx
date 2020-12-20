@@ -1,7 +1,6 @@
 import * as React from "react";
-import { StyleSheet, SafeAreaView, FlatList, ScrollView, RefreshControl } from "react-native";
+import { StyleSheet, SafeAreaView, FlatList } from "react-native";
 import { ListItem } from "react-native-elements";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Text, View } from "../components/Themed";
 import api from "../services/api/axios";
 import {getToken} from '../services/services/auth';
@@ -16,20 +15,21 @@ const Item = ({ title, description }) =>
 export default function CategoriesScreen({ navigation, route }) {
 
   const [data, setData] = React.useState([]);
-
-  navigation.setOptions({
-    headerTintColor: "#ffffff",
-    headerStyle: {
-      backgroundColor: "#d44b42",
-      borderBottomColor: "#d44b42",
-      borderBottomWidth: 3
-    },
-    headerTitleStyle: {
-      fontSize: 18
-    }
-  });
-
   const [refreshing, setRefreshing] = React.useState(false);
+
+  React.useEffect(() => {
+
+    navigation.setOptions({
+      headerTintColor: "#d44b42",
+      headerStyle: {
+        borderBottomWidth: 0,
+      },
+      headerTitleStyle: {
+        fontSize: 18
+      }
+    });
+
+	}, [])
 
   const onRefresh = React.useCallback(() => {
     getCollections()
@@ -38,7 +38,7 @@ export default function CategoriesScreen({ navigation, route }) {
   const getCollections = async () => {
     setRefreshing(true);
     try {
-      const response = await api.get(`categoria-musicas/${route.params.id}`, {
+      const response = await api.get(`categoria/${route.params.id}/musicas`, {
         headers: {
           Authorization: await getToken()
         }
@@ -79,20 +79,13 @@ export default function CategoriesScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
-      >
-        <FlatList
-          data={data}
-          scrollEnabled
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-        />
-        </ScrollView>
-      </SafeAreaView>
+      <FlatList
+        data={data}
+        scrollEnabled
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+      />
+    </SafeAreaView>
   );
 }
 

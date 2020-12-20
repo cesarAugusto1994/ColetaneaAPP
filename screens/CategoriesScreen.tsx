@@ -7,23 +7,25 @@ import api from "../services/api/axios";
 export default function CategoriesScreen({ navigation, route }) {
   const [data, setData] = React.useState([]);
 
-  navigation.setOptions({
-    headerTintColor: "#ffffff",
-    headerStyle: {
-      backgroundColor: "#d44b42",
-      borderBottomColor: "#d44b42",
-      borderBottomWidth: 3
-    },
-    headerTitleStyle: {
-      fontSize: 18
-    }
-  });
+  React.useEffect(() => {
+
+    navigation.setOptions({
+      headerTintColor: "#d44b42",
+      headerStyle: {
+        borderBottomWidth: 0,
+      },
+      headerTitleStyle: {
+        fontSize: 18
+      }
+    });
+
+  }, [])
 
   const getCollections = async () => {
     setRefreshing(true);
     try {
       const response = await api.get(
-        `colecao-categorias/${route.params.id}`,
+        `colecao/${route.params.id}/categorias`,
         {
           headers: {
             Authorization: await getToken()
@@ -68,20 +70,13 @@ export default function CategoriesScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.scrollView}
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
-      >
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          scrollEnabled
-          keyExtractor={keyExtractor}
-        />
-        </ScrollView>
-      </SafeAreaView>
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        scrollEnabled
+        keyExtractor={keyExtractor}
+      />
+    </SafeAreaView>
   );
 }
 

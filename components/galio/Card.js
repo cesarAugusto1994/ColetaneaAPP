@@ -25,13 +25,13 @@ class Card extends React.Component {
       <Block row={horizontal} card flex style={cardContainer}>
         <TouchableWithoutFeedback onPress={() => navigation.navigate(navigateTo, { screen: 'Categorias', id: item.id })}>
           <Block flex style={imgContainer}>
-            <Image source={{uri: `http://192.168.15.16:1337${item.image}`}} style={imageStyles} />
+            <Image source={{uri: `http://coletanea-io.umbler.net${item.image}`}} style={imageStyles} />
           </Block>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => navigation.navigate(navigateTo, { id: item.id })}>
           <Block flex space="between" style={styles.cardDescription}>
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>
-            <Text size={12} muted={!ctaColor} color={ctaColor || argonTheme.COLORS.ACTIVE} bold>{item.cta}</Text>
+            <Text size={12} muted={!ctaColor} color={ctaColor || argonTheme.COLORS.RED} bold>{item.cta}</Text>
           </Block>
         </TouchableWithoutFeedback>
       </Block>
