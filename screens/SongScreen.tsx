@@ -245,7 +245,7 @@ const SecondRoute = ({ data }) => {
 				Autor: {data.autor ? data.autor.nome : 'Não Informado'}
 			</Text>
 
-			{data.autor.biografia &&
+			{data.autor &&
 				<Text style={styles.descriptionsSong}>
 					Biografia: {data.autor.biografia}
 				</Text>}
