@@ -51,8 +51,10 @@ class Transposer {
         for (let line of this.tokens) {
             for (let token of line) {
                 if (token instanceof Chord) {
-                    if(!this.allChords.includes(token.toString()))
-                    this.allChords.push(token.toString());
+                    const stringiedChord = token.toString()
+                    const onlyChord = stringiedChord.replace(/<\/?[^>]+(>|$)/g, "");
+                    if(!this.allChords.includes(onlyChord))
+                    this.allChords.push(onlyChord);
                 }
             }
         }
@@ -115,10 +117,10 @@ class Chord {
         if(this.showChord !== true) return "<i></i>"
             
         if (this.bass) {
-            return `${this.root + this.suffix + "/" + this.bass}`;
+            return `<i>${this.root + this.suffix + "/" + this.bass}</i>`;
         }
         else {
-            return `${this.root + this.suffix}`;
+            return `<i>${this.root + this.suffix}</i>`;
         }
 
     }

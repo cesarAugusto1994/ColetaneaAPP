@@ -9,6 +9,7 @@ import TabOneScreen from "../screens/TabOneScreen";
 import CategoriesScreen from "../screens/CategoriesScreen";
 import SongsScreen from "../screens/SongsScreen";
 import Songscreen from "../screens/SongScreen";
+import SongEditScreen from "../screens/SongEditScreen";
 import SearchScreen from "../screens/SearchScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import TabConfigsScreen from "../screens/TabConfigsScreen";
@@ -115,6 +116,13 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="Musica"
         component={Songscreen}
+        options={({ route }) => ({ 
+          title: route.params.title,
+        })}
+      />
+      <TabOneStack.Screen
+        name="LetraEditor"
+        component={SongEditScreen}
         options={({ route }) => ({ 
           title: route.params.title,
         })}

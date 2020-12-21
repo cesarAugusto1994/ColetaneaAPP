@@ -16,12 +16,13 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import moment from 'moment';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 
+
 const _ = require('lodash');
 
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 const colors = ['#fcba03', '#d44b42', '#35d45d', '#3381d4'];
 
-const FirstRoute = ({ data, handleShowHeader }) => {
+const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 	const [spanFontSize, setspanFontSize] = React.useState(15);
 	const [favorite, setFavorite] = React.useState(false);
 	const [showChord, setShowChord] = React.useState(true);
@@ -89,25 +90,14 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 		handleGetVersion('normal');
 	}, []);
 
-	// const getWords = () => {
-	// 	if (!data.letra) {
-	// 		return '<p>Letra não encontrada.</p>';
-	// 	}
-	// 	const transp = Transposer.transpose(data.letra, showChord);
-	// 	const words = transp.fromKey(originalTom).toKey(tom).toString();
-	// 	const a = transp.getAllChords();
-	// 	if (!allChords.length) setChords(a);
-	// 	return `<span>${words}</span>`;
-	// };
-
 	const changeTextSizeDown = () => {
 		if (spanFontSize <= 10) return;
-		setspanFontSize(spanFontSize - 2);
+		setspanFontSize(spanFontSize - 1);
 	};
 
 	const changeTextSizeUp = () => {
 		if (spanFontSize >= 36) return;
-		setspanFontSize(spanFontSize + 2);
+		setspanFontSize(spanFontSize + 1);
 	};
 
 	const handleFavorite = () => {
@@ -120,7 +110,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 	};
 
 	const handleDarkMode = () => {
-		setDarkMode(!darkMode);
+		setDarkMode(!darkMode)
 	};
 
 	const handleChordColor = () => {
@@ -143,6 +133,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 	};
 
 	let styleSheetWebView = {
+		
 		i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize },
 		span: {
 			fontSize: spanFontSize,
@@ -159,8 +150,6 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 
 	const handleGetVersion = async (currentVersion = 'normal', showAllChords = true, tom = originalTom) => {
 
-		console.log("asdfklç")
-
 		if (!data.letra) {
 			setSong(`<p>Letra não encontrada.</p>`);
 			return;
@@ -170,9 +159,10 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 			showAllChords
 		);
 		const words = transp.fromKey(originalTom).toKey(tom).toString();
+		console.log({words})
 		const a = transp.getAllChords();
 		if (!allChords.length) setChords(a);
-		setSong(`<span>${words}</span>`);
+		setSong(`<span><pre>${words}</pre></span>`);
 	};
 
 	const handleChangeVersion = async () => {
@@ -230,7 +220,7 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 								<Text style={[styles.descriptionsSong]}>
 									Versão: {version} (Trocar)
 								</Text>
-							</TouchableHighlight>}
+						</TouchableHighlight>}
 				</View>
 			</View>
 
@@ -301,15 +291,15 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 							: <Ionicons name="ios-document-text-outline" size={15} />}
 					</TouchableOpacity>
 
-					<TouchableOpacity style={styles.btnUp} onPress={handleFavorite}>
+					{/* <TouchableOpacity style={styles.btnUp} onPress={handleFavorite}>
 						{favorite
 							? <Ionicons name="ios-star" color="#ffd000" size={15} />
 							: <Ionicons name="ios-star-outline" size={15} />}
-					</TouchableOpacity>
-
-					{/* <TouchableOpacity style={styles.btnUp} onPress={handleChordColor}>
-						<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
 					</TouchableOpacity> */}
+
+					<TouchableOpacity style={styles.btnUp} onPress={handleChordColor}>
+						<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
+					</TouchableOpacity>
 
 					<TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
 						<Ionicons name="expand-outline" size={15} />
@@ -323,6 +313,21 @@ const FirstRoute = ({ data, handleShowHeader }) => {
 					>
 						<Ionicons name="musical-notes-outline" size={15} />
 					</TouchableOpacity>
+
+					<TouchableOpacity
+						style={styles.btnUp}
+						onPress={() => {
+							
+							navigation.navigate("LetraEditor", {
+								id: data.id,
+								title: data.nome
+							});
+
+						}}
+					>
+						<Ionicons name="build-outline" size={15} />
+					</TouchableOpacity>
+
 				</View>
 			</View>
 
@@ -493,7 +498,7 @@ export default function CategoriesScreen({ route, navigation }) {
 	]);
 
 	const renderScene = SceneMap({
-		first: () => <FirstRoute data={data} handleShowHeader={handleShowHeader} />,
+		first: () => <FirstRoute data={data} handleShowHeader={handleShowHeader} navigation={navigation} />,
 		second: () => <SecondRoute data={data} />,
 		third: () => <ThirdRoute data={data} />,
 	});
