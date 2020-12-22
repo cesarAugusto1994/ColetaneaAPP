@@ -5,31 +5,34 @@ import { Block, theme, Text } from 'galio-framework';
 import { getUser, getToken, setUser } from '../services/services/auth';
 import * as ImagePicker from 'expo-image-picker';
 import api from '../services/api/axios';
-import FormData from 'form-data'
+import FormData from 'form-data';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function UserEditScreen({ navigation }) {
-  const [currentUser, setCurrentUser] = React.useState(null);
+	const [currentUser, setCurrentUser] = React.useState(null);
 
-  const [isVisible, setisVisible] = React.useState(false);
-  const [name, setName] = React.useState(null);
+	const [saving, setSaving] = React.useState(false);
+	const [name, setName] = React.useState(null);
 
-  const [image, setImage] = React.useState(null);
-  const [image64, setImage64] = React.useState(null);
+	const [image, setImage] = React.useState(null);
+	const [image64, setImage64] = React.useState(null);
 
+	React.useEffect(() => {
+		(async () => {
+			if (Platform.OS !== 'web') {
+				const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+				if (status !== 'granted') {
+					alert('Sorry, we need camera roll permissions to make this work!');
+				}
+				// await ImagePicker.requestCameraPermissionsAsync()
+				// await ImagePicker.getCameraPermissionsAsync()
+			}
+		})();
+	}, []);
 
-  React.useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
-        // await ImagePicker.requestCameraPermissionsAsync()
-        // await ImagePicker.getCameraPermissionsAsync()
-      }
-    })();
-  }, []);
+	const handleSaving = () => {
+		setSaving(!saving)
+	}
 
 	const getCurrentUser = async () => {
 		const parseUser = await getUser();
@@ -38,93 +41,100 @@ export default function UserEditScreen({ navigation }) {
 
 	React.useEffect(() => {
 		getCurrentUser();
-  }, []);
+	}, []);
 
-  React.useEffect(() => {
-    
-      if(currentUser) {
-        setName(currentUser.username)
-        setImage(`http://192.168.15.16:1337${currentUser.avatar.url}`)
-      }
+	React.useEffect(
+		() => {
+			if (currentUser) {
+				setName(currentUser.username);
+				console.log(`http://coletanea-io.umbler.net${currentUser.avatar.url}`)
+				setImage(`http://coletanea-io.umbler.net${currentUser.avatar.url}`);
+			}
+		},
+		[currentUser]
+	);
 
-  }, [currentUser]);
-  
-  const transforImage = async (uri) => {
-    const manipResult = await ImageManipulator.manipulateAsync(uri,
-      [],
-      { format: ImageManipulator.SaveFormat.PNG }
-    );
-    return manipResult
-  };
+	const transforImage = async uri => {
+		const manipResult = await ImageManipulator.manipulateAsync(uri, [], {
+			format: ImageManipulator.SaveFormat.PNG,
+		});
+		return manipResult;
+	};
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-    if (!result.cancelled) {
-      const manipulatedImage = await transforImage(result.uri)
-      setImage(manipulatedImage.uri);
-      setImage64(manipulatedImage);
-    }
-  };
+	const pickImage = async () => {
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+		if (!result.cancelled) {
+			const manipulatedImage = await transforImage(result.uri);
+			setImage(manipulatedImage.uri);
+			setImage64(manipulatedImage);
+		}
+	};
 
-  const save = async () => {
+	const save = async () => {
+		try {
 
-    try {
+			setSaving(true)
 
-      const form = new FormData()
+			const form = new FormData();
 
-      form.append('files', {
-        uri: image,
-        name: `avatar-user-${currentUser.id}.png`,
-        filename: `avatar-user-${currentUser.id}.png`,
-        type: `image/png`,
-        ext: 'png'
-      });
-      
+			form.append('files', {
+				uri: image,
+				name: `avatar-user-${currentUser.id}.png`,
+				type: `image/png`,
+			});
+
 			const response = await api.post(`upload`, form, {
 				headers: {
-          Authorization: await getToken(),
-          Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
-          mimeType: "multipart/form-data"
+					Authorization: await getToken(),
+					// Accept: 'application/json',
+					'Content-Type': 'multipart/form-data',
+					// mimeType: "multipart/form-data"
 				},
 			});
+			console.log("asdgr", response.data)
 			if (response && response.data) {
-        alert("Sucesso")
-        currentUser.avatar = response.data && Array.isArray(response.data) ? response.data[0].id : response.data.id
-        currentUser.username = name
-        updateUser(currentUser)
-			}
+				alert('Sucesso');
+				currentUser.avatar =
+					response.data && Array.isArray(response.data) ? response.data[0].id : response.data.id;
+				currentUser.username = name;
+				updateUser(currentUser);
+				return
+			} 
+			setSaving(false)
 		} catch (error) {
+			setSaving(false)
 			console.log('error', error.config);
 		}
+	};
 
-  }
-
-  const updateUser = async user => {
-    
-    try {
-			const response = await api.put(`users/${user.id}`, 
-			{
-          username: user.username,
-          avatar: user.avatar
-      },
-			{
-				headers: {
-					Authorization: await getToken(),
+	const updateUser = async user => {
+		try {
+			const response = await api.put(
+				`users/${user.id}`,
+				{
+					username: user.username,
+					avatar: user.avatar,
 				},
-			});
+				{
+					headers: {
+						Authorization: await getToken(),
+					},
+				}
+			);
 			if (response) {
-        setUser(response.data)
+				setUser(response.data);
+				setSaving(false)
 			}
 		} catch (error) {
+			setSaving(false)
 			console.log('error', error.response);
 		}
-  }
+	};
 
 	return (
 		<View style={styles.container}>
@@ -135,11 +145,13 @@ export default function UserEditScreen({ navigation }) {
 							rounded
 							size="xlarge"
 							containerStyle={{ backgroundColor: '#f5f5f5' }}
-              activeOpacity={0.7}
-              imageProps={{resizeMode:'cover'}}
-              onPress={pickImage}
+							activeOpacity={0.7}
+							imageProps={{ resizeMode: 'cover' }}
+							onPress={pickImage}
 							source={{
-								uri: image || 'https://cdn.pixabay.com/photo/2018/10/30/16/06/water-lily-3784022__340.jpg',
+								uri:
+									image ||
+									'https://cdn.pixabay.com/photo/2018/10/30/16/06/water-lily-3784022__340.jpg',
 							}}
 						/>
 					</Block>
@@ -149,16 +161,16 @@ export default function UserEditScreen({ navigation }) {
 						<TextInput
 							style={styles.textInput}
 							placeholder="Editar seu Nome"
-              defaultValue={currentUser.username}
-              onChangeText={text => setName(text)}
+							defaultValue={currentUser.username}
+							onChangeText={text => setName(text)}
 						/>
 					</Block>
 
-          <View style={styles.divider} />
+					<View style={styles.divider} />
 
-          <Block flex>
-            <Button title="Salvar" onPress={save} />
-          </Block>
+					<Block flex>
+						<Button title="Salvar" onPress={save} loading={saving} />
+					</Block>
 					<View style={styles.divider} />
 				</Block>}
 		</View>

@@ -56,7 +56,7 @@ export default function TabConfigsScreen({navigation}) {
 					<View style={{ width: '100%', marginHorizontal: 20 }}>
 						<ListItem key="2" bottomDivider onPress={navigateToUserEdition}>
 							{
-								currentUser.avatar && <Avatar rounded size="large" source={{uri: `http://192.168.15.16:1337${currentUser.avatar.url}`}} />
+								currentUser.avatar && <Avatar rounded size="large" source={{uri: `http://coletanea-io.umbler.net${currentUser.avatar.url}`}} />
 							}
 							<ListItem.Content>
 								<ListItem.Title>{currentUser.username}</ListItem.Title>
