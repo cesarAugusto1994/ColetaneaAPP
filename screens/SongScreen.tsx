@@ -200,15 +200,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 					<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
 						Toalidade: {data.tom}
 					</Text>
-				</View>
-				<View
-					style={{
-						flex: 0.3,
-						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
-						alignItems: 'flex-end',
-						right: 0,
-					}}
-				>
 					{data.ritmo &&
 						<Text style={[styles.descriptionsSong]}>
 							Ritmo: {data.ritmo.nome}
@@ -217,7 +208,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 				</View>
 				<View
 					style={{
-						flex: 0.4,
+						flex: 0.7,
 						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
 						alignItems: 'flex-end',
 						right: 0,
