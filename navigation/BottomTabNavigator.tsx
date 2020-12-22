@@ -28,6 +28,9 @@ import GroupListsScreen from "../screens/GroupListsScreen";
 import GroupListDetailsScreen from "../screens/GroupListDetailsScreen";
 import GroupListAddScreen from "../screens/GroupListAddScreen";
 
+import AboutScreen from "../screens/AboutScreen";
+import UserEditScreen from "../screens/UserEditScreen";
+
 import {
   BottomTabParamList,
   TabOneParamList,
@@ -277,6 +280,20 @@ function TabConfigsNavigator() {
         component={Songscreen}
         options={({ route }) => ({ 
           title: route.params.title,
+        })}
+      />
+      <TabOneStack.Screen
+        name="Sobre"
+        component={AboutScreen}
+        options={({ route }) => ({ 
+          title: "Sobre o APP",
+        })}
+      />
+      <TabOneStack.Screen
+        name="UserEditScreen"
+        component={UserEditScreen}
+        options={({ route }) => ({ 
+          title: "Editar Perfil",
         })}
       />
     </TabConfigsStack.Navigator>

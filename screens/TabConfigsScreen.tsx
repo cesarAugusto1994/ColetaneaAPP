@@ -41,13 +41,23 @@ export default function TabConfigsScreen({navigation}) {
 		navigation.navigate('Favoritos');
 	};
 
+	const navigateToAbout = () => {
+		navigation.navigate('Sobre');
+	};
+
+	const navigateToUserEdition = () => {
+		navigation.navigate('UserEditScreen');
+	};
+
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} onTouchStart={getCurrentUser}>
 			{
 				currentUser && (
 					<View style={{ width: '100%', marginHorizontal: 20 }}>
-						<ListItem key="2" bottomDivider>
-							<Avatar source={{uri: `http://coletanea-io.umbler.net${currentUser.avatar?.formats.medium.url}`}} />
+						<ListItem key="2" bottomDivider onPress={navigateToUserEdition}>
+							{
+								currentUser.avatar && <Avatar rounded size="large" source={{uri: `http://192.168.15.16:1337${currentUser.avatar.url}`}} />
+							}
 							<ListItem.Content>
 								<ListItem.Title>{currentUser.username}</ListItem.Title>
 								<ListItem.Subtitle>{currentUser.email}</ListItem.Subtitle>
@@ -63,7 +73,7 @@ export default function TabConfigsScreen({navigation}) {
 						<ListItem.Title>Favoritos</ListItem.Title>
 					</ListItem.Content>
 				</ListItem>
-				<ListItem key="3" bottomDivider onPress={() => {}}>
+				<ListItem key="3" bottomDivider onPress={navigateToAbout}>
 					<ListItem.Content>
 						<ListItem.Title>Sobre o APP</ListItem.Title>
 					</ListItem.Content>
@@ -76,7 +86,7 @@ export default function TabConfigsScreen({navigation}) {
 			</View>
 
 			<View style={{ width: '100%', marginHorizontal: 20, position: 'absolute', bottom: 20, alignItems: 'center' }}>
-				<Text>Desenvolvido por César Augusto.</Text>
+				{/* <Text>Desenvolvido por César Augusto.</Text> */}
 				<Text>Versão: 1.0.0</Text>
 			</View>
 
