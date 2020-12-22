@@ -15,6 +15,7 @@ export default function NotFoundScreen({ navigation }) {
 	const [email, setEmail] = React.useState('');
 	const [password, setPassword] = React.useState('');
 	const [loginView, setloginView] = React.useState(true);
+	const [saving, setSaving] = React.useState(false);
 
 	const handleLoginView = () => {
 		setloginView(!loginView);
@@ -22,6 +23,7 @@ export default function NotFoundScreen({ navigation }) {
 
 	const verifyCreateLogin = async () => {
 		try {
+			setSaving(true)
 			if (!email) {
 				alert('O email deve ser informado!');
 				return;
@@ -43,6 +45,7 @@ export default function NotFoundScreen({ navigation }) {
 				}
 			);
 			if (response) {
+				setSaving(false)
 				if (response.data) {
 					if (response.data.jwt) {
 						alert('Usuário Cadastrado com sucesso!');
@@ -53,6 +56,7 @@ export default function NotFoundScreen({ navigation }) {
 				}
 			}
 		} catch (error) {
+			setSaving(false)
 			if (error.response) {
 				// The request was made and the server responded with a status code
 				// that falls out of the range of 2xx
@@ -93,6 +97,7 @@ export default function NotFoundScreen({ navigation }) {
 
 	const verifyLogin = async () => {
 		try {
+			setSaving(true)
 			if (!email) {
 				alert('O email deve ser informado!');
 				return;
@@ -113,15 +118,18 @@ export default function NotFoundScreen({ navigation }) {
 				}
 			);
 			if (response) {
+				setSaving(false)
 				if (response.data) {
 					onSignIn(response.data).then(async () => {
 						navigation.navigate('Root');
 					});
 				} else {
 					alert('Registrado Com Sucesso');
+					
 				}
 			}
 		} catch (error) {
+			setSaving(false)
 			if (error.response) {
 				// The request was made and the server responded with a status code
 				// that falls out of the range of 2xx
@@ -210,6 +218,7 @@ export default function NotFoundScreen({ navigation }) {
 								onPress={() => {
 									verifyLogin();
 								}}
+								loading={saving}
 							>
 								Entrar
 							</Button>

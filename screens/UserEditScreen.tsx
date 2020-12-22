@@ -47,7 +47,9 @@ export default function UserEditScreen({ navigation }) {
 		() => {
 			if (currentUser) {
 				setName(currentUser.username);
-				setImage(`http://coletanea-io.umbler.net${currentUser.avatar.url}`);
+				if(currentUser.avatar) {
+					setImage(`http://coletanea-io.umbler.net${currentUser.avatar.url}`);
+				}
 			}
 		},
 		[currentUser]
