@@ -10,12 +10,16 @@ import Transposer from '../services/chord-transposer';
 import { getToken } from '../services/services/auth';
 import { Button, Card, ListItem } from 'react-native-elements';
 import ChordTab from '../components/ChordTab';
-import * as FileSystem from 'expo-file-system';
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import moment from 'moment';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { getUser, setUser } from '../services/services/auth';
+
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+import * as Permissions from 'expo-permissions';
+
 const _ = require('lodash');
 
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
@@ -444,6 +448,17 @@ const ThirdRoute = ({ data }) => {
 		setDownloadProgress(progress);
 	};
 
+	const saveFile = async (fileUri: string) => {
+		const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+		if (status === "granted") {
+			const asset = await MediaLibrary.createAssetAsync(fileUri)
+			const dewnloded = await MediaLibrary.createAlbumAsync("Minha Coletânea", asset, false)
+			if(dewnloded) {
+				alert("Arquivo baixado com sucesso na Pasta Minha Coletânea")
+			}
+		}
+	}
+
 	const downloadFile = async (item) => {
 
 		const downloadResumable = FileSystem.createDownloadResumable(
@@ -456,6 +471,7 @@ const ThirdRoute = ({ data }) => {
 		try {
 			const { uri } = await downloadResumable.downloadAsync();
 			console.log('Finished downloading to ', uri);
+			saveFile(uri)
 		} catch (e) {
 			console.error(e);
 		}
