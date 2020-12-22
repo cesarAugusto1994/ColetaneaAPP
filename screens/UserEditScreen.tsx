@@ -47,7 +47,6 @@ export default function UserEditScreen({ navigation }) {
 		() => {
 			if (currentUser) {
 				setName(currentUser.username);
-				console.log(`http://coletanea-io.umbler.net${currentUser.avatar.url}`)
 				setImage(`http://coletanea-io.umbler.net${currentUser.avatar.url}`);
 			}
 		},
@@ -96,7 +95,6 @@ export default function UserEditScreen({ navigation }) {
 					// mimeType: "multipart/form-data"
 				},
 			});
-			console.log("asdgr", response.data)
 			if (response && response.data) {
 				alert('Sucesso');
 				currentUser.avatar =
