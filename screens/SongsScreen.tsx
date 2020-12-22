@@ -37,6 +37,7 @@ export default function CategoriesScreen({ navigation, route }) {
 
   const getCollections = async () => {
     setRefreshing(true);
+    console.log(`categoria/${route.params.id}/musicas`)
     try {
       const response = await api.get(`categoria/${route.params.id}/musicas`, {
         headers: {
@@ -68,14 +69,14 @@ export default function CategoriesScreen({ navigation, route }) {
     }}>
       {/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
       <ListItem.Content>
-        <ListItem.Title>{item.nome}</ListItem.Title>
-        <ListItem.Subtitle>Tonalidade: {item.tom}</ListItem.Subtitle>
-        {item.numero && <ListItem.Subtitle>Número: {item.numero}</ListItem.Subtitle>}
+        <ListItem.Title><Text>{item.numero && `${item.numero} - `}{item.nome}</Text></ListItem.Title>
+        <ListItem.Subtitle><Text>Tonalidade: {item.tom}</Text></ListItem.Subtitle>
       </ListItem.Content>
       <ListItem.Chevron />
     </ListItem>
   )
 
+  if (!data.length) return <Text>Carregando...</Text>
 
   return (
     <SafeAreaView style={styles.container}>

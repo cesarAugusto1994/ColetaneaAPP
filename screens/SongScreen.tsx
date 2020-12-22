@@ -159,7 +159,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 			showAllChords
 		);
 		const words = transp.fromKey(originalTom).toKey(tom).toString();
-		console.log({words})
 		const a = transp.getAllChords();
 		if (!allChords.length) setChords(a);
 		setSong(`<span><pre>${words}</pre></span>`);
@@ -195,10 +194,8 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 		<SafeAreaView style={[styles.containerSafe, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
 			<View style={[styles.navbar, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
 				<View style={{ flex: 0.3, backgroundColor: darkMode ? '#000000' : '#f5f5f5' }}>
-					{data.numero &&
-						<Text style={[styles.descriptionsSong]}>
-							Número: {data.numero}
-						</Text>}
+					{/* {data.numero &&
+						<Text style={[styles.descriptionsSong]}>Número: {data.numero || ' '}</Text>} */}
 
 					<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
 						Toalidade: {data.tom}
@@ -206,7 +203,21 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 				</View>
 				<View
 					style={{
-						flex: 0.7,
+						flex: 0.3,
+						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
+						alignItems: 'flex-end',
+						right: 0,
+					}}
+				>
+					{data.ritmo &&
+						<Text style={[styles.descriptionsSong]}>
+							Ritmo: {data.ritmo.nome}
+						</Text>
+					}
+				</View>
+				<View
+					style={{
+						flex: 0.4,
 						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
 						alignItems: 'flex-end',
 						right: 0,
@@ -301,9 +312,9 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 						<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
 					</TouchableOpacity>
 
-					<TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
+					{/* <TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
 						<Ionicons name="expand-outline" size={15} />
-					</TouchableOpacity>
+					</TouchableOpacity> */}
 
 					<TouchableOpacity
 						style={styles.btnUp}
@@ -345,67 +356,74 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 
 const SecondRoute = ({ data }) => {
 	return (
-		<View style={[styles.scene, { backgroundColor: '#f5f5f5', padding: 20 }]}>
-			<Text style={styles.descriptionsSong}>
-				Autor: {data.autor ? data.autor.nome : 'Não Informado'}
-			</Text>
+		<ScrollView scrollEnabled>
+			<View style={[styles.scene, { backgroundColor: '#FFF', padding: 20 }]}>
 
-			{data.autor &&
 				<Text style={styles.descriptionsSong}>
-					Biografia: {data.autor.biografia}
-				</Text>}
+					Autor: {data.autor ? data.autor.nome : 'Não Informado'}
+				</Text>
 
-			<Text style={styles.descriptionsSong}>
-				Artista/Cantor: {data.artista ? data.artista.nome : 'Não Informado'}
-			</Text>
+				{data.autor &&
+					<Text style={styles.descriptionsSong}>
+						Biografia: {data.autor.biografia}
+					</Text>}
 
-			{data.artista &&
 				<Text style={styles.descriptionsSong}>
-					Biografia: {data.artista.biografia}
-				</Text>}
+					Artista/Cantor: {data.artista ? data.artista.nome : 'Não Informado'}
+				</Text>
 
-			{data.categoria &&
+				{data.artista &&
+					<Text style={styles.descriptionsSong}>
+						Biografia: {data.artista.biografia}
+					</Text>}
+
+				{data.categoria &&
+					<Text style={styles.descriptionsSong}>
+						Categoria: {data.categoria.nome}
+					</Text>}
+				{data.categoria &&
+					<Text style={styles.descriptionsSong}>
+						Coleção: {data.categoria.colecao.nome}
+					</Text>}
 				<Text style={styles.descriptionsSong}>
-					Categoria: {data.categoria.nome}
-				</Text>}
-			{data.categoria &&
-				<Text style={styles.descriptionsSong}>
-					Coleção: {data.categoria.colecao.nome}
-				</Text>}
-			<Text style={styles.descriptionsSong}>
-				Atualizado Em: {data.created_at ? moment(data.created_at).format('DD/MM/YY hh:mm:ss') : 'Indefinido'}
-			</Text>
-		</View>
+					Atualizado Em: {data.created_at ? moment(data.created_at).format('DD/MM/YY hh:mm:ss') : 'Indefinido'}
+				</Text>
+			</View>
+		</ScrollView>
 	);
 };
 
 const ThirdRoute = ({ data }) => {
+
 	const [downloadProgress, setDownloadProgress] = React.useState(0);
-	const webViewRef = React.useRef(null)
 
 	const callback = downloadProgress => {
 		const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
 		setDownloadProgress(progress);
 	};
 
-	const downloadResumable = FileSystem.createDownloadResumable(
-		'http://techslides.com/demos/sample-videos/small.mp4',
-		FileSystem.documentDirectory + 'small.mp4',
-		{},
-		callback
-	);
+	const downloadFile = async (item) => {
 
-	// try {
-	// 	const { uri } = await downloadResumable.downloadAsync();
-	// 	console.log('Finished downloading to ', uri);
-	// } catch (e) {
-	// 	console.error(e);
-	// }
+		const downloadResumable = FileSystem.createDownloadResumable(
+			`http://coletanea-io.umbler.net${item.url}`,
+			FileSystem.documentDirectory + item.name,
+			{},
+			callback
+		);
+
+		try {
+			const { uri } = await downloadResumable.downloadAsync();
+			console.log('Finished downloading to ', uri);
+		} catch (e) {
+			console.error(e);
+		}
+
+	}
 
 	const keyExtractor = (item, index) => index.toString();
 
 	const renderItem = ({ item }) =>
-		<ListItem bottomDivider onPress={() => {}}>
+		<ListItem bottomDivider onPress={() => downloadFile(item)}>
 			{/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
 			<ListItem.Content>
 				<ListItem.Title>

@@ -23,11 +23,16 @@ class Card extends React.Component {
 
     return (
       <Block row={horizontal} card flex style={cardContainer}>
-        <TouchableWithoutFeedback onPress={() => navigation.navigate(navigateTo, { screen: 'Categorias', id: item.id })}>
-          <Block flex style={imgContainer}>
-            <Image source={{uri: `http://coletanea-io.umbler.net${item.image}`}} style={imageStyles} />
-          </Block>
-        </TouchableWithoutFeedback>
+        {
+          item.image && (
+            <TouchableWithoutFeedback onPress={() => navigation.navigate(navigateTo, { screen: 'Categorias', id: item.id })}>
+              <Block flex style={imgContainer}>
+                <Image source={{uri: `http://coletanea-io.umbler.net${item.image}`}} style={imageStyles} />
+              </Block>
+            </TouchableWithoutFeedback>
+          )
+        }
+        
         <TouchableWithoutFeedback onPress={() => navigation.navigate(navigateTo, { id: item.id })}>
           <Block flex space="between" style={styles.cardDescription}>
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>

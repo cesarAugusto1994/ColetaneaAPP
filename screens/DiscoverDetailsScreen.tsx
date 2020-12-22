@@ -3,39 +3,41 @@ import * as React from 'react';
 import {
 	StyleSheet,
 	SafeAreaView,
-	FlatList,
-	StatusBar,
-	Button,
 	Dimensions,
 	RefreshControl,
 	ScrollView,
-	TouchableOpacity,
+	Image,
+	TouchableOpacity
 } from 'react-native';
-import { Avatar, Image, ListItem, Card as CardRNE } from 'react-native-elements';
+import { Card as CardRNE } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
 import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
+import { isSignedIn } from '../services/services/auth';
 const { width } = Dimensions.get('screen');
-import { getUser } from '../services/services/auth';
 
-export default function TabOneScreen({ navigation }) {
-	const [data, setData] = React.useState([]);
-	const [refreshing, setRefreshing] = React.useState(false);
-	const [currentUser, setCurrentUser] = React.useState(null);
+export default function TabOneScreen({ navigation, route }) {
 
-	const getCurrentUser = async () => {
-		const parseUser = await getUser();
-		setCurrentUser(JSON.parse(parseUser));
-	};
+  const [data, setData] = React.useState(null);
+  const [refreshing, setRefreshing] = React.useState(false);
+  
+  const checkIsLogged = async () => {
+    const response = await isSignedIn()
+    if(!response) navigation.navigate("NotFound")
+  }
+
+  React.useEffect(() => {
+
+    checkIsLogged()
+
+	}, [])
 
 	React.useEffect(() => {
-		getCurrentUser();
-	}, []);
 
-	React.useEffect(() => {
 		navigation.setOptions({
+			title: 'Coletânea ICM',
 			headerTintColor: '#d44b42',
 			headerStyle: {
 				borderBottomWidth: 0,
@@ -44,69 +46,64 @@ export default function TabOneScreen({ navigation }) {
 				fontSize: 18,
 			},
 		});
-	}, []);
+
+	}, [])
 
 	const onRefresh = React.useCallback(() => {
+    checkIsLogged()
 		getCollections();
 	}, []);
 
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get(`users/${currentUser.id}`, {
+			const response = await api.get(`postagens/${route.params.id}`, {
 				headers: {
 					Authorization: await getToken(),
 				},
 			});
-			console.log(response.data);
-			if (response.data) {
+			if (response) {
+				console.log(response.data)
 				setData(response.data);
 				setRefreshing(false);
 			}
 		} catch (error) {
 			setRefreshing(false);
-			console.log('error', JSON.stringify(error));
+			console.log('error', JSON.stringify(error.config));
 		}
 	};
 
-	React.useEffect(
-		() => {
-			if (currentUser) {
-				getCollections();
-			}
-		},
-		[currentUser]
-	);
+	React.useEffect(() => {
+		getCollections();
+	}, []);
 
-	const keyExtractor = (item, index) => index.toString();
-
-	const renderItem = ({ item }) =>
-		<ListItem
-			bottomDivider
-			onPress={() => {
-				navigation.navigate('Group', {
-					id: item.id,
-					title: item.nome,
-				});
-			}}
-		>
-			<Avatar size="medium" title={item.nome.substring(0, 2)} source={{ uri: item.avatar_url }} />
-			<ListItem.Content>
-				<ListItem.Title>
-					{item.nome}
-				</ListItem.Title>
-			</ListItem.Content>
-			<ListItem.Chevron />
-		</ListItem>;
+	if (!data) return <Text>Carregando...</Text>
 
 	return (
 		<SafeAreaView style={styles.container}>
-			{data.grupos && data.grupos.length
-				? <FlatList data={data.grupos} scrollEnabled renderItem={renderItem} keyExtractor={keyExtractor} />
-				: <View style={styles.notfound}>
-						<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
-						<CardRNE.Divider />
-					</View>}
+
+		{data
+			? <Block flex center style={styles.home}>
+
+				{
+					data.imagem && (
+						<Block style={styles.imageContainer}>
+                			<Image source={{uri: `http://coletanea-io.umbler.net${data.imagem?.formats.thumbnail.url}`}} style={{height: 215, width: '100%',}} />
+              			</Block>
+					)
+				}
+
+				<Block center>
+					<CardRNE>
+						<Text>{data.conteudo}</Text>
+					</CardRNE>
+				</Block>
+				</Block>
+			:	<View style={styles.notfound}>
+					<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
+					<CardRNE.Divider />
+				</View>
+        }
 		</SafeAreaView>
 	);
 }
@@ -121,6 +118,7 @@ const styles = StyleSheet.create({
 	articles: {
 		width: width - theme.SIZES.BASE * 2,
 		paddingVertical: theme.SIZES.BASE,
+		backgroundColor: '#f6f6f6'
 	},
 	notfound: {
 		flex: 1,
@@ -153,5 +151,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		borderRadius: 7,
+	},
+	imageContainer: {
+		borderRadius: 3,
+		elevation: 1,
+		overflow: 'hidden',
 	},
 });

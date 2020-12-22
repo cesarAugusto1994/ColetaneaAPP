@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableOpacity
 } from 'react-native';
-import { Avatar, Image, ListItem, Card as CardRNE } from 'react-native-elements';
+import { Card as CardRNE } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
 import { Card } from '../components/galio';
@@ -65,7 +65,7 @@ export default function TabOneScreen({ navigation }) {
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get('colecoes', {
+			const response = await api.get('postagens', {
 				headers: {
 					Authorization: await getToken(),
 				},
@@ -86,7 +86,7 @@ export default function TabOneScreen({ navigation }) {
 
 	const renderArticles = () => {
     
-		if (!data.length) return <Text>Nada</Text>
+		if (!data.length) return <Text>Carregando...</Text>
 
 		return (
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
@@ -95,11 +95,11 @@ export default function TabOneScreen({ navigation }) {
 							data.map((item, index) => {
 								return (
 									<Card
-                    key={index}
-										navigateTo="Categorias"
-										item={{ id: item.id, title: item.nome, cta: item.descricao, image: item.imagem?.formats.thumbnail.url }}
+                    					key={index}
+										navigateTo="DiscoverDetailsScreen"
+										item={{ id: item.id, title: item.titulo, cta: item.descricao, image: item.imagem?.formats.thumbnail.url }}
 										// style={{ marginRight: theme.SIZES.BASE }}
-										// horizontal
+										horizontal
 									/>
 								)
 							})

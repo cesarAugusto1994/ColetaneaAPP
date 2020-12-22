@@ -18,6 +18,9 @@ import BooksScreen from "../screens/BooksScreen";
 import ChaptersScreen from "../screens/ChaptersScreen";
 import VerseScreen from "../screens/VerseScreen";
 
+import TabDiscoverScreen from "../screens/TabDiscoverScreen";
+import DiscoverDetailsScreen from "../screens/DiscoverDetailsScreen";
+
 import GroupScreen from "../screens/GroupScreen";
 import GroupUsersScreen from "../screens/GroupUsersScreen";
 import GroupListsScreen from "../screens/GroupListsScreen";
@@ -59,6 +62,14 @@ export default function BottomTabNavigator() {
         options={{
           tabBarIcon: ({ color }) =>
             <TabBarIcon name="ios-book-outline" color={color} />
+        }}
+      />
+      <BottomTab.Screen
+        name="Descobrir"
+        component={TabDiscoverNavigator}
+        options={{
+          tabBarIcon: ({ color }) =>
+            <TabBarIcon name="ios-globe-outline" color={color} />
         }}
       />
       <BottomTab.Screen
@@ -167,6 +178,25 @@ function TabBookNavigator() {
         })}
       />
     </TabBookStack.Navigator>
+  );
+}
+
+const TaDiscoverBookStack = createStackNavigator<TabBookParamList>();
+
+function TabDiscoverNavigator() {
+  return (
+    <TaDiscoverBookStack.Navigator>
+      <TaDiscoverBookStack.Screen
+        name="DiscoverScreen"
+        component={TabDiscoverScreen}
+        options={{ headerTitle: "Postagens" }}
+      />
+      <TaDiscoverBookStack.Screen
+        name="DiscoverDetailsScreen"
+        component={DiscoverDetailsScreen}
+        options={{ headerTitle: "Postagem" }}
+      />
+    </TaDiscoverBookStack.Navigator>
   );
 }
 
