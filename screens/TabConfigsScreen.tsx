@@ -31,11 +31,14 @@ export default function TabConfigsScreen({navigation}) {
 
 	}, [])
 
-
 	const logout = () => {
 		onSignOut().then(() => {
 			navigation.navigate('NotFound');
 		});
+	};
+
+	const navigateToFavorites = () => {
+		navigation.navigate('Favoritos');
 	};
 
 	return (
@@ -55,12 +58,28 @@ export default function TabConfigsScreen({navigation}) {
 			}
 			
 			<View style={{ width: '100%', marginHorizontal: 20 }}>
+				<ListItem key="1" bottomDivider onPress={navigateToFavorites}>
+					<ListItem.Content>
+						<ListItem.Title>Favoritos</ListItem.Title>
+					</ListItem.Content>
+				</ListItem>
+				<ListItem key="3" bottomDivider onPress={() => {}}>
+					<ListItem.Content>
+						<ListItem.Title>Sobre o APP</ListItem.Title>
+					</ListItem.Content>
+				</ListItem>
 				<ListItem key="0" bottomDivider onPress={logout}>
-					<ListItem.Content style={{ alignItems: 'center' }}>
+					<ListItem.Content>
 						<ListItem.Title style={{ color: 'red' }}>Sair</ListItem.Title>
 					</ListItem.Content>
 				</ListItem>
 			</View>
+
+			<View style={{ width: '100%', marginHorizontal: 20, position: 'absolute', bottom: 20, alignItems: 'center' }}>
+				<Text>Desenvolvido por César Augusto.</Text>
+				<Text>Versão: 1.0.0</Text>
+			</View>
+
 
 		</View>
 	);

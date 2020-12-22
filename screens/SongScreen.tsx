@@ -15,14 +15,14 @@ import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import moment from 'moment';
 import { TouchableHighlight } from 'react-native-gesture-handler';
-
-
+import { getUser, setUser } from '../services/services/auth';
 const _ = require('lodash');
 
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 const colors = ['#fcba03', '#d44b42', '#35d45d', '#3381d4'];
 
 const FirstRoute = ({ data, handleShowHeader, navigation }) => {
+
 	const [spanFontSize, setspanFontSize] = React.useState(15);
 	const [favorite, setFavorite] = React.useState(false);
 	const [showChord, setShowChord] = React.useState(true);
@@ -33,11 +33,31 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 	const [song, setSong] = React.useState('');
 	const [version, setVesrion] = React.useState('normal');
 	const sheetRef = React.useRef(null);
-
+	const [currentUser, setCurrentUser] = React.useState(null)
 	const [chordColor, setChordColor] = React.useState('#fcba03');
 
 	const [originalTom] = React.useState(data.tom);
 	const [tom, setTom] = React.useState(data.tom);
+
+	const getCurrentUser = async () => {
+		const parseUser = await getUser()
+		setCurrentUser(JSON.parse(parseUser))
+	}
+
+	React.useEffect(() => {
+
+		getCurrentUser()
+
+	}, [])
+
+	React.useEffect(() => {
+
+		if(currentUser) {
+			const hasSong = _.findIndex(currentUser.musicas, { id: data.id })
+			setFavorite(hasSong > -1)
+		}
+
+	}, [currentUser])
 
 	const getNextTone = () => {
 		const currentIndex = tones.indexOf(tom);
@@ -100,8 +120,39 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 		setspanFontSize(spanFontSize + 1);
 	};
 
-	const handleFavorite = () => {
+	const handleFavorite = async () => {
+
 		setFavorite(!favorite);
+
+		if(currentUser.musicas) {
+			const hasMusica = _.findIndex(currentUser.musicas, { id: data.id })
+			if(hasMusica > -1) {
+				_.remove(currentUser.musicas, { id: data.id })
+			} else {
+				currentUser.musicas.push(data)
+			}
+		}
+
+		try {
+			const response = await api.put(`users/${currentUser.id}`, 
+			{
+				musicas: currentUser.musicas
+			},
+			{
+				headers: {
+					Authorization: await getToken(),
+				},
+			});
+			console.log(response)
+			if (response) {
+				// setData(response.data);
+			}
+		} catch (error) {
+			console.log('error', error.response);
+		}
+
+		setUser(currentUser)
+
 	};
 
 	const handleShowChord = async () => {
@@ -198,7 +249,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 						<Text style={[styles.descriptionsSong]}>Número: {data.numero || ' '}</Text>} */}
 
 					<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
-						Toalidade: {data.tom}
+						Tonalidade: {data.tom}
 					</Text>
 					{data.ritmo &&
 						<Text style={[styles.descriptionsSong]}>
@@ -293,11 +344,11 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 							: <Ionicons name="ios-document-text-outline" size={15} />}
 					</TouchableOpacity>
 
-					{/* <TouchableOpacity style={styles.btnUp} onPress={handleFavorite}>
+					<TouchableOpacity style={styles.btnUp} onPress={handleFavorite}>
 						{favorite
 							? <Ionicons name="ios-star" color="#ffd000" size={15} />
-							: <Ionicons name="ios-star-outline" size={15} />}
-					</TouchableOpacity> */}
+							: <Ionicons name="ios-star-outline" color="#000000" size={15} />}
+					</TouchableOpacity>
 
 					<TouchableOpacity style={styles.btnUp} onPress={handleChordColor}>
 						<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
