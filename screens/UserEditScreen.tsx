@@ -108,7 +108,7 @@ export default function UserEditScreen({ navigation }) {
 			setSaving(false)
 		} catch (error) {
 			setSaving(false)
-			console.log('error', error.config);
+			console.log('error', error.response);
 		}
 	};
 
@@ -117,7 +117,7 @@ export default function UserEditScreen({ navigation }) {
 			const response = await api.put(
 				`users/${user.id}`,
 				{
-					username: user.username,
+					username: name,
 					avatar: user.avatar,
 				},
 				{
