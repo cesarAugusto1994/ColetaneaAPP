@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { actions, defaultActions, RichEditor, RichToolbar } from 'react-native-pell-rich-editor';
 
-const Main = ({ song }) => {
+const Main = ({ song, updateSongText }) => {
 	const richText = React.useRef(null);
 
 	function renderHtml(body: string) {
@@ -22,18 +22,20 @@ const Main = ({ song }) => {
 			// containerStyle={themeBg}
 			ref={richText}
 			style={[styles.rich]}
-			placeholder={'please input content'}
+			placeholder={'Adicione a letra aqui'}
 			initialContentHTML={song.letra ? renderHtml(song.letra) : ''}
 			// editorInitializedCallback={that.editorInitializedCallback}
-			// onChange={that.handleChange}
+			onChange={updateSongText}
 			// onHeightChange={that.handleHeightChange}
-			// onPaste={that.handlePaste}
+			onPaste={updateSongText}
 			// onKeyUp={that.handleKeyUp}
 			// onKeyDown={that.handleKeyDown}
 			// onMessage={that.handleMessage}
 			// onFocus={that.handleFocus}
 			// onBlur={that.handleBlur}
-			// pasteAsPlainText={true}
+			pasteAsPlainText
+			scrollEnabled
+		
 		/>
 	);
 };

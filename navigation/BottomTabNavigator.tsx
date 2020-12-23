@@ -139,7 +139,7 @@ function TabOneNavigator() {
         name="LetraEditor"
         component={SongEditScreen}
         options={({ route }) => ({ 
-          title: route.params.title,
+          title: "Editor",
         })}
       />
       <TabOneStack.Screen
