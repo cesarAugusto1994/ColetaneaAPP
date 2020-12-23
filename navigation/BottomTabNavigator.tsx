@@ -11,6 +11,8 @@ import SongsScreen from "../screens/SongsScreen";
 import Songscreen from "../screens/SongScreen";
 import FavoriteSongsScreen from "../screens/FavoriteSongsScreen";
 import SongEditScreen from "../screens/SongEditScreen";
+import SongEditInfoScreen from "../screens/SongEditInfoScreen";
+import SongAddScreen from "../screens/SongAddScreen";
 import SearchScreen from "../screens/SearchScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import TabConfigsScreen from "../screens/TabConfigsScreen";
@@ -112,7 +114,7 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="TabOneScreen"
         component={TabOneScreen}
-        options={{ headerTitle: "Coletânea ICM" }}
+        options={{ headerTitle: "Minha Coletânea" }}
       />
       <TabOneStack.Screen
         name="Categorias"
@@ -140,6 +142,20 @@ function TabOneNavigator() {
         component={SongEditScreen}
         options={({ route }) => ({ 
           title: "Editor",
+        })}
+      />
+      <TabOneStack.Screen
+        name="SongEditor"
+        component={SongEditInfoScreen}
+        options={({ route }) => ({ 
+          title: "Editar Informações",
+        })}
+      />
+      <TabOneStack.Screen
+        name="SongAdd"
+        component={SongAddScreen}
+        options={({ route }) => ({ 
+          title: "Adicionar",
         })}
       />
       <TabOneStack.Screen

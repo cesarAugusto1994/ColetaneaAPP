@@ -88,7 +88,7 @@ export default function TabOneScreen({ navigation, route }) {
 				{
 					data.imagem && (
 						<Block style={styles.imageContainer}>
-                			<Image source={{uri: `http://coletanea-io.umbler.net${data.imagem?.formats.thumbnail.url}`}} style={{height: 215, width: '100%',}} />
+                			<Image source={{uri: `https://minhacoletanea.com${data.imagem?.formats.thumbnail.url}`}} style={{height: 215, width: '100%',}} />
               			</Block>
 					)
 				}

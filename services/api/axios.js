@@ -4,7 +4,7 @@ const axios = require('axios')
 
 const apiClient = axios.create({
     baseURL: "http://192.168.15.16:1337",
-    // baseURL: "http://coletanea-io.umbler.net",
+    // baseURL: "https://minhacoletanea.com",
     timeout: 30000
 })
 // const apiClient = axios.create({

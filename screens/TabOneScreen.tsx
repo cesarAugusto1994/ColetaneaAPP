@@ -5,10 +5,11 @@ import {
 	SafeAreaView,
 	Dimensions,
 	RefreshControl,
-  ScrollView,
-  TouchableOpacity
+	ScrollView,
+	TouchableOpacity,
+	ActivityIndicator
 } from 'react-native';
-import { Avatar, Image, ListItem, Card as CardRNE } from 'react-native-elements';
+import { Card as CardRNE, Button } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
 import { Card } from '../components/galio';
@@ -160,6 +161,10 @@ export default function TabOneScreen({ navigation }) {
 	return (
 		<SafeAreaView style={styles.container}>
 
+			{
+				refreshing && <ActivityIndicator size="large" color="#d44b42" />
+			}
+
 		{data.length
 			? <Block flex center style={styles.home}>
 					{renderArticles()}
@@ -167,6 +172,7 @@ export default function TabOneScreen({ navigation }) {
 			:	<View style={styles.notfound}>
 					<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
 					<CardRNE.Divider />
+					<Button title="Atualizar Tela" onPress={onRefresh} />
 				</View>
         }
 		</SafeAreaView>

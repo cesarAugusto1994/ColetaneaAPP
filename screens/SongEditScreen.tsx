@@ -4,6 +4,8 @@ import { Text, View } from "../components/Themed";
 import api from "../services/api/axios";
 import {getToken} from '../services/services/auth';
 import TextEditor from '../components/SongEditor'
+import { Avatar, Button, Card } from 'react-native-elements';
+import { Block } from 'galio-framework';
 import { Ionicons } from '@expo/vector-icons';
 
 let textString: String = ''
@@ -18,31 +20,6 @@ export default function MainScreen({ navigation, route }) {
     textString = text
   }
 
-  const updateSong = async () => {
-		try {
-      setSaving(true)
-      console.log(textString)
-			const response = await api.put(
-				`musicas/${route.params.id}`,
-				{
-					letra: textString,
-				},
-				{
-					headers: {
-						Authorization: await getToken(),
-					},
-				}
-      );
-      console.log(response.data)
-			if (response && response.data) {
-				setSaving(false)
-			}
-		} catch (error) {
-			setSaving(false)
-			console.log('error', error);
-		}
-	};
-
   React.useEffect(() => {
 
     navigation.setOptions({
@@ -53,25 +30,19 @@ export default function MainScreen({ navigation, route }) {
       headerTitleStyle: {
         fontSize: 18
       },
-      headerRight: () =>
-				<TouchableHighlight
-					style={{ marginRight: 15 }}
-					onPress={() => {
-						updateSong();
-					}}
-				>
-					<Ionicons name="ios-save-outline" size={25} color="#d44b42" />
-				</TouchableHighlight>,
+      // headerRight: () =>
+			// 	<TouchableHighlight
+			// 		style={{ marginRight: 15 }}
+			// 		onPress={() => {
+			// 			updateSong();
+			// 		}}
+			// 	>
+			// 		<Ionicons name="ios-save-outline" size={25} color="#d44b42" />
+			// 	</TouchableHighlight>,
     });
 
   }, [])
   
-
-
-  // const onRefresh = React.useCallback(() => {
-  //   getSong()
-  // }, [])
-
   const getSong = async () => {
     setRefreshing(true);
     try {
@@ -94,11 +65,44 @@ export default function MainScreen({ navigation, route }) {
     getSong();
   }, []);
 
+  const updateSong = async () => {
+		try {
+      setSaving(true)
+			const response = await api.put(
+				`musicas/${route.params.id}`,
+				{
+					letra: textString,
+				},
+				{
+					headers: {
+						Authorization: await getToken(),
+					},
+				}
+      );
+			if (response && response.data) {
+        alert("Registro atualizado com sucesso!")
+        navigation.navigate('Musica', {
+          id: data.id,
+          title: data.nome,
+          reload: true
+        })
+				setSaving(false)
+			}
+		} catch (error) {
+      setSaving(false)
+      alert("Ocorreu um na atualização!")
+			console.log('error', error);
+		}
+	};
+
   return (
     <SafeAreaView style={styles.container}>
       {
         data && <TextEditor song={data} updateSongText={updateSongText} />
       }
+      <Block>
+        <Button title="Salvar" onPress={updateSong} loading={saving} />
+			</Block>
     </SafeAreaView>
   );
 }

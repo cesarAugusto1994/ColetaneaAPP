@@ -1,16 +1,10 @@
 import * as React from "react";
-import { StyleSheet, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, SafeAreaView, FlatList, TouchableHighlight } from "react-native";
 import { ListItem } from "react-native-elements";
 import { Text, View } from "../components/Themed";
+import { Ionicons } from '@expo/vector-icons';
 import api from "../services/api/axios";
 import {getToken} from '../services/services/auth';
-
-const Item = ({ title, description }) =>
-  <View style={styles.item}>
-    <Text style={styles.title}>
-      {description && `${description} - `} {title}
-    </Text>
-  </View>;
 
 export default function CategoriesScreen({ navigation, route }) {
 
@@ -26,18 +20,38 @@ export default function CategoriesScreen({ navigation, route }) {
       },
       headerTitleStyle: {
         fontSize: 18
-      }
+      },
+      headerRight: () =>
+			<TouchableHighlight
+				style={{ marginRight: 15 }}
+				onPress={() => {
+					navigation.navigate('SongAdd', {
+						id: route.params.id
+					})
+				}}
+			>
+				<Ionicons name="ios-add-outline" size={25} color="#d44b42" />
+			</TouchableHighlight>,
     });
 
-	}, [])
-
-  const onRefresh = React.useCallback(() => {
-    getCollections()
   }, [])
 
-  const getCollections = async () => {
+  const onRefresh = React.useCallback(() => {
+    getSongs()
+  }, [])
+
+  React.useEffect(() => {
+    
+    navigation.addListener(
+      'focus',
+      () => getSongs()
+    );
+
+  }, []);
+
+  const getSongs = async () => {
     setRefreshing(true);
-    console.log(`categoria/${route.params.id}/musicas`)
+    console.log(`categoria/${route.params.id}/musicas asdfe`)
     try {
       const response = await api.get(`categoria/${route.params.id}/musicas`, {
         headers: {
@@ -55,7 +69,7 @@ export default function CategoriesScreen({ navigation, route }) {
   };
 
   React.useEffect(() => {
-    getCollections();
+    getSongs();
   }, []);
 
   const keyExtractor = (item, index) => index.toString()

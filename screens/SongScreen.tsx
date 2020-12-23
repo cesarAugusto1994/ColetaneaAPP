@@ -147,7 +147,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 					Authorization: await getToken(),
 				},
 			});
-			console.log(response)
 			if (response) {
 				// setData(response.data);
 			}
@@ -253,7 +252,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 						<Text style={[styles.descriptionsSong]}>Número: {data.numero || ' '}</Text>} */}
 
 					<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
-						Tonalidade: {data.tom}
+						Tonalidade: {data && data.tom}
 					</Text>
 					{data.ritmo &&
 						<Text style={[styles.descriptionsSong]}>
@@ -423,14 +422,14 @@ const SecondRoute = ({ data }) => {
 						Biografia: {data.artista.biografia}
 					</Text>}
 
-				{data.categoria &&
+				{data.categoria_id &&
 					<Text style={styles.descriptionsSong}>
-						Categoria: {data.categoria.nome}
+						Categoria: {data.categoria_id.nome}
 					</Text>}
-				{data.categoria &&
+				{/* {data.categoria_id && data.categoria_id.colecao_id &&
 					<Text style={styles.descriptionsSong}>
-						Coleção: {data.categoria.colecao.nome}
-					</Text>}
+						Coleção: {data.categoria_id.colecao_id.nome}
+					</Text>} */}
 				<Text style={styles.descriptionsSong}>
 					Atualizado Em: {data.created_at ? moment(data.created_at).format('DD/MM/YY hh:mm:ss') : 'Indefinido'}
 				</Text>
@@ -462,7 +461,7 @@ const ThirdRoute = ({ data }) => {
 	const downloadFile = async (item) => {
 
 		const downloadResumable = FileSystem.createDownloadResumable(
-			`http://coletanea-io.umbler.net${item.url}`,
+			`https://minhacoletanea.com${item.url}`,
 			FileSystem.documentDirectory + item.name,
 			{},
 			callback
@@ -531,8 +530,9 @@ const ThirdRoute = ({ data }) => {
 };
 const initialLayout = { width: Dimensions.get('window').width };
 
-export default function CategoriesScreen({ route, navigation }) {
-	const [data, setData] = React.useState([]);
+export default function SongScreen({ route, navigation }) {
+
+	const [data, setData] = React.useState({});
 	const [showHeader, setShowHeader] = React.useState(true);
 
 	React.useEffect(() => {
@@ -543,15 +543,37 @@ export default function CategoriesScreen({ route, navigation }) {
 			},
 			headerTitleStyle: {
 				fontSize: 18,
-			},
+			}
 		});
-	}, []);
+  }, []);
+  
+  React.useEffect(() => {
+		navigation.setOptions({
+			headerRight: () =>
+			<TouchableHighlight
+				style={{ marginRight: 15 }}
+				onPress={() => {
+					navigation.navigate('SongEditor', {
+						id: data.id
+					})
+				}}
+			>
+				<Ionicons name="ios-settings-outline" size={25} color="#d44b42" />
+			</TouchableHighlight>,
+		});
+  }, [data]);
+  
+  React.useEffect(() => {
+    if(route.params && route.params.reload) {
+      getSong()
+    }
+  }, [route.params]);
 
 	const handleShowHeader = () => {
 		setShowHeader(!showHeader);
 	};
 
-	const getCollections = async () => {
+	const getSong = async () => {
 		try {
 			const response = await api.get(`musicas/${route.params.id}`, {
 				headers: {
@@ -559,12 +581,17 @@ export default function CategoriesScreen({ route, navigation }) {
 				},
 			});
 			if (response) {
+        console.log("Song", response.data)
 				setData(response.data);
 			}
 		} catch (error) {
 			console.log('error', JSON.stringify(error));
 		}
-	};
+  };
+  
+  React.useEffect(() => {
+		getSong();
+  }, []);
 
 	const [index, setIndex] = React.useState(0);
 	const [routes] = React.useState([
@@ -578,10 +605,6 @@ export default function CategoriesScreen({ route, navigation }) {
 		second: () => <SecondRoute data={data} />,
 		third: () => <ThirdRoute data={data} />,
 	});
-
-	React.useEffect(() => {
-		getCollections();
-	}, []);
 
 	return (
 		<TabView

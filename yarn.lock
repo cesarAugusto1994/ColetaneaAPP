@@ -1419,6 +1419,13 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
+"@koale/useworker@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@koale/useworker/-/useworker-3.2.1.tgz#3d45593887e1df7ae8b469f1512fbaff85e4db2f"
+  integrity sha512-oTATxVRYceI0ZrlcAYGwhXU5l+rHd14yFlAyQfgbwi+vfFnnMX9EwU85RlGHIKf0BT4rrIIJm73L9lgz/+/EnA==
+  dependencies:
+    dequal "^1.0.0"
+
 "@react-native-async-storage/async-storage@^1.13.2":
   version "1.13.2"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.13.2.tgz#649f78527f16cd5a87071a888219ef7a35ef5c79"
@@ -3036,6 +3043,11 @@ deprecated-react-native-listview@0.0.5, deprecated-react-native-listview@0.0.6:
     invariant "*"
     react-clone-referenced-element "*"
 
+dequal@^1.0.0:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/dequal/-/dequal-1.0.1.tgz#dbbf9795ec626e9da8bd68782f4add1d23700d8b"
+  integrity sha512-Fx8jxibzkJX2aJgyfSdLhr9tlRoTnHKrRJuu2XHlAgKioN2j19/Bcbe0d4mFXYZ3+wpE2KVobUVTfDutcD17xQ==
+
 destroy@~1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/destroy/-/destroy-1.0.4.tgz#978857442c44749e4206613e37946205826abd80"
@@ -3401,6 +3413,15 @@ expo-auth-session@~3.0.0:
     expo-web-browser "^8.6.0"
     invariant "^2.2.4"
     qs "6.9.1"
+
+expo-camera@~9.1.0:
+  version "9.1.1"
+  resolved "https://registry.yarnpkg.com/expo-camera/-/expo-camera-9.1.1.tgz#8630012524b112bf7667ae7a85bbbca5a0911a24"
+  integrity sha512-PWxUS/lTETt8fz03dLGwTLQ3l16irKNjOMfBKJ9KNBlKaPdQv12S6gBK/VE4pHi4vHSf7kL1f8FTI8JUu8Kq7Q==
+  dependencies:
+    "@koale/useworker" "^3.2.1"
+    invariant "2.2.4"
+    lodash "^4.6.0"
 
 expo-constants@^9.3.3, expo-constants@~9.3.0, expo-constants@~9.3.3:
   version "9.3.5"
@@ -6736,6 +6757,11 @@ react-native-exit-app@^1.1.0:
   resolved "https://registry.yarnpkg.com/react-native-exit-app/-/react-native-exit-app-1.1.0.tgz#5ec082152974240e2d6a93f1608efb49a4385f21"
   integrity sha512-Spne19zfMfJvnUTX909EHUqWMk69rATtLJq9XMBGpNSHhx0M7v5yetx2Z87egBhLOqQm+CWfD/oxWzDG8rbIQA==
 
+react-native-firebase-mlkit@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/react-native-firebase-mlkit/-/react-native-firebase-mlkit-0.6.2.tgz#4fddd7f493ba1ff03c3f6b5240599ad4176bc9b9"
+  integrity sha512-ISHkwbajT+OCMGqxYXApQZFPyx6zFP+qduMambHXENZfi5g5ybHmx6Kly9kEhonoLeqvTtA6nERuH3kJhamYHw==
+
 react-native-gesture-handler@~1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.8.0.tgz#18f61f51da50320f938957b0ee79bc58f47449dc"
@@ -6831,6 +6857,11 @@ react-native-tab-view@^2.15.2:
   version "2.15.2"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.15.2.tgz#4bc7832d33a119306614efee667509672a7ee64e"
   integrity sha512-2hxLkBnZtEKFDyfvNO5EUywhy3f/EiLOBO8SWqKj4BMBTO0QwnybaPE5MVF00Fhz+VA4+h/iI40Dkrrtq70dGg==
+
+react-native-text-detector@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-text-detector/-/react-native-text-detector-0.0.6.tgz#c33cdcfd574b15cb94ffe4db320e7a22ead12c86"
+  integrity sha512-Etwflm4EU1rOvMiQ8iStaGZkl6qbYyIcApJRWvvpHvkc+NTJ2btM3FAayF829E6FLFWOwjZCBzaRns1LTrQcFw==
 
 react-native-web@~0.13.12:
   version "0.13.18"

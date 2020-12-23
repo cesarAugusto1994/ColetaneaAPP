@@ -27,7 +27,7 @@ class Card extends React.Component {
           item.image && (
             <TouchableWithoutFeedback onPress={() => navigation.navigate(navigateTo, { screen: 'Categorias', id: item.id })}>
               <Block flex style={imgContainer}>
-                <Image source={{uri: `http://coletanea-io.umbler.net${item.image}`}} style={imageStyles} />
+                <Image source={{uri: `https://minhacoletanea.com${item.image}`}} style={imageStyles} />
               </Block>
             </TouchableWithoutFeedback>
           )

@@ -3,6 +3,7 @@ import { StyleSheet, SafeAreaView, FlatList, ScrollView, View, RefreshControl } 
 import { ListItem, Card } from 'react-native-elements';
 import { getToken } from '../services/services/auth';
 import api from '../services/api/axios';
+import _ from 'lodash'
 
 export default function CategoriesScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
@@ -28,7 +29,7 @@ export default function CategoriesScreen({ navigation, route }) {
 				},
 			});
 			if (response) {
-				setData(response.data);
+				setData(_.sortBy(response.data, order => order.ordem));
 				setRefreshing(false);
 			}
 		} catch (error) {
