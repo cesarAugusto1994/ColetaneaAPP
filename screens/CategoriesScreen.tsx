@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, SafeAreaView, FlatList, ScrollView, View, RefreshControl } from 'react-native';
+import { StyleSheet, SafeAreaView, FlatList, View } from 'react-native';
 import { ListItem, Card } from 'react-native-elements';
 import { getToken } from '../services/services/auth';
 import api from '../services/api/axios';

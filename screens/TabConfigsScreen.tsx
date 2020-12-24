@@ -103,7 +103,7 @@ export default function TabConfigsScreen({navigation}) {
 
 			<View style={{ width: '100%', marginHorizontal: 20, position: 'absolute', bottom: 20, alignItems: 'center' }}>
 				{/* <Text>Desenvolvido por César Augusto.</Text> */}
-				<Text>Versão: 1.0.0</Text>
+				<Text>Versão: 1.0.1</Text>
 			</View>
 
 

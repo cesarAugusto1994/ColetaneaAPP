@@ -156,6 +156,8 @@ export default function UserEditScreen({ navigation }) {
 						/>
 					</Block>
 
+					<View style={styles.divider} />
+
 					<Block>
 						<Text style={styles.linkText}>Nome</Text>
 						<TextInput
@@ -168,9 +170,10 @@ export default function UserEditScreen({ navigation }) {
 
 					<View style={styles.divider} />
 
-					<Block flex>
+					<Block>
 						<Button title="Salvar" onPress={save} loading={saving} />
 					</Block>
+
 					<View style={styles.divider} />
 				</Block>}
 		</View>
