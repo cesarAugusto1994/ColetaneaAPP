@@ -25,7 +25,7 @@ const _ = require('lodash');
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 const colors = ['#fcba03', '#d44b42', '#35d45d', '#3381d4'];
 
-const FirstRoute = ({ data, handleShowHeader, navigation }) => {
+const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 
 	const [spanFontSize, setspanFontSize] = React.useState(15);
 	const [favorite, setFavorite] = React.useState(false);
@@ -37,22 +37,10 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 	const [song, setSong] = React.useState('');
 	const [version, setVesrion] = React.useState('normal');
 	const sheetRef = React.useRef(null);
-	const [currentUser, setCurrentUser] = React.useState(null)
 	const [chordColor, setChordColor] = React.useState('#fcba03');
 
 	const [originalTom] = React.useState(data.tom);
 	const [tom, setTom] = React.useState(data.tom);
-
-	const getCurrentUser = async () => {
-		const parseUser = await getUser()
-		setCurrentUser(JSON.parse(parseUser))
-	}
-
-	React.useEffect(() => {
-
-		getCurrentUser()
-
-	}, [])
 
 	React.useEffect(() => {
 
@@ -370,19 +358,23 @@ const FirstRoute = ({ data, handleShowHeader, navigation }) => {
 						<Ionicons name="musical-notes-outline" size={15} />
 					</TouchableOpacity>
 
-					<TouchableOpacity
-						style={styles.btnUp}
-						onPress={() => {
-							
-							navigation.navigate("LetraEditor", {
-								id: data.id,
-								title: data.nome
-							});
+					{
+						currentUser && currentUser.role && currentUser.role.id === 3 && (
+							<TouchableOpacity
+								style={styles.btnUp}
+								onPress={() => {
+									
+									navigation.navigate("LetraEditor", {
+										id: data.id,
+										title: data.nome
+									});
 
-						}}
-					>
-						<Ionicons name="build-outline" size={15} />
-					</TouchableOpacity>
+								}}
+							>
+								<Ionicons name="build-outline" size={15} />
+							</TouchableOpacity>
+						)
+					}
 
 				</View>
 			</View>
@@ -534,6 +526,16 @@ export default function SongScreen({ route, navigation }) {
 
 	const [data, setData] = React.useState({});
 	const [showHeader, setShowHeader] = React.useState(true);
+	const [currentUser, setCurrentUser] = React.useState(null)
+
+	const getCurrentUser = async () => {
+		const parseUser = await getUser()
+		setCurrentUser(JSON.parse(parseUser))
+	}
+
+	React.useEffect(() => {
+		getCurrentUser()
+	}, [])
 
 	React.useEffect(() => {
 		navigation.setOptions({
@@ -548,20 +550,24 @@ export default function SongScreen({ route, navigation }) {
   }, []);
   
   React.useEffect(() => {
-		navigation.setOptions({
-			headerRight: () =>
-			<TouchableHighlight
-				style={{ marginRight: 15 }}
-				onPress={() => {
-					navigation.navigate('SongEditor', {
-						id: data.id
-					})
-				}}
-			>
-				<Ionicons name="ios-settings-outline" size={25} color="#d44b42" />
-			</TouchableHighlight>,
-		});
-  }, [data]);
+
+		if(currentUser && currentUser.role && currentUser.role.id === 3) {
+			navigation.setOptions({
+				headerRight: () =>
+				<TouchableHighlight
+					style={{ marginRight: 15 }}
+					onPress={() => {
+						navigation.navigate('SongEditor', {
+							id: data.id
+						})
+					}}
+				>
+					<Ionicons name="ios-settings-outline" size={25} color="#d44b42" />
+				</TouchableHighlight>,
+			});
+		}
+		
+  }, [currentUser]);
   
   React.useEffect(() => {
     if(route.params && route.params.reload) {
@@ -600,7 +606,7 @@ export default function SongScreen({ route, navigation }) {
 	]);
 
 	const renderScene = SceneMap({
-		first: () => <FirstRoute data={data} handleShowHeader={handleShowHeader} navigation={navigation} />,
+		first: () => <FirstRoute data={data} handleShowHeader={handleShowHeader} navigation={navigation} currentUser={currentUser} />,
 		second: () => <SecondRoute data={data} />,
 		third: () => <ThirdRoute data={data} />,
 	});

@@ -3,10 +3,11 @@ import { StyleSheet, SafeAreaView, FlatList, View } from 'react-native';
 import { ListItem, Card } from 'react-native-elements';
 import { getToken } from '../services/services/auth';
 import api from '../services/api/axios';
-import _ from 'lodash'
+import _ from 'lodash';
 
 export default function CategoriesScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
+	const [refreshing, setRefreshing] = React.useState(false);
 
 	React.useEffect(() => {
 		navigation.setOptions({
@@ -29,10 +30,10 @@ export default function CategoriesScreen({ navigation, route }) {
 				},
 			});
 			if (response) {
-				const categories = response.data
+				const categories = response.data;
 				categories.map(category => {
-					category.ordem = parseInt(category.ordem, 10)
-				})
+					category.ordem = parseInt(category.ordem, 10);
+				});
 				setData(_.sortBy(response.data, order => order.ordem));
 				setRefreshing(false);
 			}
@@ -45,8 +46,6 @@ export default function CategoriesScreen({ navigation, route }) {
 	React.useEffect(() => {
 		getCollections();
 	}, []);
-
-	const [refreshing, setRefreshing] = React.useState(false);
 
 	const onRefresh = React.useCallback(() => {
 		getCollections();
@@ -71,6 +70,14 @@ export default function CategoriesScreen({ navigation, route }) {
 			</ListItem.Content>
 			<ListItem.Chevron />
 		</ListItem>;
+
+	if (refreshing)
+		return (
+			<View style={styles.notfound}>
+				<Card.Title style={styles.notfoundTitle}>Carregando as Categorias...</Card.Title>
+				<Card.Divider />
+			</View>
+		);
 
 	return (
 		<SafeAreaView style={styles.container}>

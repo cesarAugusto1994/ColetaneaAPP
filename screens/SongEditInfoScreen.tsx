@@ -2,10 +2,47 @@ import * as React from 'react';
 import { StyleSheet, SafeAreaView, TextInput, View, Alert } from 'react-native';
 import api from '../services/api/axios';
 import { getToken } from '../services/services/auth';
-import { Button } from 'react-native-elements';
+import { Button, Card } from 'react-native-elements';
 import { Block, Text } from 'galio-framework';
 import { Picker } from '@react-native-picker/picker';
 import _ from 'lodash';
+
+const tones = [
+	'C',
+	'Cm',
+	'C#',
+	'C#m',
+	'D',
+	'Dm',
+	'D#',
+	'D#m',
+	'Db',
+	'Dbm',
+	'E',
+	'Em',
+	'Eb',
+	'Ebm',
+	'F',
+	'Fm',
+	'F#',
+	'F#m',
+	'G',
+	'Gm',
+	'G#',
+	'G#m',
+	'Gb',
+	'Gbm',
+	'A',
+	'Am',
+	'A#',
+	'A#m',
+	'Ab',
+	'Abm',
+	'B',
+	'Bm',
+	'Bb',
+	'Bbm',
+];
 
 export default function MainScreen({ navigation, route }) {
 	const [data, setData] = React.useState(null);
@@ -97,39 +134,37 @@ export default function MainScreen({ navigation, route }) {
 	React.useEffect(
 		() => {
 			if (data) {
-
 				setName(data.nome);
-        setTom(data.tom);
+				setTom(data.tom);
 
-        if(data.numero) {
-          setNumber(data.numero.toString() || undefined);
-        }
+				if (data.numero) {
+					setNumber(data.numero.toString() || undefined);
+				}
 
-        setSelectedCategory(data.categoria_id.id);
-        
+				setSelectedCategory(data.categoria_id.id);
+
 				if (data.ritmo) {
 					setSelectedRhythm(data.ritmo.id);
-        }
-        
+				}
 			}
 		},
 		[data]
-  );
-  
-  const requestInactivateSong = () => 
-  Alert.alert(
-    "Desativar este título?",
-    "Tem certeza?",
-    [
-      {
-        text: "Cancelar",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel"
-      },
-      { text: "OK", onPress: () => inactivateSong() }
-    ],
-    { cancelable: false }
-  );
+	);
+
+	const requestInactivateSong = () =>
+		Alert.alert(
+			'Desativar este título?',
+			'Tem certeza?',
+			[
+				{
+					text: 'Cancelar',
+					onPress: () => console.log('Cancel Pressed'),
+					style: 'cancel',
+				},
+				{ text: 'OK', onPress: () => inactivateSong() },
+			],
+			{ cancelable: false }
+		);
 
 	const updateSong = async () => {
 		try {
@@ -153,7 +188,7 @@ export default function MainScreen({ navigation, route }) {
 				},
 			});
 			if (response && response.data) {
-				Alert.alert('Sucesso!','Registro atualizado com sucesso!');
+				Alert.alert('Sucesso!', 'Registro atualizado com sucesso!');
 				navigation.navigate('Musica', {
 					id: data.id,
 					title: data.nome,
@@ -166,22 +201,25 @@ export default function MainScreen({ navigation, route }) {
 			Alert.alert('Erro Insperado', 'Ocorreu um na atualização!');
 			console.log('error', error.response);
 		}
-  };
-  
-  const inactivateSong = async () => {
-		try {
+	};
 
+	const inactivateSong = async () => {
+		try {
 			setSaving(true);
-			const response = await api.put(`musicas/${route.params.id}`, {
-        published_at: null,
-        ativo: false
-      }, {
-				headers: {
-					Authorization: await getToken(),
+			const response = await api.put(
+				`musicas/${route.params.id}`,
+				{
+					published_at: null,
+					ativo: false,
 				},
-			});
+				{
+					headers: {
+						Authorization: await getToken(),
+					},
+				}
+			);
 			if (response && response.data) {
-				Alert.alert('Sucesso!','Registro desativado com sucesso!');
+				Alert.alert('Sucesso!', 'Registro desativado com sucesso!');
 				navigation.navigate('Musicas', {
 					id: data.categoria_id.id,
 					title: data.categoria_id.nome,
@@ -196,7 +234,13 @@ export default function MainScreen({ navigation, route }) {
 		}
 	};
 
-	if (!data && !categories.length) return <Text>Carregando Conteúdo...</Text>;
+	if (refreshing)
+		return (
+			<View style={styles.notfound}>
+				<Card.Title style={styles.notfoundTitle}>Carregando Conteúdo...</Card.Title>
+				<Card.Divider />
+			</View>
+		);
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -210,8 +254,8 @@ export default function MainScreen({ navigation, route }) {
 						onChangeText={text => setName(text)}
 					/>
 				</Block>
-				<View style={styles.divider} />
-				<Block>
+				{/* <Block>
+					<View style={styles.divider} />
 					<Text style={styles.linkText}>Tonalidade</Text>
 					<TextInput
 						style={styles.textInput}
@@ -219,7 +263,7 @@ export default function MainScreen({ navigation, route }) {
 						defaultValue={tom || undefined}
 						onChangeText={text => setTom(text)}
 					/>
-				</Block>
+				</Block> */}
 				<View style={styles.divider} />
 				<Block>
 					<Text style={styles.linkText}>Número</Text>
@@ -229,6 +273,19 @@ export default function MainScreen({ navigation, route }) {
 						defaultValue={number}
 						onChangeText={text => setNumber(text)}
 					/>
+				</Block>
+				<View style={styles.divider} />
+				<Block>
+					<Text style={styles.linkText}>Tonalidade</Text>
+					<Picker
+						selectedValue={tom}
+						style={styles.picker}
+						onValueChange={(itemValue, itemIndex) => {
+							setTom(itemValue);
+						}}
+					>
+						{tones.map(tone => <Picker.Item key={tone} label={tone} value={tone} />)}
+					</Picker>
 				</Block>
 				<View style={styles.divider} />
 				<Block>
@@ -267,9 +324,15 @@ export default function MainScreen({ navigation, route }) {
 				<Block>
 					<Button title="Salvar" onPress={updateSong} loading={saving || refreshing} />
 				</Block>
-        <View style={styles.divider} />
+				<View style={styles.divider} />
 				<Block>
-					<Button type="outline" style={{backgroundColor: '#d44b42'}} title="Desativar" onPress={requestInactivateSong} loading={saving || refreshing} />
+					<Button
+						type="outline"
+						style={{ backgroundColor: '#d44b42' }}
+						title="Desativar"
+						onPress={requestInactivateSong}
+						loading={saving || refreshing}
+					/>
 				</Block>
 			</Block>
 		</SafeAreaView>
@@ -287,6 +350,15 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		// justifyContent: 'center',
 		padding: 20,
+	},
+	notfound: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#f5f5f5',
+	},
+	notfoundTitle: {
+		fontSize: 18,
 	},
 	picker: {
 		backgroundColor: '#f5f5f5',

@@ -2,10 +2,47 @@ import * as React from 'react';
 import { StyleSheet, SafeAreaView, TextInput, View, Alert } from 'react-native';
 import api from '../services/api/axios';
 import { getToken } from '../services/services/auth';
-import { Button } from 'react-native-elements';
+import { Button, Card } from 'react-native-elements';
 import { Block, Text } from 'galio-framework';
 import { Picker } from '@react-native-picker/picker';
 import _ from 'lodash';
+
+const tones = [
+	'C',
+	'Cm',
+	'C#',
+	'C#m',
+	'D',
+	'Dm',
+	'D#',
+	'D#m',
+	'Db',
+	'Dbm',
+	'E',
+	'Em',
+	'Eb',
+	'Ebm',
+	'F',
+	'Fm',
+	'F#',
+	'F#m',
+	'G',
+	'Gm',
+	'G#',
+	'G#m',
+	'Gb',
+	'Gbm',
+	'A',
+	'Am',
+	'A#',
+	'A#m',
+	'Ab',
+	'Abm',
+	'B',
+	'Bm',
+	'Bb',
+	'Bbm',
+];
 
 export default function MainScreen({ navigation, route }) {
 	const [data, setData] = React.useState(null);
@@ -97,7 +134,7 @@ export default function MainScreen({ navigation, route }) {
 	const saveSong = async () => {
 		try {
 			if (!name) {
-				alert('Informe o Título');
+				Alert.alert("Título Requerido!", 'Informe o Título');
 				return;
 			}
 
@@ -117,7 +154,7 @@ export default function MainScreen({ navigation, route }) {
 				},
 			});
 			if (response && response.data) {
-				alert('Registro atualizado com sucesso!');
+				Alert.alert("Sucesso!", 'Registro atualizado com sucesso!');
 				navigation.navigate('Musica', {
 					id: response.data.id,
 					title: response.data.nome,
@@ -132,7 +169,13 @@ export default function MainScreen({ navigation, route }) {
 		}
 	};
 
-	if (!data && !categories.length) return <Text>Carregando Conteúdo...</Text>;
+	if (refreshing)
+		return (
+			<View style={styles.notfound}>
+				<Card.Title style={styles.notfoundTitle}>Carregando Conteúdo...</Card.Title>
+				<Card.Divider />
+			</View>
+		);
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -147,7 +190,7 @@ export default function MainScreen({ navigation, route }) {
 					/>
 				</Block>
 				<View style={styles.divider} />
-				<Block>
+				{/* <Block>
 					<Text style={styles.linkText}>Tonalidade</Text>
 					<TextInput
 						style={styles.textInput}
@@ -155,7 +198,7 @@ export default function MainScreen({ navigation, route }) {
 						defaultValue={tom}
 						onChangeText={text => setTom(text)}
 					/>
-				</Block>
+				</Block> */}
 				<View style={styles.divider} />
 				<Block>
 					<Text style={styles.linkText}>Número</Text>
@@ -165,6 +208,19 @@ export default function MainScreen({ navigation, route }) {
 						defaultValue={number}
 						onChangeText={text => setNumber(text)}
 					/>
+				</Block>
+				<View style={styles.divider} />
+				<Block>
+					<Text style={styles.linkText}>Tonalidade</Text>
+					<Picker
+						selectedValue={tom}
+						style={styles.picker}
+						onValueChange={(itemValue, itemIndex) => {
+							setTom(itemValue);
+						}}
+					>
+						{tones.map(tone => <Picker.Item key={tone} label={tone} value={tone} />)}
+					</Picker>
 				</Block>
 				<View style={styles.divider} />
 				<Block>
@@ -219,6 +275,15 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		// justifyContent: 'center',
 		padding: 20,
+	},
+	notfound: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#f5f5f5',
+	},
+	notfoundTitle: {
+		fontSize: 18,
 	},
 	picker: {
 		backgroundColor: '#f5f5f5',
