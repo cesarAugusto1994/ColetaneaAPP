@@ -58,7 +58,6 @@ export default function TabOneScreen({ navigation }) {
 					Authorization: await getToken(),
 				},
 			});
-			console.log(response.data);
 			if (response.data) {
 				setData(response.data);
 				setRefreshing(false);

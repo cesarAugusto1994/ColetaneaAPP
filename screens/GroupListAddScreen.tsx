@@ -72,7 +72,6 @@ export default function GroupScreen({ navigation, route }) {
 					Authorization: await getToken(),
 				},
 			});
-			console.log(response.data);
 			if (response) {
 				setData(response.data);
 				setRefreshing(false);
@@ -98,8 +97,6 @@ export default function GroupScreen({ navigation, route }) {
 						name: i.nome
 					}
 				})
-
-				console.log({prepareddata})
 
 				setItems(prepareddata);
 				setLoading(false);

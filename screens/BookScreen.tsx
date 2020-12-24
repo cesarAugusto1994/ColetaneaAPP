@@ -43,7 +43,6 @@ export default function TabOneScreen({ navigation }) {
     try {
       setLoading(true)
       const response = await api.get("versoes");
-      console.log("response", JSON.stringify(response.data));
       setLoading(false)
       if (response) {
         setData(response.data);

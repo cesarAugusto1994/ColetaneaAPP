@@ -56,7 +56,6 @@ export default function GroupScreen({ navigation, route }) {
 					Authorization: await getToken(),
 				},
 			});
-			console.log(response.data);
 			if (response) {
 				setData(response.data);
 				setRefreshing(false);

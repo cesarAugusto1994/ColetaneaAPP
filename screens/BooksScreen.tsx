@@ -33,7 +33,6 @@ export default function TabOneScreen({ navigation, route }) {
     try {
       setLoading(true)
       const response = await api.get('biblias');
-      console.log("response", JSON.stringify(response.data));
       setLoading(false)
       if (response) {
         setData(response.data);

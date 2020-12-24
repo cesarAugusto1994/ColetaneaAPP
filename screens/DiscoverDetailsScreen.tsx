@@ -63,7 +63,6 @@ export default function TabOneScreen({ navigation, route }) {
 				},
 			});
 			if (response) {
-				console.log(response.data)
 				setData(response.data);
 				setRefreshing(false);
 			}

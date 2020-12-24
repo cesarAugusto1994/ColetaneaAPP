@@ -39,8 +39,6 @@ export default function TabOneScreen({ navigation, route }) {
 
     setData(range)
 
-    console.log({range})
-
   };
 
   React.useEffect(() => {

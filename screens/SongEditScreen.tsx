@@ -1,12 +1,10 @@
 import * as React from "react";
-import { StyleSheet, SafeAreaView, TouchableHighlight } from "react-native";
-import { Text, View } from "../components/Themed";
+import { StyleSheet, SafeAreaView, Alert } from "react-native";
 import api from "../services/api/axios";
 import {getToken} from '../services/services/auth';
 import TextEditor from '../components/SongEditor'
-import { Avatar, Button, Card } from 'react-native-elements';
+import { Button } from 'react-native-elements';
 import { Block } from 'galio-framework';
-import { Ionicons } from '@expo/vector-icons';
 
 let textString: String = ''
 
@@ -30,15 +28,6 @@ export default function MainScreen({ navigation, route }) {
       headerTitleStyle: {
         fontSize: 18
       },
-      // headerRight: () =>
-			// 	<TouchableHighlight
-			// 		style={{ marginRight: 15 }}
-			// 		onPress={() => {
-			// 			updateSong();
-			// 		}}
-			// 	>
-			// 		<Ionicons name="ios-save-outline" size={25} color="#d44b42" />
-			// 	</TouchableHighlight>,
     });
 
   }, [])
@@ -80,7 +69,7 @@ export default function MainScreen({ navigation, route }) {
 				}
       );
 			if (response && response.data) {
-        alert("Registro atualizado com sucesso!")
+        Alert.alert("Sucesso", "Registro atualizado com sucesso!")
         navigation.navigate('Musica', {
           id: data.id,
           title: data.nome,
@@ -90,7 +79,7 @@ export default function MainScreen({ navigation, route }) {
 			}
 		} catch (error) {
       setSaving(false)
-      alert("Ocorreu um na atualização!")
+      Alert.alert("Erro", "Ocorreu um erro na atualização!")
 			console.log('error', error);
 		}
 	};

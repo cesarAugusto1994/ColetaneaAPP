@@ -469,7 +469,7 @@ const ThirdRoute = ({ data }) => {
 
 		try {
 			const { uri } = await downloadResumable.downloadAsync();
-			console.log('Finished downloading to ', uri);
+			// console.log('Finished downloading to ', uri);
 			saveFile(uri)
 		} catch (e) {
 			console.error(e);
@@ -581,7 +581,6 @@ export default function SongScreen({ route, navigation }) {
 				},
 			});
 			if (response) {
-        console.log("Song", response.data)
 				setData(response.data);
 			}
 		} catch (error) {

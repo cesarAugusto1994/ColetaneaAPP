@@ -29,6 +29,10 @@ export default function CategoriesScreen({ navigation, route }) {
 				},
 			});
 			if (response) {
+				const categories = response.data
+				categories.map(category => {
+					category.ordem = parseInt(category.ordem, 10)
+				})
 				setData(_.sortBy(response.data, order => order.ordem));
 				setRefreshing(false);
 			}

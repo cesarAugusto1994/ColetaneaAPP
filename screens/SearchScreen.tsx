@@ -61,7 +61,6 @@ export default function NotFoundScreen({
     try {
       const response = await api.get(`musicas/search/${text}`);
       if (response) {
-        console.log(response.data);
         setData(response.data);
         setLoading(false)
       }
@@ -98,7 +97,7 @@ export default function NotFoundScreen({
     setsearch(text)
   }
 
-  const debouncedSearch = _.debounce(onChangeText, 2000);
+  const debouncedSearch = _.debounce(onChangeText, 800);
 
   return (
     <View style={styles.container}>
