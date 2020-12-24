@@ -82,7 +82,7 @@ export default function CategoriesScreen({ navigation, route }) {
     }}>
       {/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
       <ListItem.Content>
-        <ListItem.Title><Text>{item.numero && `${item.numero} - `}{item.nome}</Text></ListItem.Title>
+        <ListItem.Title><Text>{item.numero && `${item.numero} - `}{item.nome} {item.tom && `(${item.tom})`}</Text></ListItem.Title>
         {/* <ListItem.Subtitle><Text>Tonalidade: {item.tom}</Text></ListItem.Subtitle> */}
       </ListItem.Content>
       <ListItem.Chevron />

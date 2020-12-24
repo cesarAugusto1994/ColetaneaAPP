@@ -21,6 +21,8 @@ import BooksScreen from "../screens/BooksScreen";
 import ChaptersScreen from "../screens/ChaptersScreen";
 import VerseScreen from "../screens/VerseScreen";
 
+import UsersScreen from "../screens/UsersScreen";
+
 import TabDiscoverScreen from "../screens/TabDiscoverScreen";
 import DiscoverDetailsScreen from "../screens/DiscoverDetailsScreen";
 
@@ -310,6 +312,13 @@ function TabConfigsNavigator() {
         component={UserEditScreen}
         options={({ route }) => ({ 
           title: "Editar Perfil",
+        })}
+      />
+      <TabOneStack.Screen
+        name="Users"
+        component={UsersScreen}
+        options={({ route }) => ({ 
+          title: "Usuários",
         })}
       />
     </TabConfigsStack.Navigator>

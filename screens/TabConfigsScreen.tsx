@@ -22,6 +22,7 @@ export default function TabConfigsScreen({navigation}) {
 
 	const getCurrentUser = async () => {
 		const parseUser = await getUser()
+		console.log('setCurrentUser', JSON.parse(parseUser))
 		setCurrentUser(JSON.parse(parseUser))
 	}
 
@@ -47,6 +48,10 @@ export default function TabConfigsScreen({navigation}) {
 
 	const navigateToUserEdition = () => {
 		navigation.navigate('UserEditScreen');
+	};
+
+	const navigateToUsers = () => {
+		navigation.navigate('Users');
 	};
 
 	return (
@@ -78,6 +83,17 @@ export default function TabConfigsScreen({navigation}) {
 						<ListItem.Title>Sobre o APP</ListItem.Title>
 					</ListItem.Content>
 				</ListItem>
+
+				{
+					currentUser && currentUser.role && currentUser.role.id === 3 && (
+	<					ListItem key="4" bottomDivider onPress={navigateToUsers}>
+							<ListItem.Content>
+								<ListItem.Title>Usuários</ListItem.Title>
+							</ListItem.Content>
+						</ListItem>
+					)
+				}
+				
 				<ListItem key="0" bottomDivider onPress={logout}>
 					<ListItem.Content>
 						<ListItem.Title style={{ color: 'red' }}>Sair</ListItem.Title>
