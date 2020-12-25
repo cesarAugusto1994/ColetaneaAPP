@@ -167,6 +167,9 @@ export default function NotFoundScreen({ navigation }) {
 				setSaving(false);
 				if (response.data) {
 					onSignIn(response.data).then(async () => {
+						if(response.data.user) {
+							registerUserLogin(response.data.user.id, response.data.jwt)
+						}
 						navigation.navigate('Root');
 					});
 				} else {
@@ -219,6 +222,22 @@ export default function NotFoundScreen({ navigation }) {
 			// console.log(error.config);
 		}
 	};
+
+	async function registerUserLogin(userID, token) {
+		try {
+		  await api.post(`/logins`, {
+			users_permissions_user: userID
+		  }, {
+			headers: {
+			  'Content-Type': 'application/json',
+			  Authorization: `Bearer ${token}`,
+			},
+		  });
+		} catch (error) {
+		  console.log('error', JSON.stringify(error.response));
+		}
+	  }
+	  
 
 	return (
 		<ImageBackground source={image} style={styles.image}>

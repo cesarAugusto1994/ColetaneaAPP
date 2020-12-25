@@ -7,21 +7,46 @@ import {
 	RefreshControl,
 	ScrollView,
 	TouchableOpacity,
-	ActivityIndicator
+	ActivityIndicator,
 } from 'react-native';
 import { Card as CardRNE, Button } from 'react-native-elements';
 import { View } from '../components/Themed';
-import { getToken } from '../services/services/auth';
+import { getToken, getUser } from '../services/services/auth';
 import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
 import { isSignedIn } from '../services/services/auth';
 const { width } = Dimensions.get('screen');
+import registerForPushNotificationsAsync, { registerUserToken, sendPushNotification } from '../utils/pushNotifications'
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+	  shouldShowAlert: true,
+	  shouldPlaySound: true,
+	  shouldSetBadge: true,
+	}),
+});
 
 export default function TabOneScreen({ navigation }) {
 
 	const [data, setData] = React.useState([]);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [currentUser, setCurrentUser] = React.useState(null)
+
+  const [expoPushToken, setExpoPushToken] = React.useState('');
+  const [notification, setNotification] = React.useState(false);
+  const notificationListener = React.useRef();
+  const responseListener = React.useRef();
+
+	const getCurrentUser = async () => {
+		const parseUser = await getUser()
+		setCurrentUser(JSON.parse(parseUser))
+	}
+
+	React.useEffect(() => {
+		getCurrentUser()
+  }, [])
   
   const checkIsLogged = async () => {
     const response = await isSignedIn()
@@ -30,7 +55,7 @@ export default function TabOneScreen({ navigation }) {
 
   React.useEffect(() => {
 
-    checkIsLogged()
+	checkIsLogged()
 
 	}, [])
 
@@ -84,6 +109,41 @@ export default function TabOneScreen({ navigation }) {
 	React.useEffect(() => {
 		getCollections();
 	}, []);
+
+	React.useEffect(() => {
+
+    if(currentUser) {
+
+      registerForPushNotificationsAsync().then(token => {
+        setExpoPushToken(token)
+        if(currentUser && currentUser.expo_token !== token) {
+          registerUserToken(token)
+          const messageBody = {
+            title: `Minha Coletânea: Olá, seja bem vindo(a) ${currentUser.name && currentUser.name}`,
+            body: 'Este app foi criado com o objetivo de auxíliar intrumentistas e grupo de louvor com o compartilhamento de louvores de forma fácil e acessível.'
+          }
+          sendPushNotification(token, messageBody)
+        }
+      });
+    
+      // This listener is fired whenever a notification is received while the app is foregrounded
+      notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        setNotification(notification);
+      });
+    
+      // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+      responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        // console.log(response);
+      });
+    
+      return () => {
+        Notifications.removeNotificationSubscription(notificationListener);
+        Notifications.removeNotificationSubscription(responseListener);
+      };
+
+    }
+
+	}, [currentUser]);
 
 	const renderArticles = () => {
     
