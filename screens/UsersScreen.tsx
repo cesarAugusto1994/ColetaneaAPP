@@ -56,7 +56,8 @@ export default function CategoriesScreen({ navigation, route }) {
 				item.avatar && <Avatar rounded size="medium" source={{uri: `https://minhacoletanea.com${item.avatar.url}`}} />
 			}
 			<ListItem.Content>
-				<ListItem.Title>{item.username}</ListItem.Title>
+				<ListItem.Title>{item.name}</ListItem.Title>
+				<ListItem.Subtitle>{item.username}</ListItem.Subtitle>
 				<ListItem.Subtitle>{item.email}</ListItem.Subtitle>
 			</ListItem.Content>
 		</ListItem>

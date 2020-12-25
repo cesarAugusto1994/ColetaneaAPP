@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View, TextInput, Platform } from 'react-native';
-import { Avatar, Button, Card } from 'react-native-elements';
-import { Block, theme, Text } from 'galio-framework';
+import { StyleSheet, Alert, View, TextInput, Platform } from 'react-native';
+import { Avatar, Button } from 'react-native-elements';
+import { Block, Text } from 'galio-framework';
 import { getUser, getToken, setUser } from '../services/services/auth';
 import * as ImagePicker from 'expo-image-picker';
 import api from '../services/api/axios';
@@ -9,12 +9,14 @@ import FormData from 'form-data';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function UserEditScreen({ navigation }) {
+
 	const [currentUser, setCurrentUser] = React.useState(null);
 
 	const [saving, setSaving] = React.useState(false);
 	const [name, setName] = React.useState(null);
 
 	const [image, setImage] = React.useState(null);
+	const [updateImage, setUpdateImage] = React.useState(false);
 	const [image64, setImage64] = React.useState(null);
 
 	React.useEffect(() => {
@@ -44,7 +46,7 @@ export default function UserEditScreen({ navigation }) {
 	React.useEffect(
 		() => {
 			if (currentUser) {
-				setName(currentUser.username);
+				setName(currentUser.name);
 				if(currentUser.avatar) {
 					setImage(`https://minhacoletanea.com${currentUser.avatar.url}`);
 				}
@@ -71,6 +73,7 @@ export default function UserEditScreen({ navigation }) {
 			const manipulatedImage = await transforImage(result.uri);
 			setImage(manipulatedImage.uri);
 			setImage64(manipulatedImage);
+			setUpdateImage(true)
 		}
 	};
 
@@ -78,6 +81,11 @@ export default function UserEditScreen({ navigation }) {
 		try {
 
 			setSaving(true)
+
+			if(!updateImage) {
+				updateUser()
+				return
+			}
 
 			const form = new FormData();
 
@@ -96,11 +104,10 @@ export default function UserEditScreen({ navigation }) {
 				},
 			});
 			if (response && response.data) {
-				alert('Sucesso');
 				currentUser.avatar =
 					response.data && Array.isArray(response.data) ? response.data[0].id : response.data.id;
-				currentUser.username = name;
-				updateUser(currentUser);
+				currentUser.name = name;
+				updateUser();
 				return
 			} 
 			setSaving(false)
@@ -110,13 +117,13 @@ export default function UserEditScreen({ navigation }) {
 		}
 	};
 
-	const updateUser = async user => {
+	const updateUser = async () => {
 		try {
 			const response = await api.put(
-				`users/${user.id}`,
+				`users/${currentUser.id}`,
 				{
-					username: name,
-					avatar: user.avatar,
+					name,
+					avatar: currentUser.avatar,
 				},
 				{
 					headers: {
@@ -125,8 +132,10 @@ export default function UserEditScreen({ navigation }) {
 				}
 			);
 			if (response) {
+				Alert.alert('Sucesso', 'Informações salvas com sucesso.');
 				setUser(response.data);
 				setSaving(false)
+				navigation.goBack()
 			}
 		} catch (error) {
 			setSaving(false)
@@ -162,8 +171,30 @@ export default function UserEditScreen({ navigation }) {
 						<TextInput
 							style={styles.textInput}
 							placeholder="Editar seu Nome"
-							defaultValue={currentUser.username}
+							defaultValue={currentUser.name}
 							onChangeText={text => setName(text)}
+						/>
+					</Block>
+
+					<View style={styles.divider} />
+
+					<Block>
+						<Text style={styles.linkText}>Usuário</Text>
+						<TextInput
+							style={styles.textInput}
+							defaultValue={currentUser.username}
+							editable={false}
+						/>
+					</Block>
+
+					<View style={styles.divider} />
+
+					<Block>
+						<Text style={styles.linkText}>E-mail</Text>
+						<TextInput
+							style={styles.textInput}
+							defaultValue={currentUser.email}
+							editable={false}
 						/>
 					</Block>
 
@@ -206,7 +237,7 @@ const styles = StyleSheet.create({
 	},
 	linkText: {
 		fontSize: 15,
-		color: '#333',
+		color: '#595858',
 		alignContent: 'center',
 	},
 });

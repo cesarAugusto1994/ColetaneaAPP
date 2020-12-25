@@ -22,7 +22,6 @@ export default function TabConfigsScreen({navigation}) {
 
 	const getCurrentUser = async () => {
 		const parseUser = await getUser()
-		console.log('setCurrentUser', JSON.parse(parseUser))
 		setCurrentUser(JSON.parse(parseUser))
 	}
 
@@ -64,7 +63,8 @@ export default function TabConfigsScreen({navigation}) {
 								currentUser.avatar && <Avatar rounded size="large" source={{uri: `https://minhacoletanea.com${currentUser.avatar.url}`}} />
 							}
 							<ListItem.Content>
-								<ListItem.Title>{currentUser.username}</ListItem.Title>
+								<ListItem.Title>{currentUser.name}</ListItem.Title>
+								<ListItem.Subtitle>{currentUser.username}</ListItem.Subtitle>
 								<ListItem.Subtitle>{currentUser.email}</ListItem.Subtitle>
 							</ListItem.Content>
 								<Button size="small" type="outline" title="Editar" onPress={navigateToUserEdition} style={{alignSelf: 'flex-end', right: 0}} />
