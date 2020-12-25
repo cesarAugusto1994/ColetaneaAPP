@@ -348,14 +348,19 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						<Ionicons name="expand-outline" size={15} />
 					</TouchableOpacity> */}
 
-					<TouchableOpacity
-						style={styles.btnUp}
-						onPress={() => {
-							handleOpenBootmSheet();
-						}}
-					>
-						<Ionicons name="musical-notes-outline" size={15} />
-					</TouchableOpacity>
+					{
+						data.letra && (
+		<					TouchableOpacity
+								style={styles.btnUp}
+								onPress={() => {
+									handleOpenBootmSheet();
+								}}
+							>
+								<Ionicons name="musical-notes-outline" size={15} />
+							</TouchableOpacity>
+						)
+					}
+					
 
 					{currentUser &&
 						currentUser.role &&
@@ -619,7 +624,7 @@ export default function SongScreen({ route, navigation }) {
 
 	React.useEffect(
 		() => {
-			if (currentUser && currentUser.role && currentUser.role.id === 3) {
+			if (currentUser && currentUser.role && currentUser.role.id === 3 && data) {
 				navigation.setOptions({
 					headerRight: () =>
 						<TouchableHighlight
@@ -635,7 +640,7 @@ export default function SongScreen({ route, navigation }) {
 				});
 			}
 		},
-		[currentUser]
+		[currentUser, data]
 	);
 
 	React.useEffect(
