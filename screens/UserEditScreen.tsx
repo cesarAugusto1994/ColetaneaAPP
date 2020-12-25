@@ -24,8 +24,6 @@ export default function UserEditScreen({ navigation }) {
 				if (status !== 'granted') {
 					alert('Sorry, we need camera roll permissions to make this work!');
 				}
-				// await ImagePicker.requestCameraPermissionsAsync()
-				// await ImagePicker.getCameraPermissionsAsync()
 			}
 		})();
 	}, []);
@@ -144,7 +142,7 @@ export default function UserEditScreen({ navigation }) {
 						<Avatar
 							rounded
 							size="xlarge"
-							containerStyle={{ backgroundColor: '#f5f5f5' }}
+							containerStyle={{ backgroundColor: '#f5f5f5', marginBottom: 10 }}
 							activeOpacity={0.7}
 							imageProps={{ resizeMode: 'cover' }}
 							onPress={pickImage}
@@ -154,6 +152,7 @@ export default function UserEditScreen({ navigation }) {
 									'https://cdn.pixabay.com/photo/2018/10/30/16/06/water-lily-3784022__340.jpg',
 							}}
 						/>
+						<Button size="small" type="outline" title="Editar Imagem" onPress={pickImage} style={{alignSelf: 'flex-end', right: 0}} />
 					</Block>
 
 					<View style={styles.divider} />
@@ -194,7 +193,7 @@ const styles = StyleSheet.create({
 		padding: 5,
 	},
 	divider: {
-		marginVertical: 15,
+		marginVertical: 10,
 	},
 	title: {
 		fontSize: 20,

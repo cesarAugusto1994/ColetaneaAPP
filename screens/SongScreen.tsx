@@ -20,13 +20,14 @@ import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 
+import * as DocumentPicker from 'expo-document-picker';
+
 const _ = require('lodash');
 
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 const colors = ['#fcba03', '#d44b42', '#35d45d', '#3381d4'];
 
 const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
-
 	const [spanFontSize, setspanFontSize] = React.useState(15);
 	const [favorite, setFavorite] = React.useState(false);
 	const [showChord, setShowChord] = React.useState(true);
@@ -42,14 +43,15 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 	const [originalTom] = React.useState(data.tom);
 	const [tom, setTom] = React.useState(data.tom);
 
-	React.useEffect(() => {
-
-		if(currentUser) {
-			const hasSong = _.findIndex(currentUser.musicas, { id: data.id })
-			setFavorite(hasSong > -1)
-		}
-
-	}, [currentUser])
+	React.useEffect(
+		() => {
+			if (currentUser) {
+				const hasSong = _.findIndex(currentUser.musicas, { id: data.id });
+				setFavorite(hasSong > -1);
+			}
+		},
+		[currentUser]
+	);
 
 	const getNextTone = () => {
 		const currentIndex = tones.indexOf(tom);
@@ -83,7 +85,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 			return;
 		}
 		setTom(tones[nextIndex]);
-		await handleGetVersion(version, showChord, tones[nextIndex])
+		await handleGetVersion(version, showChord, tones[nextIndex]);
 	};
 
 	const arrayReverseWalk = async () => {
@@ -95,7 +97,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 			return;
 		}
 		setTom(tones[nextIndex]);
-		await handleGetVersion(version, showChord, tones[nextIndex])
+		await handleGetVersion(version, showChord, tones[nextIndex]);
 	};
 
 	React.useEffect(() => {
@@ -113,28 +115,29 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 	};
 
 	const handleFavorite = async () => {
-
 		setFavorite(!favorite);
 
-		if(currentUser.musicas) {
-			const hasMusica = _.findIndex(currentUser.musicas, { id: data.id })
-			if(hasMusica > -1) {
-				_.remove(currentUser.musicas, { id: data.id })
+		if (currentUser.musicas) {
+			const hasMusica = _.findIndex(currentUser.musicas, { id: data.id });
+			if (hasMusica > -1) {
+				_.remove(currentUser.musicas, { id: data.id });
 			} else {
-				currentUser.musicas.push(data)
+				currentUser.musicas.push(data);
 			}
 		}
 
 		try {
-			const response = await api.put(`users/${currentUser.id}`, 
-			{
-				musicas: currentUser.musicas
-			},
-			{
-				headers: {
-					Authorization: await getToken(),
+			const response = await api.put(
+				`users/${currentUser.id}`,
+				{
+					musicas: currentUser.musicas,
 				},
-			});
+				{
+					headers: {
+						Authorization: await getToken(),
+					},
+				}
+			);
 			if (response) {
 				// setData(response.data);
 			}
@@ -142,8 +145,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 			console.log('error', error.response);
 		}
 
-		setUser(currentUser)
-
+		setUser(currentUser);
 	};
 
 	const handleShowChord = async () => {
@@ -152,7 +154,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 	};
 
 	const handleDarkMode = () => {
-		setDarkMode(!darkMode)
+		setDarkMode(!darkMode);
 	};
 
 	const handleChordColor = () => {
@@ -175,7 +177,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 	};
 
 	let styleSheetWebView = {
-		
 		i: { color: chordColor, fontWeight: 'bold', fontSize: spanFontSize },
 		span: {
 			fontSize: spanFontSize,
@@ -191,7 +192,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 	};
 
 	const handleGetVersion = async (currentVersion = 'normal', showAllChords = true, tom = originalTom) => {
-
 		if (!data.letra) {
 			setSong(`<p>Letra não encontrada.</p>`);
 			return;
@@ -245,8 +245,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 					{data.ritmo &&
 						<Text style={[styles.descriptionsSong]}>
 							Ritmo: {data.ritmo.nome}
-						</Text>
-					}
+						</Text>}
 				</View>
 				<View
 					style={{
@@ -264,7 +263,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 								<Text style={[styles.descriptionsSong]}>
 									Versão: {version} (Trocar)
 								</Text>
-						</TouchableHighlight>}
+							</TouchableHighlight>}
 				</View>
 			</View>
 
@@ -358,24 +357,20 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						<Ionicons name="musical-notes-outline" size={15} />
 					</TouchableOpacity>
 
-					{
-						currentUser && currentUser.role && currentUser.role.id === 3 && (
-							<TouchableOpacity
-								style={styles.btnUp}
-								onPress={() => {
-									
-									navigation.navigate("LetraEditor", {
-										id: data.id,
-										title: data.nome
-									});
-
-								}}
-							>
-								<Ionicons name="build-outline" size={15} />
-							</TouchableOpacity>
-						)
-					}
-
+					{currentUser &&
+						currentUser.role &&
+						currentUser.role.id === 3 &&
+						<TouchableOpacity
+							style={styles.btnUp}
+							onPress={() => {
+								navigation.navigate('LetraEditor', {
+									id: data.id,
+									title: data.nome,
+								});
+							}}
+						>
+							<Ionicons name="build-outline" size={15} />
+						</TouchableOpacity>}
 				</View>
 			</View>
 
@@ -395,7 +390,6 @@ const SecondRoute = ({ data }) => {
 	return (
 		<ScrollView scrollEnabled>
 			<View style={[styles.scene, { backgroundColor: '#FFF', padding: 20 }]}>
-
 				<Text style={styles.descriptionsSong}>
 					Autor: {data.autor ? data.autor.nome : 'Não Informado'}
 				</Text>
@@ -423,7 +417,8 @@ const SecondRoute = ({ data }) => {
 						Coleção: {data.categoria_id.colecao_id.nome}
 					</Text>} */}
 				<Text style={styles.descriptionsSong}>
-					Atualizado Em: {data.created_at ? moment(data.created_at).format('DD/MM/YY hh:mm:ss') : 'Indefinido'}
+					Atualizado Em:{' '}
+					{data.created_at ? moment(data.created_at).format('DD/MM/YY hh:mm:ss') : 'Indefinido'}
 				</Text>
 			</View>
 		</ScrollView>
@@ -433,6 +428,81 @@ const SecondRoute = ({ data }) => {
 const ThirdRoute = ({ data }) => {
 
 	const [downloadProgress, setDownloadProgress] = React.useState(0);
+	const [saving, setSaving] = React.useState(false);
+
+	const pickDocument = async () => {
+		let result = await DocumentPicker.getDocumentAsync({
+			type: 'audio/*'
+		});
+		console.log({ result });
+		alert(result.uri);
+		uploadFile(result);
+	};
+
+	const uploadFile = async (file) => {
+		try {
+			setSaving(true);
+
+			const form = new FormData();
+
+			// const file = await FileSystem.getInfoAsync(fileURI);
+
+			// const attechments = data.musica_anexos || []
+
+			form.append('files', {
+				uri:  file.uri,
+				name: file.name,
+				type: 'audio/mp3'
+			});
+
+			const response = await api.post(`upload`, form, {
+				headers: {
+					Authorization: await getToken(),
+					// Accept: 'application/json',
+					'Content-Type': 'multipart/form-data',
+					// mimeType: "multipart/form-data"
+				},
+			});
+			console.log({response})
+			if (response && response.data) {
+				alert('Sucesso');
+			}
+			setSaving(false)
+		} catch (error) {
+			setSaving(false);
+			console.log('error', error.config);
+		}
+	};
+
+	const uploadSong = async () => {
+		try {
+			setSaving(true);
+
+			const attechments = data.musica_anexos || [];
+
+			const response = await api.put(
+				`musicas/${data.id}`,
+				{
+					musica_anexos: [],
+				},
+				{
+					headers: {
+						Authorization: await getToken(),
+						// Accept: 'application/json',
+						'Content-Type': 'multipart/form-data',
+						// mimeType: "multipart/form-data"
+					},
+				}
+			);
+			if (response && response.data) {
+				alert('Sucesso');
+			}
+			setSaving(false);
+		} catch (error) {
+			setSaving(false);
+			console.log('error', error.response);
+		}
+	};
 
 	const callback = downloadProgress => {
 		const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
@@ -441,17 +511,16 @@ const ThirdRoute = ({ data }) => {
 
 	const saveFile = async (fileUri: string) => {
 		const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-		if (status === "granted") {
-			const asset = await MediaLibrary.createAssetAsync(fileUri)
-			const dewnloded = await MediaLibrary.createAlbumAsync("Minha Coletânea", asset, false)
-			if(dewnloded) {
-				alert("Arquivo baixado com sucesso na Pasta Minha Coletânea")
+		if (status === 'granted') {
+			const asset = await MediaLibrary.createAssetAsync(fileUri);
+			const dewnloded = await MediaLibrary.createAlbumAsync('Minha Coletânea', asset, false);
+			if (dewnloded) {
+				alert('Arquivo baixado com sucesso na Pasta Minha Coletânea');
 			}
 		}
-	}
+	};
 
-	const downloadFile = async (item) => {
-
+	const downloadFile = async item => {
 		const downloadResumable = FileSystem.createDownloadResumable(
 			`https://minhacoletanea.com${item.url}`,
 			FileSystem.documentDirectory + item.name,
@@ -462,12 +531,11 @@ const ThirdRoute = ({ data }) => {
 		try {
 			const { uri } = await downloadResumable.downloadAsync();
 			// console.log('Finished downloading to ', uri);
-			saveFile(uri)
+			saveFile(uri);
 		} catch (e) {
 			console.error(e);
 		}
-
-	}
+	};
 
 	const keyExtractor = (item, index) => index.toString();
 
@@ -491,6 +559,7 @@ const ThirdRoute = ({ data }) => {
 					? <FlatList data={data.anexos} renderItem={renderItem} keyExtractor={keyExtractor} />
 					: <View style={styles.notfound}>
 							<Card.Title style={styles.notfoundTitle}>NENHUM ARQUIVO ENCONTRADO.</Card.Title>
+							{/* <Button title="Select Document" onPress={pickDocument} /> */}
 							<Card.Divider />
 						</View>}
 
@@ -523,19 +592,18 @@ const ThirdRoute = ({ data }) => {
 const initialLayout = { width: Dimensions.get('window').width };
 
 export default function SongScreen({ route, navigation }) {
-
 	const [data, setData] = React.useState({});
 	const [showHeader, setShowHeader] = React.useState(true);
-	const [currentUser, setCurrentUser] = React.useState(null)
+	const [currentUser, setCurrentUser] = React.useState(null);
 
 	const getCurrentUser = async () => {
-		const parseUser = await getUser()
-		setCurrentUser(JSON.parse(parseUser))
-	}
+		const parseUser = await getUser();
+		setCurrentUser(JSON.parse(parseUser));
+	};
 
 	React.useEffect(() => {
-		getCurrentUser()
-	}, [])
+		getCurrentUser();
+	}, []);
 
 	React.useEffect(() => {
 		navigation.setOptions({
@@ -545,35 +613,39 @@ export default function SongScreen({ route, navigation }) {
 			},
 			headerTitleStyle: {
 				fontSize: 18,
-			}
+			},
 		});
-  }, []);
-  
-  React.useEffect(() => {
+	}, []);
 
-		if(currentUser && currentUser.role && currentUser.role.id === 3) {
-			navigation.setOptions({
-				headerRight: () =>
-				<TouchableHighlight
-					style={{ marginRight: 15 }}
-					onPress={() => {
-						navigation.navigate('SongEditor', {
-							id: data.id
-						})
-					}}
-				>
-					<Ionicons name="ios-settings-outline" size={25} color="#d44b42" />
-				</TouchableHighlight>,
-			});
-		}
-		
-  }, [currentUser]);
-  
-  React.useEffect(() => {
-    if(route.params && route.params.reload) {
-      getSong()
-    }
-  }, [route.params]);
+	React.useEffect(
+		() => {
+			if (currentUser && currentUser.role && currentUser.role.id === 3) {
+				navigation.setOptions({
+					headerRight: () =>
+						<TouchableHighlight
+							style={{ marginRight: 15 }}
+							onPress={() => {
+								navigation.navigate('SongEditor', {
+									id: data.id,
+								});
+							}}
+						>
+							<Ionicons name="ios-settings-outline" size={25} color="#d44b42" />
+						</TouchableHighlight>,
+				});
+			}
+		},
+		[currentUser]
+	);
+
+	React.useEffect(
+		() => {
+			if (route.params && route.params.reload) {
+				getSong();
+			}
+		},
+		[route.params]
+	);
 
 	const handleShowHeader = () => {
 		setShowHeader(!showHeader);
@@ -592,11 +664,11 @@ export default function SongScreen({ route, navigation }) {
 		} catch (error) {
 			console.log('error', JSON.stringify(error));
 		}
-  };
-  
-  React.useEffect(() => {
+	};
+
+	React.useEffect(() => {
 		getSong();
-  }, []);
+	}, []);
 
 	const [index, setIndex] = React.useState(0);
 	const [routes] = React.useState([
@@ -606,7 +678,13 @@ export default function SongScreen({ route, navigation }) {
 	]);
 
 	const renderScene = SceneMap({
-		first: () => <FirstRoute data={data} handleShowHeader={handleShowHeader} navigation={navigation} currentUser={currentUser} />,
+		first: () =>
+			<FirstRoute
+				data={data}
+				handleShowHeader={handleShowHeader}
+				navigation={navigation}
+				currentUser={currentUser}
+			/>,
 		second: () => <SecondRoute data={data} />,
 		third: () => <ThirdRoute data={data} />,
 	});
@@ -638,7 +716,7 @@ const styles = StyleSheet.create({
 	},
 	WebViewContainer: {
 		marginTop: Platform.OS == 'android' ? 20 : 0,
-		width: '100%'
+		width: '100%',
 	},
 	navbar: { flexDirection: 'row', width: '100%', padding: 10 },
 	title: {

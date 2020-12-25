@@ -4,11 +4,21 @@ import { Card, ListItem } from 'react-native-elements';
 import { Text, View } from '../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../services/api/axios';
-import { getToken } from '../services/services/auth';
+import { getToken, getUser } from '../services/services/auth';
 
 export default function CategoriesScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 	const [refreshing, setRefreshing] = React.useState(false);
+	const [currentUser, setCurrentUser] = React.useState(null)
+
+	const getCurrentUser = async () => {
+		const parseUser = await getUser()
+		setCurrentUser(JSON.parse(parseUser))
+	}
+
+	React.useEffect(() => {
+		getCurrentUser()
+	}, [])
 
 	React.useEffect(() => {
 		navigation.setOptions({
@@ -19,19 +29,28 @@ export default function CategoriesScreen({ navigation, route }) {
 			headerTitleStyle: {
 				fontSize: 18,
 			},
-			headerRight: () =>
+		});
+	}, []);
+
+	React.useEffect(() => {
+
+		if(currentUser && currentUser.role && currentUser.role.id === 3) { 
+			navigation.setOptions({
+				headerRight: () =>
 				<TouchableHighlight
 					style={{ marginRight: 15 }}
 					onPress={() => {
 						navigation.navigate('SongAdd', {
-							id: route.params.id,
-						});
+							id: route.params.id
+						})
 					}}
 				>
 					<Ionicons name="ios-add-outline" size={25} color="#d44b42" />
 				</TouchableHighlight>,
-		});
-	}, []);
+			});
+		}
+		
+  }, [currentUser]);
 
 	const onRefresh = React.useCallback(() => {
 		getSongs();

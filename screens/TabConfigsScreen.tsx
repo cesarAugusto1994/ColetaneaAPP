@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { Avatar, Image, ListItem } from 'react-native-elements';
+import { Avatar, Button, Image, ListItem } from 'react-native-elements';
 import { Text, View } from '../components/Themed';
 import { onSignOut, getUser } from '../services/services/auth';
 
@@ -67,6 +67,7 @@ export default function TabConfigsScreen({navigation}) {
 								<ListItem.Title>{currentUser.username}</ListItem.Title>
 								<ListItem.Subtitle>{currentUser.email}</ListItem.Subtitle>
 							</ListItem.Content>
+								<Button size="small" type="outline" title="Editar" onPress={navigateToUserEdition} style={{alignSelf: 'flex-end', right: 0}} />
 						</ListItem>
 					</View>
 				)
