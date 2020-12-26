@@ -67,6 +67,7 @@ export default function CategoriesScreen({ navigation, route }) {
 				<ListItem.Title>
 					{item.nome}
 				</ListItem.Title>
+					{item.number_start && <ListItem.Subtitle>{`(${item.number_start} - ${item.number_end})`}</ListItem.Subtitle>}
 			</ListItem.Content>
 			<ListItem.Chevron />
 		</ListItem>;
