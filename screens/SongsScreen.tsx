@@ -4,6 +4,7 @@ import { Card, ListItem } from 'react-native-elements';
 import { Text, View } from '../components/Themed';
 import { Ionicons } from '@expo/vector-icons';
 import api from '../services/api/axios';
+import _ from 'lodash';
 import { getToken, getUser } from '../services/services/auth';
 
 export default function CategoriesScreen({ navigation, route }) {
@@ -56,9 +57,9 @@ export default function CategoriesScreen({ navigation, route }) {
 		getSongs();
 	}, []);
 
-	React.useEffect(() => {
-		navigation.addListener('focus', () => getSongs());
-	}, []);
+	// React.useEffect(() => {
+	// 	navigation.addListener('focus', () => getSongs());
+	// }, []);
 
 	const getSongs = async () => {
 		setRefreshing(true);
@@ -69,12 +70,21 @@ export default function CategoriesScreen({ navigation, route }) {
 				},
 			});
 			if (response) {
-				setData(response.data);
+
+				const songs = response.data;
+				songs.map(song => {
+					song.numero = parseInt(song.numero, 10);
+					delete song.anexos
+					delete song.videos
+				});
+				const sort = _.sortBy(songs, 'numero')
+				setData(sort);
+
 				setRefreshing(false);
 			}
 		} catch (error) {
 			setRefreshing(false);
-			console.log('error', JSON.stringify(error));
+			console.log('error', error);
 		}
 	};
 
@@ -117,6 +127,9 @@ export default function CategoriesScreen({ navigation, route }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
+			<View style={styles.result}>
+				<Text style={styles.resultText}>{data.length} Registro(s) Encontrado(s)</Text>
+			</View>
 			{data.length
 				? <FlatList data={data} renderItem={renderItem} scrollEnabled keyExtractor={keyExtractor} />
 				: <View style={styles.notfound}>
@@ -140,6 +153,14 @@ const styles = StyleSheet.create({
 	},
 	notfoundTitle: {
 		fontSize: 18,
+	},
+	result: {
+		alignItems: 'center',
+		paddingVertical: 5,
+		backgroundColor: '#f5f5f5'
+	},
+	resultText: {
+		fontSize: 10
 	},
 	scrollView: {
 		flex: 1,
