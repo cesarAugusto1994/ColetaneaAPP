@@ -73,7 +73,9 @@ export default function CategoriesScreen({ navigation, route }) {
 
 				const songs = response.data;
 				songs.map(song => {
-					song.numero = parseInt(song.numero, 10);
+					if(song.numero) {
+						song.numero = parseInt(song.numero, 10);
+					}
 					delete song.anexos
 					delete song.videos
 				});
