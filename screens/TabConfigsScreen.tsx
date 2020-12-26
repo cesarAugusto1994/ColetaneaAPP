@@ -53,6 +53,10 @@ export default function TabConfigsScreen({navigation}) {
 		navigation.navigate('Users');
 	};
 
+	const navigateToLogins = () => {
+		navigation.navigate('Logins');
+	};
+
 	return (
 		<View style={styles.container} onTouchStart={getCurrentUser}>
 			{
@@ -90,6 +94,16 @@ export default function TabConfigsScreen({navigation}) {
 						<ListItem key="4" bottomDivider onPress={navigateToUsers}>
 							<ListItem.Content>
 								<ListItem.Title>Usuários</ListItem.Title>
+							</ListItem.Content>
+						</ListItem>
+					)
+				}
+
+				{
+					currentUser && currentUser.role && currentUser.role.id === 3 && (
+						<ListItem key="4" bottomDivider onPress={navigateToLogins}>
+							<ListItem.Content>
+								<ListItem.Title>Logins</ListItem.Title>
 							</ListItem.Content>
 						</ListItem>
 					)

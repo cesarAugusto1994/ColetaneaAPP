@@ -22,6 +22,7 @@ import ChaptersScreen from "../screens/ChaptersScreen";
 import VerseScreen from "../screens/VerseScreen";
 
 import UsersScreen from "../screens/UsersScreen";
+import LoginsScreen from "../screens/LoginsScreen";
 
 import TabDiscoverScreen from "../screens/TabDiscoverScreen";
 import DiscoverDetailsScreen from "../screens/DiscoverDetailsScreen";
@@ -319,6 +320,13 @@ function TabConfigsNavigator() {
         component={UsersScreen}
         options={({ route }) => ({ 
           title: "Usuários",
+        })}
+      />
+      <TabOneStack.Screen
+        name="Logins"
+        component={LoginsScreen}
+        options={({ route }) => ({ 
+          title: "Logins",
         })}
       />
     </TabConfigsStack.Navigator>
