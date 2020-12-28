@@ -781,6 +781,7 @@ const styles = StyleSheet.create({
 	},
 	descriptionsSong: {
 		fontSize: 14,
+		color: '#333'
 	},
 	separator: {
 		marginVertical: 30,

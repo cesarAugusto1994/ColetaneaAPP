@@ -57,10 +57,6 @@ export default function CategoriesScreen({ navigation, route }) {
 		getSongs();
 	}, []);
 
-	// React.useEffect(() => {
-	// 	navigation.addListener('focus', () => getSongs());
-	// }, []);
-
 	const getSongs = async () => {
 		setRefreshing(true);
 		try {
@@ -109,7 +105,7 @@ export default function CategoriesScreen({ navigation, route }) {
 			{/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
 			<ListItem.Content>
 				<ListItem.Title>
-					<Text>
+					<Text style={{color: '#333'}}>
 						{item.numero && `${item.numero} - `}
 						{item.nome} {item.tom && `(${item.tom})`}
 					</Text>
@@ -162,7 +158,8 @@ const styles = StyleSheet.create({
 		backgroundColor: '#f5f5f5'
 	},
 	resultText: {
-		fontSize: 10
+		fontSize: 10,
+		color: '#333'
 	},
 	scrollView: {
 		flex: 1,

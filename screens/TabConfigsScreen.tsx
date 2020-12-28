@@ -116,9 +116,9 @@ export default function TabConfigsScreen({navigation}) {
 				</ListItem>
 			</View>
 
-			<View style={{ width: '100%', marginHorizontal: 20, position: 'absolute', bottom: 20, alignItems: 'center' }}>
+			<View style={{ width: '100%', marginHorizontal: 20, position: 'absolute', bottom: 20, alignItems: 'center', backgroundColor: '#f5f5f5' }}>
 				{/* <Text>Desenvolvido por César Augusto.</Text> */}
-				<Text>Versão: 1.0.25</Text>
+				<Text style={{color: '#333'}}>Versão: 1.0.25</Text>
 			</View>
 
 
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		alignItems: 'center',
+		backgroundColor: '#f5f5f5'
 		// justifyContent: 'center',
 	},
 	title: {
