@@ -236,8 +236,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 				height: 200,
 			}}
 		>
-			{allChords.length
-				? <ChordTab
+			<ChordTab
 						onPressClose={() => {
 							selectChord(null);
 							handleOpenBootmSheet();
@@ -246,7 +245,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						allChords={allChords}
 						closeLabel="Fechar"
 					/>
-				: <Text>Nada</Text>}
 		</View>;
 
 	return (
@@ -324,7 +322,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						right: 0,
 						height: 450,
 						marginRight: -40,
-						// alignItems: 'center',
 						top: 0,
 						width: 25,
 						backgroundColor: darkMode ? '#000000' : '#FFFFFF',
@@ -450,10 +447,6 @@ const SecondRoute = ({ data }) => {
 					<Text style={styles.descriptionsSong}>
 						Categoria: {data.categoria_id.nome}
 					</Text>}
-				{/* {data.categoria_id && data.categoria_id.colecao_id &&
-					<Text style={styles.descriptionsSong}>
-						Coleção: {data.categoria_id.colecao_id.nome}
-					</Text>} */}
 				<Text style={styles.descriptionsSong}>
 					Atualizado Em:{' '}
 					{data.created_at ? moment(data.created_at).format('DD/MM/YY hh:mm:ss') : 'Indefinido'}
