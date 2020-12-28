@@ -57,6 +57,10 @@ export default function TabConfigsScreen({navigation}) {
 		navigation.navigate('Logins');
 	};
 
+	const navigateToError = () => {
+		navigation.navigate('Error');
+	};
+
 	return (
 		<View style={styles.container} onTouchStart={getCurrentUser}>
 			{
@@ -86,6 +90,12 @@ export default function TabConfigsScreen({navigation}) {
 				<ListItem key="3" bottomDivider onPress={navigateToAbout}>
 					<ListItem.Content>
 						<ListItem.Title>Sobre o APP</ListItem.Title>
+					</ListItem.Content>
+				</ListItem>
+
+				<ListItem key="6" bottomDivider onPress={navigateToError}>
+					<ListItem.Content>
+						<ListItem.Title style={{ color: 'red' }}>Sugerir ou Reportar Erro</ListItem.Title>
 					</ListItem.Content>
 				</ListItem>
 

@@ -36,6 +36,8 @@ import GroupListAddScreen from "../screens/GroupListAddScreen";
 import AboutScreen from "../screens/AboutScreen";
 import UserEditScreen from "../screens/UserEditScreen";
 
+import ErrorScreen from '../screens/ErrorScreen'
+
 import {
   BottomTabParamList,
   TabOneParamList,
@@ -320,6 +322,13 @@ function TabConfigsNavigator() {
         component={UsersScreen}
         options={({ route }) => ({ 
           title: "Usuários",
+        })}
+      />
+      <TabOneStack.Screen
+        name="Error"
+        component={ErrorScreen}
+        options={({ route }) => ({ 
+          title: "Sugerir ou Reportar Erro",
         })}
       />
       <TabOneStack.Screen

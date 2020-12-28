@@ -7,6 +7,7 @@ import { Block, theme } from 'galio-framework';
 import { Button, Input, Icon } from '../components/galio';
 import { argonTheme } from '../components/constants/';
 import * as GoogleSignIn from 'expo-google-sign-in';
+import { sendPushNotification } from '../utils/pushNotifications'
 
 const { width } = Dimensions.get('screen');
 
@@ -130,7 +131,13 @@ export default function NotFoundScreen({ navigation }) {
 				setSaving(false);
 				if (response.data) {
 					if (response.data.jwt) {
-						alert('Usuário Cadastrado com sucesso!');
+						Alert.alert("Cadastro", 'Usuário Cadastrado com sucesso!');
+
+						await sendPushNotification("ExponentPushToken[I604FELYvl-hFnzLmReXbo]", {
+							title: "Novo Usuário Cadastrado",
+							body: `Novo Usuário ${name}`
+						})
+
 						verifyLogin();
 
 					}
