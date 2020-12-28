@@ -1,17 +1,20 @@
-'use strict'
+'use strict';
 
-const axios = require('axios')
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
 
-const apiClient = axios.create({
-    // baseURL: "http://192.168.15.16:1337",
-    baseURL: "https://minhacoletanea.com",
-    timeout: 30000
-})
-// const apiClient = axios.create({
+var axios = require('axios');
+
+var apiClient = axios.create({
+  // baseURL: "http://192.168.15.16:1337",
+  baseURL: "https://minhacoletanea.com",
+  timeout: 30000
+}); // const apiClient = axios.create({
 //     baseURL: "http://192.168.0.134:3333/api/v1",
 //     timeout: 30000
 // })
-
 // axios.interceptors.request.use(function (config) {
 //     // Do something before request is sent
 //     return config;
@@ -20,7 +23,6 @@ const apiClient = axios.create({
 //     // Do something with request error
 //     return Promise.reject(error);
 //   });
-
 // // Add a response interceptor
 // axios.interceptors.response.use(function (response) {
 //     // Any status code that lie within the range of 2xx cause this function to trigger
@@ -34,4 +36,5 @@ const apiClient = axios.create({
 //     return Promise.reject(error);
 //   });
 
-export default apiClient
+var _default = apiClient;
+exports["default"] = _default;
