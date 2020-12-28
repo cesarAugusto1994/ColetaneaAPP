@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "minhacoletanea",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -27,9 +27,15 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#FFFFFF"
       },
-      "package": "com.novatec.coletaneaicm"
+      "package": "com.novatec.coletaneaicm",
+      "config": {
+        "googleSignIn": {
+            "apiKey": "AIzaSyCPSooaM6dgbp5KUh4dObN5cGbJj0jluwY",
+            "certificateHash": "73:92:55:48:56:22:1C:9F:1C:D1:CB:46:25:82:3C:C0:E3:DC:72:73"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

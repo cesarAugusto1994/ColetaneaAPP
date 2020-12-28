@@ -6,13 +6,14 @@ import { onSignIn } from '../services/services/auth';
 import { Block, theme } from 'galio-framework';
 import { Button, Input, Icon } from '../components/galio';
 import { argonTheme } from '../components/constants/';
+// import * as Google from 'expo-google-app-auth';
+import * as GoogleSignIn from 'expo-google-sign-in';
 
 const { width } = Dimensions.get('screen');
 
 const image = require('../assets/images/splash-9.png');
 
 export default function NotFoundScreen({ navigation }) {
-
 	const [name, setName] = React.useState('');
 	const [username, setUsername] = React.useState('');
 	const [email, setEmail] = React.useState('');
@@ -21,8 +22,69 @@ export default function NotFoundScreen({ navigation }) {
 	const [loginView, setloginView] = React.useState(true);
 	const [saving, setSaving] = React.useState(false);
 
+	const [error, setError] = React.useState('');
+
+	const [user, setUser] = React.useState(null);
+
 	const handleLoginView = () => {
 		setloginView(!loginView);
+	};
+
+	React.useEffect(() => {
+		initAsync();
+	}, []);
+
+	const initAsync = async () => {
+		await GoogleSignIn.initAsync({
+			isOfflineEnabled: true,
+        	isPromptEnabled: true,
+			clientId: '970806941320-vamh97ukjp9apq74aaup400nqbqc2u26.apps.googleusercontent.com',
+			scopes: ['profile', 'email'],
+			behavior: 'web',
+		});
+		_syncUserWithStateAsync();
+	};
+
+	const _syncUserWithStateAsync = async () => {
+		const userData = await GoogleSignIn.signInSilentlyAsync();
+		
+		setName(userData.displayName);
+		setUsername(userData.displayName)
+		setEmail(userData.email)
+		setPassword(userData.uid)
+		setPasswordRepeat(userData.uid)
+
+		setUser(userData);
+
+		await verifyCreateLogin()
+		
+	};
+
+	const signOutAsync = async () => {
+		await GoogleSignIn.signOutAsync();
+		setUser(null);
+	};
+
+	const signInAsync = async () => {
+		try {
+			await GoogleSignIn.askForPlayServicesAsync();
+			const result = await GoogleSignIn.signInAsync();
+			
+			if (result && result.type === 'success') {
+				// alert(JSON.stringify(result.user));
+				_syncUserWithStateAsync();
+			}
+		} catch ({ message }) {
+			alert('login: Error:' + message);
+		}
+	};
+
+	const onPress = () => {
+		if (user) {
+			signOutAsync();
+		} else {
+			signInAsync();
+		}
 	};
 
 	const verifyCreateLogin = async () => {
@@ -96,18 +158,19 @@ export default function NotFoundScreen({ navigation }) {
 							const data = firstMessage[0].messages;
 
 							if (Array.isArray(data)) {
-
-								if(data[0].message === 'Email is already taken.') {
-									Alert.alert("Acesso Negado", "E-mail já cadastrado.");
-									return
+								if (data[0].message === 'Email is already taken.') {
+									Alert.alert('Acesso Negado', 'E-mail já cadastrado.');
+									verifyLogin();
+									return;
 								}
 
-								if(data[0].message === 'Username already taken') {
-									Alert.alert("Acesso Negado", "Nome de Usuário já cadastrado.");
-									return
+								if (data[0].message === 'Username already taken') {
+									Alert.alert('Acesso Negado', 'Nome de Usuário já cadastrado.');
+									verifyLogin();
+									return;
 								}
-								
-								Alert.alert("Erro Inesperado", data[0].message);
+
+								Alert.alert('Erro Inesperado', data[0].message);
 							}
 						}
 					}
@@ -132,23 +195,22 @@ export default function NotFoundScreen({ navigation }) {
 	};
 
 	const clearState = () => {
-		setName('')
-		setUsername('')
-		setEmail('')
-		setPassword('')
-		setPasswordRepeat('')
-	}
+		setName('');
+		setUsername('');
+		setEmail('');
+		setPassword('');
+		setPasswordRepeat('');
+	};
 
 	const verifyLogin = async () => {
 		try {
-			
 			if (!email) {
-				Alert.alert("Requerido!", 'O email ou usuário deve ser informado!');
+				Alert.alert('Requerido!', 'O email ou usuário deve ser informado!');
 				return;
 			}
 
 			if (!password) {
-				Alert.alert("Requerido!", 'A senha deve ser informada!');
+				Alert.alert('Requerido!', 'A senha deve ser informada!');
 				return;
 			}
 
@@ -167,8 +229,8 @@ export default function NotFoundScreen({ navigation }) {
 				setSaving(false);
 				if (response.data) {
 					onSignIn(response.data).then(async () => {
-						if(response.data.user) {
-							registerUserLogin(response.data.user.id, response.data.jwt)
+						if (response.data.user) {
+							registerUserLogin(response.data.user.id, response.data.jwt);
 						}
 						navigation.navigate('Root');
 					});
@@ -192,14 +254,12 @@ export default function NotFoundScreen({ navigation }) {
 							const data = firstMessage[0].messages;
 
 							if (Array.isArray(data)) {
-
-								if(data[0].message === 'Identifier or password invalid.') {
-									Alert.alert("Acesso Negado", "Usuário ou Senha são Inválidos.");
-									return
+								if (data[0].message === 'Identifier or password invalid.') {
+									Alert.alert('Acesso Negado', 'Usuário ou Senha são Inválidos.');
+									return;
 								}
 
-								Alert.alert("Acesso Negado", data[0].message);
-
+								Alert.alert('Acesso Negado', data[0].message);
 							}
 						}
 					}
@@ -225,19 +285,22 @@ export default function NotFoundScreen({ navigation }) {
 
 	async function registerUserLogin(userID, token) {
 		try {
-		  await api.post(`/logins`, {
-			users_permissions_user: userID
-		  }, {
-			headers: {
-			  'Content-Type': 'application/json',
-			  Authorization: `Bearer ${token}`,
-			},
-		  });
+			await api.post(
+				`/logins`,
+				{
+					users_permissions_user: userID,
+				},
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
 		} catch (error) {
-		  console.log('error', JSON.stringify(error.response));
+			console.log('error', JSON.stringify(error.response));
 		}
-	  }
-	  
+	}
 
 	return (
 		<ImageBackground source={image} style={styles.image}>
@@ -298,9 +361,6 @@ export default function NotFoundScreen({ navigation }) {
 									Entrar
 								</Button>
 							</Block>
-							<Block center>
-								<Text>ou</Text>
-							</Block>
 							<Block center style={{ marginTop: 8 }}>
 								<Button
 									color="primary"
@@ -308,10 +368,22 @@ export default function NotFoundScreen({ navigation }) {
 									style={styles.button}
 									onPress={() => {
 										handleLoginView();
-										clearState()
+										clearState();
 									}}
 								>
 									Registrar-se
+								</Button>
+							</Block>
+							<Block center style={{ marginTop: 8 }}>
+								<Button
+									color="red"
+									textStyle={{ fontSize: 12 }}
+									style={styles.button}
+									onPress={() => {
+										onPress();
+									}}
+								>
+									Login com Google
 								</Button>
 							</Block>
 						</Card>
@@ -433,7 +505,7 @@ export default function NotFoundScreen({ navigation }) {
 									style={styles.button}
 									onPress={() => {
 										handleLoginView();
-										clearState()
+										clearState();
 									}}
 								>
 									Voltar ao login
