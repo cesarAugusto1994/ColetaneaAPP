@@ -338,6 +338,13 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 					<TouchableOpacity style={darkMode ? styles.btnDownDark : styles.btnDown} onPress={changeTextSizeDown}>
 						<Text style={darkMode ? styles.textLight : styles.textDark}>A-</Text>
 					</TouchableOpacity>
+
+					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleShowChord}>
+						{!showChord
+							? <FontAwesome5 name="guitar" size={15} color={darkMode? '#FFF' : '#333'} />
+							: <Ionicons name="ios-document-text-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
+					</TouchableOpacity>
+
 					{
 						showHeader && (
 
@@ -363,11 +370,7 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 									: <Ionicons name="moon-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
 							</TouchableOpacity>
 
-							<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleShowChord}>
-								{!showChord
-									? <FontAwesome5 name="guitar" size={15} color={darkMode? '#FFF' : '#333'} />
-									: <Ionicons name="ios-document-text-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
-							</TouchableOpacity>
+							
 
 							<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleFavorite}>
 								{favorite
@@ -692,7 +695,6 @@ export default function SongScreen({ route, navigation }) {
 	);
 
 	const handleShowHeader = () => {
-		console.log("deveria alterar")
 		setShowHeader(!showHeader);
 	};
 
