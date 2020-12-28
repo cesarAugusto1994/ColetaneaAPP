@@ -27,7 +27,7 @@ const _ = require('lodash');
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 const colors = ['#fcba03', '#d44b42', '#35d45d', '#3381d4'];
 
-const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
+const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUser }) => {
 
 	const [spanFontSize, setspanFontSize] = React.useState(15);
 	const [favorite, setFavorite] = React.useState(false);
@@ -249,50 +249,45 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 
 	return (
 		<SafeAreaView style={[styles.containerSafe, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
-			<View style={[styles.navbar, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
-				<View style={{ flex: 1, backgroundColor: darkMode ? '#000000' : '#f5f5f5' }}>
-					{/* {data.numero &&
-						<Text style={[styles.descriptionsSong]}>Número: {data.numero || ' '}</Text>} */}
 
-					<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
-						Tonalidade: {data && data.tom}
-					</Text>
-					{data.ritmo &&
-						<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
-							Ritmo: {data.ritmo.nome}
-						</Text>}
+			{
+				showHeader && (
+					<View style={[styles.navbar, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
+						<View style={{ flex: 1, backgroundColor: darkMode ? '#000000' : '#f5f5f5' }}>
+							{/* {data.numero &&
+								<Text style={[styles.descriptionsSong]}>Número: {data.numero || ' '}</Text>} */}
 
-					{!data.letra_simplificada
-						? <Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
-								Versão: {version}{' '}
+							<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
+								Tonalidade: {data && data.tom}
 							</Text>
-						: <TouchableHighlight onPress={handleChangeVersion}>
+							{data.ritmo &&
 								<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
-									Versão: {version} (Trocar)
-								</Text>
-							</TouchableHighlight>}
-				</View>
-				{/* <View
-					style={{
-						flex: 0.7,
-						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
-						alignItems: 'flex-end',
-						right: 0,
-					}}
-				>
-					
-					
-				</View> */}
+									Ritmo: {data.ritmo.nome}
+								</Text>}
 
-				{data.videoHash &&
-					<WebView
-						style={styles.WebViewContainer}
-						javaScriptEnabled={true}
-						source={{
-							uri: `https://www.youtube.com/embed/${data.videoHash}?rel=0&fs=0&autoplay=0&showinfo=0&controls=0`,
-						}}
-					/>}
-			</View>
+							{!data.letra_simplificada
+								? <Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
+										Versão: {version}{' '}
+									</Text>
+								: <TouchableHighlight onPress={handleChangeVersion}>
+										<Text style={[styles.descriptionsSong, { color: !darkMode ? '#000000' : '#f5f5f5' }]}>
+											Versão: {version} (Trocar)
+										</Text>
+									</TouchableHighlight>}
+						</View>
+
+						{data.videoHash &&
+							<WebView
+								style={styles.WebViewContainer}
+								javaScriptEnabled={true}
+								source={{
+									uri: `https://www.youtube.com/embed/${data.videoHash}?rel=0&fs=0&autoplay=0&showinfo=0&controls=0`,
+								}}
+							/>}
+					</View>
+				)
+			}
+			
 
 			<View style={{ flexDirection: 'row', backgroundColor: darkMode ? '#000000' : '#FFFFFF' }}>
 				<View
@@ -332,6 +327,10 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						scrollEnabled={true}
 					>
 
+					<TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
+						<Ionicons name="expand-outline" size={15} />
+					</TouchableOpacity>
+
 					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={changeTextSizeUp}>
 						<Text style={darkMode ? styles.textLight : styles.textDark}>A+</Text>
 					</TouchableOpacity>
@@ -339,71 +338,80 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 					<TouchableOpacity style={darkMode ? styles.btnDownDark : styles.btnDown} onPress={changeTextSizeDown}>
 						<Text style={darkMode ? styles.textLight : styles.textDark}>A-</Text>
 					</TouchableOpacity>
+					{
+						showHeader && (
 
-					{showChord &&
-						<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={arrayWalk}>
-							<Text style={darkMode ? styles.textLight : styles.textDark}>
-								{getNextTone()}
-							</Text>
-						</TouchableOpacity>}
+						<>
 
-					{showChord &&
-						<TouchableOpacity style={darkMode ? styles.btnDownDark : styles.btnDown} onPress={arrayReverseWalk}>
-							<Text style={darkMode ? styles.textLight : styles.textDark}>
-								{getPreviousTone()}
-							</Text>
-						</TouchableOpacity>}
+							{showChord &&
+								<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={arrayWalk}>
+									<Text style={darkMode ? styles.textLight : styles.textDark}>
+										{getNextTone()}
+									</Text>
+								</TouchableOpacity>}
 
-					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleDarkMode}>
-						{darkMode
-							? <Ionicons name="sunny-outline" size={15} color={darkMode? '#FFF' : '#333'} />
-							: <Ionicons name="moon-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
-					</TouchableOpacity>
+							{showChord &&
+								<TouchableOpacity style={darkMode ? styles.btnDownDark : styles.btnDown} onPress={arrayReverseWalk}>
+									<Text style={darkMode ? styles.textLight : styles.textDark}>
+										{getPreviousTone()}
+									</Text>
+								</TouchableOpacity>}
 
-					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleShowChord}>
-						{!showChord
-							? <FontAwesome5 name="guitar" size={15} color={darkMode? '#FFF' : '#333'} />
-							: <Ionicons name="ios-document-text-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
-					</TouchableOpacity>
+							<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleDarkMode}>
+								{darkMode
+									? <Ionicons name="sunny-outline" size={15} color={darkMode? '#FFF' : '#333'} />
+									: <Ionicons name="moon-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
+							</TouchableOpacity>
 
-					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleFavorite}>
-						{favorite
-							? <Ionicons name="ios-star" color="#ffd000" size={15} />
-							: <Ionicons name="ios-star-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
-					</TouchableOpacity>
+							<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleShowChord}>
+								{!showChord
+									? <FontAwesome5 name="guitar" size={15} color={darkMode? '#FFF' : '#333'} />
+									: <Ionicons name="ios-document-text-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
+							</TouchableOpacity>
 
-					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleChordColor}>
-						<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
-					</TouchableOpacity>
+							<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleFavorite}>
+								{favorite
+									? <Ionicons name="ios-star" color="#ffd000" size={15} />
+									: <Ionicons name="ios-star-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
+							</TouchableOpacity>
 
-					{/* <TouchableOpacity style={styles.btnUp} onPress={handleShowHeader}>
-						<Ionicons name="expand-outline" size={15} />
-					</TouchableOpacity> */}
+							<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleChordColor}>
+								<Ionicons name="color-palette-outline" color={getNextChordColor()} size={15} />
+							</TouchableOpacity>
 
-					{data.letra &&
-						<TouchableOpacity
-							style={darkMode ? styles.btnUpDark : styles.btnUp}
-							onPress={() => {
-								handleOpenBootmSheet();
-							}}
-						>
-							<Ionicons name="musical-notes-outline" size={15} color={darkMode? '#FFF' : '#333'} />
-						</TouchableOpacity>}
+							
 
-					{currentUser &&
-						currentUser.role &&
-						currentUser.role.id === 3 &&
-						<TouchableOpacity
-							style={darkMode ? styles.btnUpDark : styles.btnUp}
-							onPress={() => {
-								navigation.navigate('LetraEditor', {
-									id: data.id,
-									title: data.nome,
-								});
-							}}
-						>
-							<Ionicons name="build-outline" size={15} color={darkMode? '#FFF' : '#333'} />
-						</TouchableOpacity>}
+							{data.letra &&
+								<TouchableOpacity
+									style={darkMode ? styles.btnUpDark : styles.btnUp}
+									onPress={() => {
+										handleOpenBootmSheet();
+									}}
+								>
+									<Ionicons name="musical-notes-outline" size={15} color={darkMode? '#FFF' : '#333'} />
+								</TouchableOpacity>}
+
+							{currentUser &&
+								currentUser.role &&
+								currentUser.role.id === 3 &&
+								<TouchableOpacity
+									style={darkMode ? styles.btnUpDark : styles.btnUp}
+									onPress={() => {
+										navigation.navigate('LetraEditor', {
+											id: data.id,
+											title: data.nome,
+										});
+									}}
+								>
+									<Ionicons name="build-outline" size={15} color={darkMode? '#FFF' : '#333'} />
+								</TouchableOpacity>}
+
+
+							</>
+
+						)
+					}
+					
 
 						</ScrollView>
 				</View>
@@ -647,6 +655,12 @@ export default function SongScreen({ route, navigation }) {
 		});
 	}, []);
 
+	React.useEffect(() => {
+		navigation.setOptions({
+			headerShown: showHeader,
+		});
+	}, [showHeader]);
+
 	React.useEffect(
 		() => {
 			if (currentUser && currentUser.role && currentUser.role.id === 3 && data) {
@@ -678,6 +692,7 @@ export default function SongScreen({ route, navigation }) {
 	);
 
 	const handleShowHeader = () => {
+		console.log("deveria alterar")
 		setShowHeader(!showHeader);
 	};
 
@@ -723,6 +738,7 @@ export default function SongScreen({ route, navigation }) {
 			<FirstRoute
 				data={data}
 				handleShowHeader={handleShowHeader}
+				showHeader={showHeader}
 				navigation={navigation}
 				currentUser={currentUser}
 			/>,
