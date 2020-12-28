@@ -37,6 +37,7 @@ import AboutScreen from "../screens/AboutScreen";
 import UserEditScreen from "../screens/UserEditScreen";
 
 import ErrorScreen from '../screens/ErrorScreen'
+import ErrorsListScreen from '../screens/ErrorsListScreen'
 
 import {
   BottomTabParamList,
@@ -329,6 +330,13 @@ function TabConfigsNavigator() {
         component={ErrorScreen}
         options={({ route }) => ({ 
           title: "Sugerir ou Reportar Erro",
+        })}
+      />
+      <TabOneStack.Screen
+        name="ErrorList"
+        component={ErrorsListScreen}
+        options={({ route }) => ({ 
+          title: "Sugestões ou Erros",
         })}
       />
       <TabOneStack.Screen

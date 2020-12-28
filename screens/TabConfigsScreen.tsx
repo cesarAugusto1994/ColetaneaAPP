@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
-import { Avatar, Button, Image, ListItem } from 'react-native-elements';
+import { StyleSheet, Alert } from 'react-native';
+import { Avatar, Button, ListItem } from 'react-native-elements';
 import { Text, View } from '../components/Themed';
 import { onSignOut, getUser } from '../services/services/auth';
 
@@ -61,6 +61,25 @@ export default function TabConfigsScreen({navigation}) {
 		navigation.navigate('Error');
 	};
 
+	const navigateToErrorList = () => {
+		navigation.navigate('ErrorList');
+	};
+
+	const requestLogout = () =>
+    Alert.alert(
+      "Deseja sair?",
+      "Você será redirecionado a tela de login.",
+      [
+        {
+          text: "Cancelar",
+          onPress: () => {},
+          style: "cancel"
+        },
+        { text: "Sim", onPress: () => logout() }
+      ],
+      { cancelable: false }
+    );
+
 	return (
 		<View style={styles.container} onTouchStart={getCurrentUser}>
 			{
@@ -101,6 +120,16 @@ export default function TabConfigsScreen({navigation}) {
 
 				{
 					currentUser && currentUser.role && currentUser.role.id === 3 && (
+						<ListItem key="7" bottomDivider onPress={navigateToErrorList}>
+							<ListItem.Content>
+								<ListItem.Title>Sugestões e Erros</ListItem.Title>
+							</ListItem.Content>
+						</ListItem>
+					)
+				}
+
+				{
+					currentUser && currentUser.role && currentUser.role.id === 3 && (
 						<ListItem key="4" bottomDivider onPress={navigateToUsers}>
 							<ListItem.Content>
 								<ListItem.Title>Usuários</ListItem.Title>
@@ -119,7 +148,7 @@ export default function TabConfigsScreen({navigation}) {
 					)
 				}
 				
-				<ListItem key="0" bottomDivider onPress={logout}>
+				<ListItem key="0" bottomDivider onPress={requestLogout}>
 					<ListItem.Content>
 						<ListItem.Title style={{ color: 'red' }}>Sair</ListItem.Title>
 					</ListItem.Content>
@@ -128,7 +157,7 @@ export default function TabConfigsScreen({navigation}) {
 
 			<View style={{ width: '100%', marginHorizontal: 20, position: 'absolute', bottom: 20, alignItems: 'center', backgroundColor: '#f5f5f5' }}>
 				{/* <Text>Desenvolvido por César Augusto.</Text> */}
-				<Text style={{color: '#333'}}>Versão: 1.0.25</Text>
+				<Text style={{color: '#333'}}>Versão: 1.0.32</Text>
 			</View>
 
 
