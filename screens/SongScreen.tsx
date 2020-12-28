@@ -423,7 +423,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 
 const SecondRoute = ({ data }) => {
 	return (
-		<ScrollView scrollEnabled>
+		<ScrollView scrollEnabled style={{backgroundColor: '#f5f5f5',}}>
 			<View style={[styles.scene, { backgroundColor: '#FFF', padding: 20 }]}>
 				<Text style={styles.descriptionsSong}>
 					Autor: {data.autor ? data.autor.nome : 'Não Informado'}
@@ -754,6 +754,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
+		backgroundColor: '#f5f5f5',
 	},
 	WebViewContainer: {
 		flex: 1,
@@ -769,6 +770,7 @@ const styles = StyleSheet.create({
 	},
 	scene: {
 		flex: 1,
+		backgroundColor: '#f5f5f5',
 	},
 	notfound: {
 		flex: 1,
