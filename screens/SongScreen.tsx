@@ -21,6 +21,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 
 import * as DocumentPicker from 'expo-document-picker';
+import { Constants } from 'expo';
 
 const _ = require('lodash');
 
@@ -235,7 +236,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 	return (
 		<SafeAreaView style={[styles.containerSafe, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
 			<View style={[styles.navbar, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
-				<View style={{ flex: 0.3, backgroundColor: darkMode ? '#000000' : '#f5f5f5' }}>
+				<View style={{ flex: 1, backgroundColor: darkMode ? '#000000' : '#f5f5f5' }}>
 					{/* {data.numero &&
 						<Text style={[styles.descriptionsSong]}>Número: {data.numero || ' '}</Text>} */}
 
@@ -246,16 +247,8 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						<Text style={[styles.descriptionsSong]}>
 							Ritmo: {data.ritmo.nome}
 						</Text>}
-				</View>
-				<View
-					style={{
-						flex: 0.7,
-						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
-						alignItems: 'flex-end',
-						right: 0,
-					}}
-				>
-					{!data.letra_simplificada
+
+						{!data.letra_simplificada
 						? <Text style={[styles.descriptionsSong]}>
 								Versão: {version}{' '}
 							</Text>
@@ -264,7 +257,34 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 									Versão: {version} (Trocar)
 								</Text>
 							</TouchableHighlight>}
+
 				</View>
+				{/* <View
+					style={{
+						flex: 0.7,
+						backgroundColor: darkMode ? '#000000' : '#f5f5f5',
+						alignItems: 'flex-end',
+						right: 0,
+					}}
+				>
+					
+					
+				</View> */}
+
+				{
+						data.videoHash && (
+							<WebView
+								style={styles.WebViewContainer}
+								javaScriptEnabled={true}
+								source={{
+								uri: `https://www.youtube.com/embed/${data.videoHash}?rel=0&fs=0&autoplay=0&showinfo=0&controls=0`,
+								}}
+							/>
+						)
+					}
+
+				
+
 			</View>
 
 			<View style={{ flexDirection: 'row', backgroundColor: darkMode ? '#000000' : '#FFFFFF' }}>
@@ -286,7 +306,9 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						{data.letra
 							? <HTMLView value={song} stylesheet={styleSheetWebView} />
 							: <Text>Letra não encontrada.</Text>}
+							
 					</ScrollView>
+
 				</View>
 
 				<View
@@ -377,7 +399,10 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 							<Ionicons name="build-outline" size={15} />
 						</TouchableOpacity>}
 				</View>
+			
 			</View>
+
+			
 
 			{openBottomSheet &&
 				<BottomSheet
@@ -656,6 +681,12 @@ export default function SongScreen({ route, navigation }) {
 		setShowHeader(!showHeader);
 	};
 
+	function youtubeParser(url){
+		var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+		var match = url.match(regExp);
+		return (match&&match[7].length==11)? match[7] : false;
+	}
+
 	const getSong = async () => {
 		try {
 			const response = await api.get(`musicas/${route.params.id}`, {
@@ -664,6 +695,13 @@ export default function SongScreen({ route, navigation }) {
 				},
 			});
 			if (response) {
+
+				if(response.data.video) {
+					const ytb = youtubeParser(response.data.video)
+					console.log({ytb})
+					response.data.videoHash = ytb
+				}
+
 				setData(response.data);
 			}
 		} catch (error) {
@@ -720,8 +758,12 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	WebViewContainer: {
-		marginTop: Platform.OS == 'android' ? 20 : 0,
-		width: '100%',
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#ecf0f1',
+		height: 300,
+		width: '100%'
 	},
 	navbar: { flexDirection: 'row', width: '100%', padding: 10 },
 	title: {
@@ -729,7 +771,6 @@ const styles = StyleSheet.create({
 	},
 	scene: {
 		flex: 1,
-		// marginLeft: 15,
 	},
 	notfound: {
 		flex: 1,

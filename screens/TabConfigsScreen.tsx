@@ -101,7 +101,7 @@ export default function TabConfigsScreen({navigation}) {
 
 				{
 					currentUser && currentUser.role && currentUser.role.id === 3 && (
-						<ListItem key="4" bottomDivider onPress={navigateToLogins}>
+						<ListItem key="5" bottomDivider onPress={navigateToLogins}>
 							<ListItem.Content>
 								<ListItem.Title>Logins</ListItem.Title>
 							</ListItem.Content>
@@ -118,7 +118,7 @@ export default function TabConfigsScreen({navigation}) {
 
 			<View style={{ width: '100%', marginHorizontal: 20, position: 'absolute', bottom: 20, alignItems: 'center' }}>
 				{/* <Text>Desenvolvido por César Augusto.</Text> */}
-				<Text>Versão: 1.0.1</Text>
+				<Text>Versão: 1.0.25</Text>
 			</View>
 
 
