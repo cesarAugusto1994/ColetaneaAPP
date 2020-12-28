@@ -698,7 +698,6 @@ export default function SongScreen({ route, navigation }) {
 
 				if(response.data.video) {
 					const ytb = youtubeParser(response.data.video)
-					console.log({ytb})
 					response.data.videoHash = ytb
 				}
 

@@ -59,6 +59,8 @@ export default function MainScreen({ navigation, route }) {
 	const [tom, setTom] = React.useState(undefined);
 	const [number, setNumber] = React.useState(undefined);
 
+	const [video, setVideo] = React.useState(undefined);
+
 	React.useEffect(() => {
 		navigation.setOptions({
 			headerTintColor: '#d44b42',
@@ -179,6 +181,7 @@ export default function MainScreen({ navigation, route }) {
 				categoria_id: selectedCategory,
 				ritmo: selectedRhythm,
 				numero: number,
+				video: video
 			};
 
 			setSaving(true);
@@ -319,6 +322,16 @@ export default function MainScreen({ navigation, route }) {
 					>
 						{rhythms.map(rhythm => <Picker.Item key={rhythm.id} label={rhythm.nome} value={rhythm.id} />)}
 					</Picker>
+				</Block>
+				<View style={styles.divider} />
+				<Block>
+					<Text style={styles.linkText}>Youtube Video</Text>
+					<TextInput
+						style={styles.textInput}
+						placeholder="Editar Video do Youtube"
+						defaultValue={video}
+						onChangeText={text => setVideo(text)}
+					/>
 				</Block>
 				<View style={styles.divider} />
 				<Block>

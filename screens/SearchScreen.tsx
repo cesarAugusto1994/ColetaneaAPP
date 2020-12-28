@@ -66,6 +66,7 @@ export default function NotFoundScreen({
       }
     } catch (error) {
       setLoading(false)
+      setData([]);
       console.log("error", JSON.stringify(error));
     }
 
@@ -89,23 +90,26 @@ export default function NotFoundScreen({
   )
 
   const onChangeText = async text => {
-    setLoading(true)
-    await getSongs(text);
+    if(text.length > 3) {
+      setLoading(true)
+      await getSongs(text);
+    }
   };
 
   const handleSearch = text => {
     setsearch(text)
   }
 
-  const debouncedSearch = _.debounce(onChangeText, 800);
+  const debouncedSearch = React.useCallback(_.debounce(onChangeText, 500), [])
 
   return (
     <View style={styles.container}>
       <SearchBar
-        lightTheme 
+        // lightTheme 
         containerStyle={{width: '100%'}}
         style={{width: '100%'}}
-        placeholder="Pesquisar..."
+        autoFocus
+        placeholder="Informe 4 ou mais caracteres ..."
         onChangeText={text => {
           debouncedSearch(text)
           handleSearch(text)  
@@ -142,7 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    padding: 20
+    // padding: 20
   },
   notfound: {
 		flex: 1,
