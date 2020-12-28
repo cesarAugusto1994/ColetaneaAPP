@@ -7,10 +7,9 @@ import { Text, View } from '../components/Themed';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import api from '../services/api/axios';
 import Transposer from '../services/chord-transposer';
-import { getToken } from '../services/services/auth';
-import { Button, Card, ListItem } from 'react-native-elements';
+import { getToken, getDisplayMode, setDisplayMode } from '../services/services/auth';
+import { Card, ListItem } from 'react-native-elements';
 import ChordTab from '../components/ChordTab';
-import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import moment from 'moment';
 import { TouchableHighlight } from 'react-native-gesture-handler';
@@ -29,6 +28,7 @@ const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
 const colors = ['#fcba03', '#d44b42', '#35d45d', '#3381d4'];
 
 const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
+
 	const [spanFontSize, setspanFontSize] = React.useState(15);
 	const [favorite, setFavorite] = React.useState(false);
 	const [showChord, setShowChord] = React.useState(true);
@@ -103,7 +103,24 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 
 	React.useEffect(() => {
 		handleGetVersion('normal');
+		getMode()
 	}, []);
+
+	const storeTheme = async () => {
+		await setDisplayMode(!darkMode ? 'light' : 'dark')
+	}
+
+	React.useEffect(() => {
+
+		storeTheme()
+		
+	}, [darkMode]);
+
+	const getMode = async () => {
+		const mode = await getDisplayMode()
+		console.log({mode})
+		setDarkMode(mode === 'dark')
+	}
 
 	const changeTextSizeDown = () => {
 		if (spanFontSize <= 10) return;
@@ -154,7 +171,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 		await handleGetVersion(version, !showChord, tom);
 	};
 
-	const handleDarkMode = () => {
+	const handleDarkMode = async () => {
 		setDarkMode(!darkMode);
 	};
 
@@ -343,7 +360,7 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 
 					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={handleShowChord}>
 						{!showChord
-							? <FontAwesome5 name="guitar" size={15} color="black" />
+							? <FontAwesome5 name="guitar" size={15} color={darkMode? '#FFF' : '#333'} />
 							: <Ionicons name="ios-document-text-outline" size={15} color={darkMode? '#FFF' : '#333'} />}
 					</TouchableOpacity>
 

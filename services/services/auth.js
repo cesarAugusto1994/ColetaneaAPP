@@ -32,3 +32,12 @@ export const isSignedIn = async () => {
   const token = await AsyncStorage.getItem(TOKEN_KEY);
   return (token !== null) ? true : false;
 };
+
+export const setDisplayMode = async (mode) => {
+  await AsyncStorage.setItem("displaymode", mode)
+};
+
+export const getDisplayMode = async () => {
+  const response = await AsyncStorage.getItem("displaymode")
+  return response
+};
