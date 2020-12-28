@@ -118,7 +118,6 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 
 	const getMode = async () => {
 		const mode = await getDisplayMode()
-		console.log({mode})
 		setDarkMode(mode === 'dark')
 	}
 
