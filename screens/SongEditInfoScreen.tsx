@@ -138,7 +138,7 @@ export default function MainScreen({ navigation, route }) {
 			if (data) {
 				setName(data.nome);
 				setTom(data.tom);
-
+				setVideo(data.video)
 				if (data.numero) {
 					setNumber(data.numero.toString() || undefined);
 				}
