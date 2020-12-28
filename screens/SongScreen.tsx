@@ -322,13 +322,19 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 					style={{
 						flex: 0.2,
 						right: 0,
+						height: 450,
 						marginRight: -40,
 						// alignItems: 'center',
-						top: '5%',
+						top: 0,
 						width: 25,
 						backgroundColor: darkMode ? '#000000' : '#FFFFFF',
 					}}
 				>
+
+					<ScrollView
+						scrollEnabled={true}
+					>
+
 					<TouchableOpacity style={darkMode ? styles.btnUpDark : styles.btnUp} onPress={changeTextSizeUp}>
 						<Text style={darkMode ? styles.textLight : styles.textDark}>A+</Text>
 					</TouchableOpacity>
@@ -401,6 +407,8 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 						>
 							<Ionicons name="build-outline" size={15} color={darkMode? '#FFF' : '#333'} />
 						</TouchableOpacity>}
+
+						</ScrollView>
 				</View>
 			</View>
 
