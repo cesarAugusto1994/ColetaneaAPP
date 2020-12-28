@@ -6,7 +6,6 @@ import { onSignIn } from '../services/services/auth';
 import { Block, theme } from 'galio-framework';
 import { Button, Input, Icon } from '../components/galio';
 import { argonTheme } from '../components/constants/';
-// import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';
 
 const { width } = Dimensions.get('screen');
@@ -21,9 +20,6 @@ export default function NotFoundScreen({ navigation }) {
 	const [passwordRepeat, setPasswordRepeat] = React.useState('');
 	const [loginView, setloginView] = React.useState(true);
 	const [saving, setSaving] = React.useState(false);
-
-	const [error, setError] = React.useState('');
-
 	const [user, setUser] = React.useState(null);
 
 	const handleLoginView = () => {
@@ -71,7 +67,6 @@ export default function NotFoundScreen({ navigation }) {
 			const result = await GoogleSignIn.signInAsync();
 			
 			if (result && result.type === 'success') {
-				// alert(JSON.stringify(result.user));
 				_syncUserWithStateAsync();
 			}
 		} catch ({ message }) {
@@ -137,6 +132,7 @@ export default function NotFoundScreen({ navigation }) {
 					if (response.data.jwt) {
 						alert('Usuário Cadastrado com sucesso!');
 						verifyLogin();
+
 					}
 				} else {
 					alert('Ocorreu um erro inesperado.');
