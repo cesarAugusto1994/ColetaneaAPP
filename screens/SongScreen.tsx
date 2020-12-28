@@ -322,9 +322,9 @@ const FirstRoute = ({ data, handleShowHeader, navigation, currentUser }) => {
 					style={{
 						flex: 0.2,
 						right: 0,
-						marginRight: -15,
-						alignItems: 'center',
-						top: '20%',
+						marginRight: -40,
+						// alignItems: 'center',
+						top: '5%',
 						width: 25,
 						backgroundColor: darkMode ? '#000000' : '#FFFFFF',
 					}}
