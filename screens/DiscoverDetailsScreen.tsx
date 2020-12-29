@@ -1,18 +1,14 @@
-import { Ionicons } from '@expo/vector-icons';
 import * as React from 'react';
 import {
 	StyleSheet,
 	SafeAreaView,
 	Dimensions,
-	RefreshControl,
 	ScrollView,
 	Image,
-	TouchableOpacity
 } from 'react-native';
 import { Card as CardRNE } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
-import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
 import { isSignedIn } from '../services/services/auth';
@@ -76,8 +72,6 @@ export default function TabOneScreen({ navigation, route }) {
 		getCollections();
 	}, []);
 
-	if (!data) return <Text>Carregando...</Text>
-
 	return (
 		<SafeAreaView style={styles.container}>
 
@@ -85,17 +79,20 @@ export default function TabOneScreen({ navigation, route }) {
 			? <Block flex center style={styles.home}>
 
 				{
-					data.imagem && (
-						<Block style={styles.imageContainer}>
-                			<Image source={{uri: `https://minhacoletanea.com${data.imagem?.formats.thumbnail.url}`}} style={{height: 215, width: '100%',}} />
+					data.imagem && data.imagem.url && (
+						<Block center>
+							{console.log(`https://minhacoletanea.com${data.imagem?.url}`)}
+                			<Image source={{uri: `https://minhacoletanea.com${data.imagem?.url}`}} />
               			</Block>
 					)
 				}
 
 				<Block center>
-					<CardRNE>
-						<Text>{data.conteudo}</Text>
-					</CardRNE>
+						<ScrollView>
+							<CardRNE containerStyle={{marginBottom: 200}}>
+								<Text>{data.conteudo}</Text>
+							</CardRNE>
+						</ScrollView>
 				</Block>
 				</Block>
 			:	<View style={styles.notfound}>
@@ -153,7 +150,7 @@ const styles = StyleSheet.create({
 	},
 	imageContainer: {
 		borderRadius: 3,
-		elevation: 1,
-		overflow: 'hidden',
+		// elevation: 1,
+		// overflow: 'hidden',
 	},
 });

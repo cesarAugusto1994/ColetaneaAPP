@@ -3,25 +3,19 @@ import * as React from 'react';
 import {
 	StyleSheet,
 	SafeAreaView,
-	FlatList,
-	StatusBar,
 	Dimensions,
 	Text,
-	RefreshControl,
-	ScrollView,
-	TouchableOpacity,
 } from 'react-native';
-import { Avatar, Image, ListItem, Card } from 'react-native-elements';
+import { ListItem, Button } from 'react-native-elements';
 import { View } from '../components/Themed';
 import { getToken } from '../services/services/auth';
 import api from '../services/api/axios';
 import MultiSelect from 'react-native-multiple-select';
 import moment from 'moment';
 // Galio components
-import { Block, Button as GaButton, theme } from 'galio-framework';
+import { Block, theme } from 'galio-framework';
 // Argon themed components
-import { argonTheme, tabs } from '../components/constants/';
-import { Select, Icon, Input, Header, Switch } from '../components/galio/';
+import { Input } from '../components/galio/';
 import * as _ from 'lodash';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -44,6 +38,7 @@ export default function GroupScreen({ navigation, route }) {
 	const [date, setDate] = React.useState(moment());
 	const [selectedValue, setselectedValue] = React.useState('culto');
 	const [items, setItems] = React.useState([]);
+	const [selectedSongs, setSelectedSongs] = React.useState([]);
 
 	const multiSelect = React.useRef(null);
 
@@ -107,15 +102,22 @@ export default function GroupScreen({ navigation, route }) {
 		}
 	};
 
-	const onSelectedItemsChange = selectedItem => {
+	const onSelectedItemsChange = async selectedItem => {
 		setSelectedItems(selectedItem);
+
+		const index = await _.findIndex(items, { id: selectedItem })
+
+		if(index > -1) {
+			setSelectedSongs(items[index])
+		}
+
 	};
 
 	const onChangeInput = text => {
 		getSongs(text);
 	};
 
-	const debouncedSearch = _.debounce(onChangeInput, 2000);
+	const debouncedSearch = React.useCallback(_.debounce(onChangeInput, 2000), []);
 
 	const onChangeDate = () => {};
 
@@ -129,10 +131,7 @@ export default function GroupScreen({ navigation, route }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<ScrollView
-				contentContainerStyle={styles.scrollView}
-				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-			>
+
 				<Block flex style={styles.group}>
 
 					<Block style={{ paddingHorizontal: theme.SIZES.BASE }}>
@@ -161,10 +160,8 @@ export default function GroupScreen({ navigation, route }) {
 							onChange={onChangeDate}
 					/>}
 					
-					
-					
 					<Block style={{ paddingHorizontal: theme.SIZES.BASE, paddingVertical: theme.SIZES.BASE }}>
-						<Text>Selecione aqui os louvores: </Text>
+						<Text style={{marginBottom: 5}}>Selecione aqui os louvores: </Text>
 						<MultiSelect
 							items={items}
 							uniqueKey="id"
@@ -187,9 +184,25 @@ export default function GroupScreen({ navigation, route }) {
 							submitButtonText="Adicionar"
 						/>
 					</Block>
+
+					<Block style={{ paddingHorizontal: theme.SIZES.BASE, paddingVertical: theme.SIZES.BASE }}>
+						{
+							selectedSongs.map(item => {
+								<ListItem.Content>
+									<ListItem.Title>
+										{item.nome}
+									</ListItem.Title>
+								</ListItem.Content>
+							})
+						}
+					</Block>
+
+					<Block style={{ paddingHorizontal: theme.SIZES.BASE, paddingVertical: theme.SIZES.BASE }}>
+						<Button title="Salvar"/>
+					</Block>
+					
 				</Block>
 
-			</ScrollView>
 		</SafeAreaView>
 	);
 }
@@ -197,6 +210,8 @@ export default function GroupScreen({ navigation, route }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		marginHorizontal: 15,
+		marginVertical: 10
 	},
 	home: {
 		width: width,

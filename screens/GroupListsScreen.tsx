@@ -79,7 +79,7 @@ export default function GroupScreen({ navigation, route }) {
 		<SafeAreaView style={styles.container}>
 			<ScrollView
 				contentContainerStyle={styles.scrollView}
-				// refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+				refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
 			>
 					{data && data?.map((lista, i) =>
 						<Card key={i} containerStyle={{ padding: 0 }}>

@@ -44,15 +44,15 @@ export default function TabOneScreen({ navigation }) {
 			headerTitleStyle: {
 				fontSize: 18,
 			},
-			headerRight: () =>
-				<TouchableOpacity
-					style={{ marginRight: 15 }}
-					onPress={() => {
-						navigation.navigate('Pesquisar');
-					}}
-				>
-					<Ionicons name="ios-search" size={25} color="#d44b42" />
-				</TouchableOpacity>,
+			// headerRight: () =>
+			// 	<TouchableOpacity
+			// 		style={{ marginRight: 15 }}
+			// 		onPress={() => {
+			// 			navigation.navigate('Pesquisar');
+			// 		}}
+			// 	>
+			// 		<Ionicons name="ios-search" size={25} color="#d44b42" />
+			// 	</TouchableOpacity>,
 		});
 
 	}, [])
