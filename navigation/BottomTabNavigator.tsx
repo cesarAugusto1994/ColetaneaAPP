@@ -7,6 +7,7 @@ import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import TabOneScreen from "../screens/TabOneScreen";
 import CategoriesScreen from "../screens/CategoriesScreen";
+import CategoryAddScreen from "../screens/CategoryAddScreen";
 import SongsScreen from "../screens/SongsScreen";
 import Songscreen from "../screens/SongScreen";
 import FavoriteSongsScreen from "../screens/FavoriteSongsScreen";
@@ -68,14 +69,14 @@ export default function BottomTabNavigator() {
             <TabBarIcon name="ios-apps" color={color} />
         }}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="Bíblias"
         component={TabBookNavigator}
         options={{
           tabBarIcon: ({ color }) =>
             <TabBarIcon name="ios-book-outline" color={color} />
         }}
-      />
+      /> */}
       <BottomTab.Screen
         name="Descobrir"
         component={TabDiscoverNavigator}
@@ -125,6 +126,13 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="Categorias"
         component={CategoriesScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="Nova Categoria"
+        component={CategoryAddScreen}
         options={({ route }) => ({ 
           title: route.params.title
          })}

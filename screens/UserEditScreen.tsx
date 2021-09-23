@@ -48,7 +48,7 @@ export default function UserEditScreen({ navigation }) {
 			if (currentUser) {
 				setName(currentUser.name);
 				if(currentUser.avatar) {
-					setImage(`https://minhacoletanea.com${currentUser.avatar.url}`);
+					setImage(`https://minhacoletanea.com.br${currentUser.avatar.url}`);
 				}
 			}
 		},

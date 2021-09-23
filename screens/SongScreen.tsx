@@ -394,9 +394,6 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 									<Ionicons name="musical-notes-outline" size={15} color={darkMode? '#FFF' : '#333'} />
 								</TouchableOpacity>}
 
-							{currentUser &&
-								currentUser.role &&
-								currentUser.role.id === 3 &&
 								<TouchableOpacity
 									style={darkMode ? styles.btnUpDark : styles.btnUp}
 									onPress={() => {
@@ -407,8 +404,7 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 									}}
 								>
 									<Ionicons name="build-outline" size={15} color={darkMode? '#FFF' : '#333'} />
-								</TouchableOpacity>}
-
+								</TouchableOpacity>
 
 							</>
 
@@ -666,7 +662,7 @@ export default function SongScreen({ route, navigation }) {
 
 	React.useEffect(
 		() => {
-			if (currentUser && currentUser.role && currentUser.role.id === 3 && data) {
+			if (currentUser && currentUser.role && data) {
 				navigation.setOptions({
 					headerRight: () =>
 						<TouchableHighlight

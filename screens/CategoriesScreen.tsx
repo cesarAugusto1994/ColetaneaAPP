@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { StyleSheet, SafeAreaView, FlatList, View } from 'react-native';
+import { StyleSheet, SafeAreaView, FlatList, View, TouchableHighlight } from 'react-native';
 import { ListItem, Card } from 'react-native-elements';
-import { getToken } from '../services/services/auth';
+import { getToken, getUser } from '../services/services/auth';
 import api from '../services/api/axios';
 import _ from 'lodash';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function CategoriesScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
 	const [refreshing, setRefreshing] = React.useState(false);
+	const [currentUser, setCurrentUser] = React.useState(null)
 
 	React.useEffect(() => {
 		navigation.setOptions({
@@ -20,6 +22,35 @@ export default function CategoriesScreen({ navigation, route }) {
 			},
 		});
 	}, []);
+
+	const getCurrentUser = async () => {
+		const parseUser = await getUser()
+		setCurrentUser(JSON.parse(parseUser))
+	}
+
+	React.useEffect(() => {
+		getCurrentUser()
+	}, [])
+
+	React.useEffect(() => {
+
+		if(currentUser && currentUser.role && currentUser.role.id === 3) { 
+			navigation.setOptions({
+				headerRight: () =>
+				<TouchableHighlight
+					style={{ marginRight: 15 }}
+					onPress={() => {
+						navigation.navigate('Nova Categoria', {
+							id: route.params.id
+						})
+					}}
+				>
+					<Ionicons name="ios-add-outline" size={25} color="#d44b42" />
+				</TouchableHighlight>,
+			});
+		}
+		
+  	}, [currentUser]);
 
 	const getCollections = async () => {
 		setRefreshing(true);
@@ -42,6 +73,12 @@ export default function CategoriesScreen({ navigation, route }) {
 			console.log('error', JSON.stringify(error));
 		}
 	};
+
+	React.useEffect(() => {
+		if (route.params && route.params.reload) {
+			getCollections();
+		}
+	}, [route.params])
 
 	React.useEffect(() => {
 		getCollections();

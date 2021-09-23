@@ -156,7 +156,7 @@ export default function TabOneScreen({ navigation }) {
 							data.map((item, index) => {
 								return (
 									<Card
-                    key={index}
+                    					key={index}
 										navigateTo="Categorias"
 										item={{ id: item.id, title: item.nome, cta: item.descricao, image: item.imagem?.formats.thumbnail.url }}
 										// style={{ marginRight: theme.SIZES.BASE }}
