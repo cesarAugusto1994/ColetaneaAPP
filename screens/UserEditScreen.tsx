@@ -48,7 +48,7 @@ export default function UserEditScreen({ navigation }) {
 			if (currentUser) {
 				setName(currentUser.name);
 				if(currentUser.avatar) {
-					setImage(`https://minhacoletanea.com.br${currentUser.avatar.url}`);
+					setImage(currentUser.avatar.url);
 				}
 			}
 		},
@@ -93,7 +93,7 @@ export default function UserEditScreen({ navigation }) {
 				uri: image,
 				name: `avatar-user-${currentUser.id}.png`,
 				type: `image/png`,
-			});
+			}); 
 
 			const response = await api.post(`upload`, form, {
 				headers: {

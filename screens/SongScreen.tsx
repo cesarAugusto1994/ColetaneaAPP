@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, SafeAreaView, ScrollView, FlatList, Platform, Dimensions, TouchableOpacity } from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView, FlatList, Platform, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import WebView from 'react-native-webview';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import HTMLView from 'react-native-htmlview';
@@ -8,7 +8,8 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import api from '../services/api/axios';
 import Transposer from '../services/chord-transposer';
 import { getToken, getDisplayMode, setDisplayMode } from '../services/services/auth';
-import { Card, ListItem } from 'react-native-elements';
+import { Card, ListItem, Button } from 'react-native-elements';
+import * as Audio from 'expo-av';
 import ChordTab from '../components/ChordTab';
 import BottomSheet from 'reanimated-bottom-sheet';
 import moment from 'moment';
@@ -17,10 +18,8 @@ import { getUser, setUser } from '../services/services/auth';
 
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
-import * as Permissions from 'expo-permissions';
 
 import * as DocumentPicker from 'expo-document-picker';
-import { Constants } from 'expo';
 
 const _ = require('lodash');
 
@@ -466,13 +465,13 @@ const SecondRoute = ({ data }) => {
 const ThirdRoute = ({ data }) => {
 	const [downloadProgress, setDownloadProgress] = React.useState(0);
 	const [saving, setSaving] = React.useState(false);
+	const [sound, setSound] = React.useState();
+	const [isPlaying, setIsPlaying] = React.useState(false);
 
 	const pickDocument = async () => {
 		let result = await DocumentPicker.getDocumentAsync({
 			type: 'audio/*',
 		});
-		console.log({ result });
-		alert(result.uri);
 		uploadFile(result);
 	};
 
@@ -489,7 +488,7 @@ const ThirdRoute = ({ data }) => {
 			form.append('files', {
 				uri: file.uri,
 				name: file.name,
-				type: 'audio/mp3',
+				type: 'audio/mpeg',
 			});
 
 			const response = await api.post(`upload`, form, {
@@ -500,7 +499,7 @@ const ThirdRoute = ({ data }) => {
 					// mimeType: "multipart/form-data"
 				},
 			});
-			console.log({ response });
+			console.log({response})
 			if (response && response.data) {
 				alert('Sucesso');
 			}
@@ -544,22 +543,41 @@ const ThirdRoute = ({ data }) => {
 	const callback = downloadProgress => {
 		const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
 		setDownloadProgress(progress);
+		console.log({progress})
 	};
 
 	const saveFile = async (fileUri: string) => {
-		const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+		const { status } = await MediaLibrary.requestPermissionsAsync();
 		if (status === 'granted') {
 			const asset = await MediaLibrary.createAssetAsync(fileUri);
 			const dewnloded = await MediaLibrary.createAlbumAsync('Minha Coletânea', asset, false);
 			if (dewnloded) {
-				alert('Arquivo baixado com sucesso na Pasta Minha Coletânea');
+				Alert.alert("Arquivo baixado",'Arquivo baixado com sucesso na Pasta Minha Coletânea');
 			}
 		}
 	};
 
+	const requestDownloadFile = item => {
+
+		Alert.alert(
+			"Baixar arquivo?",
+			"Ao baixar, o arquivo estará disponível na pasta Minha Coletanea do seu dispositivo.",
+			[
+			  {
+				text: "Cancelar",
+				onPress: () => {},
+				style: "cancel"
+			  },
+			  { text: "Sim", onPress: () => downloadFile(item) }
+			]
+		  );
+
+	}
+
 	const downloadFile = async item => {
+
 		const downloadResumable = FileSystem.createDownloadResumable(
-			`https://minhacoletanea.com${item.url}`,
+			item.url,
 			FileSystem.documentDirectory + item.name,
 			{},
 			callback
@@ -574,10 +592,39 @@ const ThirdRoute = ({ data }) => {
 		}
 	};
 
+	const fileCanBePlayed = item => {
+		return ["audio/mpeg"].includes(item.mime)
+	}
+
+	async function playSound(item) {
+		console.log('Loading Sound', item);
+		const { sound } = await Audio.Audio.Sound.createAsync({uri: item.url});
+		setIsPlaying(true)
+		setSound(sound);
+	
+		console.log('Playing Sound');
+		await sound.playAsync(); 
+	}
+
+	async function stopSound() {
+		if(sound) {
+			await sound.stopAsync(); 
+			setIsPlaying(false)
+		}
+	}
+	
+	React.useEffect(() => {
+	return sound
+		? () => {
+			console.log('Unloading Sound');
+			sound.unloadAsync(); }
+		: undefined;
+	}, [sound]);
+
 	const keyExtractor = (item, index) => index.toString();
 
 	const renderItem = ({ item }) =>
-		<ListItem bottomDivider onPress={() => downloadFile(item)}>
+		<ListItem bottomDivider>
 			{/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
 			<ListItem.Content>
 				<ListItem.Title>
@@ -586,19 +633,39 @@ const ThirdRoute = ({ data }) => {
 				<ListItem.Subtitle>
 					Tam: {item.size} kbs
 				</ListItem.Subtitle>
+				<View style={{flexDirection: 'row', marginVertical: 10}}>
+
+					<Button
+						title="Baixar"
+						type="outline"
+						onPress={() => requestDownloadFile(item)}
+						containerStyle={{marginRight: 10}}
+					/>
+
+					{
+						fileCanBePlayed(item) && (
+							<Button
+								title={isPlaying ? 'Pausar' : 'Play'}
+								onPress={() => isPlaying ? stopSound() : playSound(item)}
+							/>
+						)
+					}
+				
+				</View>
 			</ListItem.Content>
 		</ListItem>;
 
 	return (
 		<SafeAreaView style={styles.containerSafe}>
-			<View style={[styles.scene, { backgroundColor: '#f5f5f5' }]}>
+			<View style={[styles.scene, { backgroundColor: '#fafafa' }]}>
 				{data.anexos && data.anexos.length > 0
 					? <FlatList data={data.anexos} renderItem={renderItem} keyExtractor={keyExtractor} />
 					: <View style={styles.notfound}>
 							<Card.Title style={styles.notfoundTitle}>NENHUM ARQUIVO ENCONTRADO.</Card.Title>
-							{/* <Button title="Select Document" onPress={pickDocument} /> */}
 							<Card.Divider />
 						</View>}
+
+						<Button title="Enviar Arquivo" onPress={pickDocument} />
 
 				{/* <Text style={styles.comments}>Videos</Text>
 				{data.videos && data.videos.length > 0
@@ -622,6 +689,9 @@ const ThirdRoute = ({ data }) => {
 							keyExtractor={item => item.id.toString()}
 						/>
 					: <Text>Nenhum comentário encontrado.</Text>} */}
+				<View>
+					<Text>Baixando: {(downloadProgress*100).toFixed(2)}%</Text>
+				</View>
 			</View>
 		</SafeAreaView>
 	);
