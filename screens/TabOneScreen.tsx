@@ -152,67 +152,17 @@ export default function TabOneScreen({ navigation }) {
 		return (
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 				<Block flex>
-						{
-							data.map((item, index) => {
-								return (
-									<Card
-                    					key={index}
-										navigateTo="Categorias"
-										item={{ id: item.id, title: item.nome, cta: item.descricao, image: item.imagem?.formats.thumbnail.url }}
-										// style={{ marginRight: theme.SIZES.BASE }}
-										// horizontal
-									/>
-								)
-							})
-						}
-					{/* <Block flex row>
-						<Card
-							navigateTo="Categorias"
-							item={{ id: data[1].id, title: data[1].nome, cta: data[1].descricao, image: data[1].imagem.formats.thumbnail.url }}
-							// style={{ marginRight: theme.SIZES.BASE }}
-						/>
-						<Card
-							navigateTo="Categorias"
-							item={{ id: data[3].id, title: data[3].nome, cta: data[3].descricao, image: data[3].imagem.formats.thumbnail.url }}
-							// style={{ marginRight: theme.SIZES.BASE }}
-						/>
-					</Block>
-					<Block flex row>
-						<Card
-							navigateTo="Categorias"
-							item={{ id: data[0].id, title: data[0].nome, cta: data[0].descricao, image: data[0].imagem.formats.thumbnail.url }}
-							style={{ marginRight: theme.SIZES.BASE }}
-						/>
-						<Card
-							navigateTo="Categorias"
-							item={{ id: data[2].id, title: data[2].nome, cta: data[2].descricao, image: data[2].imagem.formats.thumbnail.url }}
-							style={{ marginRight: theme.SIZES.BASE }}
-						/>
-					</Block>
-					
-					<Block flex row>
-						{
-							data[7] && (
+					{
+						data.map((item, index) => {
+							return (
 								<Card
+									key={index}
 									navigateTo="Categorias"
-									item={{ id: data[7].id, title: data[7].nome, cta: data[7].descricao, image: data[7].imagem?.formats.thumbnail.url }}
-									style={{ marginRight: theme.SIZES.BASE }}
+									item={{ id: item.id, title: item.nome, cta: item.descricao, image: item.imagem?.formats.thumbnail.url }}
 								/>
 							)
-						}
-
-						{
-							data[6] && (
-								<Card
-									navigateTo="Categorias"
-									item={{ id: data[6].id, title: data[6].nome, cta: data[6].descricao, image: data[6].imagem?.formats.thumbnail.url }}
-									style={{ marginRight: theme.SIZES.BASE }}
-								/>
-							)
-						}
-
-					</Block> */}
-
+						})
+					}
 				</Block>
 			</ScrollView>
 		);
@@ -220,21 +170,19 @@ export default function TabOneScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={styles.container}>
-
 			{
 				refreshing && <ActivityIndicator size="large" color="#d44b42" />
 			}
-
-		{data.length
-			? <Block flex center style={styles.home}>
-					{renderArticles()}
-				</Block>
-			:	<View style={styles.notfound}>
-					<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
-					<CardRNE.Divider />
-					<Button title="Atualizar Tela" onPress={onRefresh} />
-				</View>
-        }
+			{data.length
+				? 	<Block flex center style={styles.home}>
+						{renderArticles()}
+					</Block>
+				:	<View style={styles.notfound}>
+						<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
+						<CardRNE.Divider />
+						<Button title="Atualizar" onPress={onRefresh} />
+					</View>
+			}
 		</SafeAreaView>
 	);
 }

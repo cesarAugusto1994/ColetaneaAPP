@@ -3,23 +3,22 @@ import { StyleSheet, SafeAreaView, ScrollView, FlatList, Platform, Dimensions, T
 import WebView from 'react-native-webview';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import HTMLView from 'react-native-htmlview';
-import { Text, View } from '../components/Themed';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { Card, ListItem, Button } from 'react-native-elements';
+import * as Audio from 'expo-av';
+import BottomSheet from 'reanimated-bottom-sheet';
+import moment from 'moment';
+import { TouchableHighlight } from 'react-native-gesture-handler';
+
+import { Text, View } from '../components/Themed';
 import api from '../services/api/axios';
 import Transposer from '../services/chord-transposer';
 import { getToken, getDisplayMode, setDisplayMode } from '../services/services/auth';
-import { Card, ListItem, Button } from 'react-native-elements';
-import * as Audio from 'expo-av';
 import ChordTab from '../components/ChordTab';
-import BottomSheet from 'reanimated-bottom-sheet';
-import moment from 'moment';
-import mime from "mime";
-import { TouchableHighlight } from 'react-native-gesture-handler';
 import { getUser, setUser } from '../services/services/auth';
 
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
-
 import * as DocumentPicker from 'expo-document-picker';
 
 const _ = require('lodash');
@@ -463,41 +462,63 @@ const SecondRoute = ({ data }) => {
 	);
 };
 
-const ThirdRoute = ({ data }) => {
+const ThirdRoute = ({ data, currentUser }) => {
+	
 	const [downloadProgress, setDownloadProgress] = React.useState(0);
 	const [saving, setSaving] = React.useState(false);
 	const [sound, setSound] = React.useState();
 	const [isPlaying, setIsPlaying] = React.useState(false);
+	const [isDownloading, setIsDownloading] = React.useState(false);
+	const [uploadingProgress, setUploadingProgress] = React.useState(0)
 
 	const pickDocument = async () => {
 		let result = await DocumentPicker.getDocumentAsync({
-			// type: 'audio/*',
-			type: '*/*',
+			type: 'application/pdf',
 			copyToCacheDirectory: true,
-        	base64: true
+			multiple: true
 		});
 
-		console.log({result})
-
 		if (result.type === 'success' ) {
-			uploadFile(result);
+			uploadFile(result, 'application/pdf');
 		}
 
 	};
 
-	const uploadFile = async file => {
+	const pickSong = async () => {
+		let result = await DocumentPicker.getDocumentAsync({
+			type: 'audio/mpeg',
+			copyToCacheDirectory: true,
+			multiple: true
+		});
+
+		if (result.type === 'success' ) {
+			uploadFile(result, 'audio/mpeg');
+		}
+
+	};
+
+	const onUploadProgress = uploading => {
+		const percentage = (uploading.loaded / uploading.total) * 100
+		setUploadingProgress(percentage.toFixed(2))
+	}
+
+	const uploadFile = async (file, type) => {
 		try {
 			setSaving(true);
 
 			const form = new FormData();
 
-			const newImageUri =  "file://" + file.uri.split("file:/").join("");
+			const newImageUri =  "file:///" + file.uri.split("file:/").join("");
 
 			form.append('files', {
 				uri: newImageUri,
-				name: newImageUri.split("/").pop(),
-				type: mime.getType(newImageUri),
+				name: `${file.name}`,
+				type: type,
 			}); 
+
+			form.append('ref', 'musicas')
+			form.append('refId', data.id)
+			form.append('field', 'anexos')
 
 			const response = await api.post('upload', form, {
 				headers: {
@@ -505,39 +526,88 @@ const ThirdRoute = ({ data }) => {
 					Authorization: await getToken(),
 					'Content-Type': 'multipart/form-data',
 				},
+				onUploadProgress
 			});
 			if (response) {
-				alert('Sucesso');
+				Alert.alert('Envio do arquivo','Arquivo enviado com Sucesso');
+
+				const attechments = data.anexos || [];
+				const song = data
+				attechments.push(response.data[0])
+				song.anexos = attechments
 			}
 			setSaving(false);
 		} catch (error) {
 			setSaving(false);
-			console.log('error', error);
+			console.log('error', error.message);
+			console.log('error', error.config);
+			Alert.alert('Envio do arquivo','Ocorreu algum erro no tentar enviar o arquivo, tente novamente.');
 		}
 	};
 
-	const uploadSong = async () => {
+	const requestDeleteFile = item => {
+
+		Alert.alert(
+			"Deletar arquivo?",
+			"ao deletar, não será possivel recuperar o arquivo!",
+			[
+			  {
+				text: "Cancelar",
+				onPress: () => {},
+				style: "cancel"
+			  },
+			  { text: "Sim", onPress: () => deleteFile(item) }
+			]
+		  );
+
+	}
+
+	const deleteFile = async item => {
 		try {
 			setSaving(true);
-
-			const attechments = data.musica_anexos || [];
-
-			const response = await api.put(
-				`musicas/${data.id}`,
-				{
-					musica_anexos: [],
-				},
+			const response = await api.delete(
+				`upload/files/${item.id}`,
 				{
 					headers: {
 						Authorization: await getToken(),
-						// Accept: 'application/json',
-						'Content-Type': 'multipart/form-data',
-						// mimeType: "multipart/form-data"
 					},
 				}
 			);
 			if (response && response.data) {
-				alert('Sucesso');
+				Alert.alert('Deletar arquivo', 'Arquivo deletado com Sucesso');
+
+				_.remove(data.anexos, removedItem => removedItem.id === item.id)
+
+			}
+			setSaving(false);
+		} catch (error) {
+			setSaving(false);
+			console.log('error', error.response);
+		}
+	};
+
+	const uploadSong = async newSong => {
+		try {
+			setSaving(true);
+
+			const attechments = data.anexos || [];
+			const song = data
+			attechments.push(newSong)
+
+			song.anexos = attechments
+
+			const response = await api.put(
+				`musicas/${data.id}`,
+				JSON.stringify(song),
+				{
+					headers: {
+						Authorization: await getToken(),
+					},
+				}
+			);
+			console.log({response})
+			if (response && response.data) {
+				// alert('Sucesso');
 			}
 			setSaving(false);
 		} catch (error) {
@@ -547,19 +617,25 @@ const ThirdRoute = ({ data }) => {
 	};
 
 	const callback = downloadProgress => {
+		setIsDownloading(true)
 		const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
 		setDownloadProgress(progress);
-		console.log({progress})
 	};
 
 	const saveFile = async (fileUri: string) => {
-		const { status } = await MediaLibrary.requestPermissionsAsync();
-		if (status === 'granted') {
-			const asset = await MediaLibrary.createAssetAsync(fileUri);
-			const dewnloded = await MediaLibrary.createAlbumAsync('Minha Coletânea', asset, false);
-			if (dewnloded) {
-				Alert.alert("Arquivo baixado",'Arquivo baixado com sucesso na Pasta Minha Coletânea');
+
+		try {
+			const { status } = await MediaLibrary.requestPermissionsAsync();
+			if (status === 'granted') {
+				const asset = await MediaLibrary.createAssetAsync(fileUri);
+				const dewnloded = await MediaLibrary.createAlbumAsync('Minha Coletânea', asset, false);
+				if (dewnloded) {
+					Alert.alert("Arquivo baixado",'Arquivo baixado com sucesso na Pasta Minha Coletânea');
+				}
 			}
+		} catch(error) {
+			console.log(error)
+			Alert.alert("Baixar arquivo", 'ocorreu um erro ao tentar baixar o arquivo.')
 		}
 	};
 
@@ -582,17 +658,25 @@ const ThirdRoute = ({ data }) => {
 
 	const downloadFile = async item => {
 
-		const downloadResumable = FileSystem.createDownloadResumable(
-			item.url,
-			FileSystem.documentDirectory + item.name,
-			{},
-			callback
-		);
+		// const url = `http://192.168.15.29:1337${item.url}`
 
 		try {
+
+			const downloadResumable = FileSystem.createDownloadResumable(
+				item.url,
+				FileSystem.documentDirectory + item.name,
+				{},
+				callback
+			);
+
 			const { uri } = await downloadResumable.downloadAsync();
-			// console.log('Finished downloading to ', uri);
 			saveFile(uri);
+
+			if(downloadProgress === 1) {
+				setIsDownloading(false)
+				setDownloadProgress(0)
+			}
+
 		} catch (e) {
 			console.error(e);
 		}
@@ -603,12 +687,10 @@ const ThirdRoute = ({ data }) => {
 	}
 
 	async function playSound(item) {
-		console.log('Loading Sound', item);
 		const { sound } = await Audio.Audio.Sound.createAsync({uri: item.url});
+		// const { sound } = await Audio.Audio.Sound.createAsync({uri: `http://192.168.15.29:1337${item.url}`});
 		setIsPlaying(true)
 		setSound(sound);
-	
-		console.log('Playing Sound');
 		await sound.playAsync(); 
 	}
 
@@ -622,7 +704,6 @@ const ThirdRoute = ({ data }) => {
 	React.useEffect(() => {
 	return sound
 		? () => {
-			console.log('Unloading Sound');
 			sound.unloadAsync(); }
 		: undefined;
 	}, [sound]);
@@ -639,23 +720,42 @@ const ThirdRoute = ({ data }) => {
 				<ListItem.Subtitle>
 					Tam: {item.size} kbs
 				</ListItem.Subtitle>
-				<View style={{flexDirection: 'row', marginVertical: 10}}>
+				<View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
 
-					<Button
-						title="Baixar"
-						type="outline"
-						onPress={() => requestDownloadFile(item)}
-						containerStyle={{marginRight: 10}}
-					/>
+					<View style={{flexDirection: 'row', marginVertical: 10}}>
 
-					{
-						fileCanBePlayed(item) && (
-							<Button
-								title={isPlaying ? 'Pausar' : 'Play'}
-								onPress={() => isPlaying ? stopSound() : playSound(item)}
-							/>
-						)
-					}
+						<Button
+							title="Baixar"
+							type="outline"
+							onPress={() => requestDownloadFile(item)}
+							containerStyle={{marginRight: 10}}
+						/>
+
+						{
+							fileCanBePlayed(item) && (
+								<Button
+									title={isPlaying ? 'Pausar' : 'Play'}
+									onPress={() => isPlaying ? stopSound() : playSound(item)}
+								/>
+							)
+						}
+
+					</View>
+
+					<View>
+
+						{
+							(currentUser && currentUser.role && currentUser.role.id === 3) && (
+								<Button
+									title="Deletar"
+									type="clear"
+									onPress={() => requestDeleteFile(item)}
+									titleStyle={{color: 'red'}}
+								/>
+							)
+						}
+
+					</View>
 				
 				</View>
 			</ListItem.Content>
@@ -671,7 +771,10 @@ const ThirdRoute = ({ data }) => {
 							<Card.Divider />
 						</View>}
 
-						<Button title="Enviar Arquivo" onPress={pickDocument} />
+				<View style={{flexDirection:'row'}}>
+					<Button title="Enviar Documento" onPress={pickDocument} containerStyle={styles.buttonSendFile} />
+					<Button title="Enviar mp3" onPress={pickSong} buttonStyle={{backgroundColor: 'crimson'}} containerStyle={styles.buttonSendSong} />
+				</View>
 
 				{/* <Text style={styles.comments}>Videos</Text>
 				{data.videos && data.videos.length > 0
@@ -695,10 +798,24 @@ const ThirdRoute = ({ data }) => {
 							keyExtractor={item => item.id.toString()}
 						/>
 					: <Text>Nenhum comentário encontrado.</Text>} */}
-				<View>
-					<Text>Baixando: {(downloadProgress*100).toFixed(2)}%</Text>
-				</View>
+				{
+					isDownloading && downloadProgress < 1 && (
+						<View style={styles.downloadContainer}>
+							<Text>Baixando: {(downloadProgress*100).toFixed(2)}%</Text>
+						</View>
+					)
+				}
+
+				{
+					uploadingProgress > 0 && uploadingProgress < 100 && (
+						<View style={styles.downloadContainer}>
+							<Text>Enviando arquivo: {uploadingProgress}%</Text>
+						</View>
+					)
+				}
+				
 			</View>
+
 		</SafeAreaView>
 	);
 };
@@ -816,8 +933,8 @@ export default function SongScreen({ route, navigation }) {
 				navigation={navigation}
 				currentUser={currentUser}
 			/>,
-		second: () => <SecondRoute data={data} />,
-		third: () => <ThirdRoute data={data} />,
+		second: () => <SecondRoute data={data} currentUser={currentUser} />,
+		third: () => <ThirdRoute data={data} currentUser={currentUser} />,
 	});
 
 	return (
@@ -929,5 +1046,23 @@ const styles = StyleSheet.create({
 	textDark: {
 		color: '#333',
 		fontSize: 14
+	},
+	buttonSendFile: {
+		marginHorizontal: 10,
+		marginVertical: 30,
+		flex: 0.5
+	},
+	buttonSendSong: {
+		marginHorizontal: 10,
+		marginVertical: 30,
+		flex: 0.5,
+	},
+	downloadContainer: {
+		marginHorizontal: 10,
+		alignItems: 'center',
+	},
+	uploadContainer: {
+		marginHorizontal: 10,
+		alignItems: 'center',
 	}
 });

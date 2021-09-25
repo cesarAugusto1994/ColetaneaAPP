@@ -83,7 +83,7 @@ export default function GroupScreen({ navigation, route }) {
 
 	const getSongs = async text => {
 		try {
-			const response = await api.get(`musicas/search/${text}`);
+			const response = await api.get(`/musicas/search/${text}`);
 			if (response) {
 
 				const prepareddata = response.data.map(i => {
@@ -98,7 +98,7 @@ export default function GroupScreen({ navigation, route }) {
 			}
 		} catch (error) {
 			setLoading(false);
-			console.log('error', JSON.stringify(error));
+			console.log('error', error);
 		}
 	};
 
