@@ -771,10 +771,14 @@ const ThirdRoute = ({ data, currentUser }) => {
 							<Card.Divider />
 						</View>}
 
-				<View style={{flexDirection:'row'}}>
-					<Button title="Enviar Documento" onPress={pickDocument} containerStyle={styles.buttonSendFile} />
-					<Button title="Enviar mp3" onPress={pickSong} buttonStyle={{backgroundColor: 'crimson'}} containerStyle={styles.buttonSendSong} />
-				</View>
+				{
+					(currentUser && currentUser.role && currentUser.role.id === 3) && (
+						<View style={{flexDirection:'row'}}>
+							<Button title="Enviar Documento" onPress={pickDocument} containerStyle={styles.buttonSendFile} />
+							<Button title="Enviar mp3" onPress={pickSong} buttonStyle={{backgroundColor: 'crimson'}} containerStyle={styles.buttonSendSong} />
+						</View>
+					)
+				}
 
 				{/* <Text style={styles.comments}>Videos</Text>
 				{data.videos && data.videos.length > 0
