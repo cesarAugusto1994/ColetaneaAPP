@@ -98,9 +98,7 @@ export default function UserEditScreen({ navigation }) {
 			const response = await api.post(`upload`, form, {
 				headers: {
 					Authorization: await getToken(),
-					// Accept: 'application/json',
 					'Content-Type': 'multipart/form-data',
-					// mimeType: "multipart/form-data"
 				},
 			});
 			if (response && response.data) {

@@ -13,6 +13,7 @@ import * as Audio from 'expo-av';
 import ChordTab from '../components/ChordTab';
 import BottomSheet from 'reanimated-bottom-sheet';
 import moment from 'moment';
+import mime from "mime";
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { getUser, setUser } from '../services/services/auth';
 
@@ -470,9 +471,18 @@ const ThirdRoute = ({ data }) => {
 
 	const pickDocument = async () => {
 		let result = await DocumentPicker.getDocumentAsync({
-			type: 'audio/*',
+			// type: 'audio/*',
+			type: '*/*',
+			copyToCacheDirectory: true,
+        	base64: true
 		});
-		uploadFile(result);
+
+		console.log({result})
+
+		if (result.type === 'success' ) {
+			uploadFile(result);
+		}
+
 	};
 
 	const uploadFile = async file => {
@@ -481,32 +491,28 @@ const ThirdRoute = ({ data }) => {
 
 			const form = new FormData();
 
-			// const file = await FileSystem.getInfoAsync(fileURI);
-
-			// const attechments = data.musica_anexos || []
+			const newImageUri =  "file://" + file.uri.split("file:/").join("");
 
 			form.append('files', {
-				uri: file.uri,
-				name: file.name,
-				type: 'audio/mpeg',
-			});
+				uri: newImageUri,
+				name: newImageUri.split("/").pop(),
+				type: mime.getType(newImageUri),
+			}); 
 
-			const response = await api.post(`upload`, form, {
+			const response = await api.post('upload', form, {
 				headers: {
+					Accept: 'application/json',
 					Authorization: await getToken(),
-					// Accept: 'application/json',
 					'Content-Type': 'multipart/form-data',
-					// mimeType: "multipart/form-data"
 				},
 			});
-			console.log({response})
-			if (response && response.data) {
+			if (response) {
 				alert('Sucesso');
 			}
 			setSaving(false);
 		} catch (error) {
 			setSaving(false);
-			console.log('error', error.config);
+			console.log('error', error);
 		}
 	};
 
