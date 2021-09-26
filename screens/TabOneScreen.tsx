@@ -171,6 +171,12 @@ export default function TabOneScreen({ navigation }) {
 						/>
 						<View style={{marginHorizontal: 5}} />
 						<Card
+							navigateTo="Albums"
+							item={{ id: 1, title: 'Albums', cta: 'Lançamento das músicas', image: 'https://coletanea.s3.us-east-2.amazonaws.com/vitrola_gq_874a3d20e4.jpg' }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+						<View style={{marginHorizontal: 5}} />
+						<Card
 							navigateTo="Autores"
 							item={{ id: 1, title: 'Autores', cta: 'Composições de cada autor', image: 'https://coletanea.s3.us-east-2.amazonaws.com/compositor_5da2fb6c41.jpg' }}
 							// style={{ marginRight: theme.SIZES.BASE }}

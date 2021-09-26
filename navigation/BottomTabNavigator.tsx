@@ -12,6 +12,8 @@ import AuthorsScreen from "../screens/AuthorsScreen";
 import AuthorSongsScreen from "../screens/AuthorSongsScreen";
 import ArtistsScreen from "../screens/ArtistsScreen";
 import ArtistSongsScreen from "../screens/ArtistSongsScreen";
+import AlbunsScreen from "../screens/AlbunsScreen";
+import AlbunSongsScreen from "../screens/AlbunSongsScreen";
 import TagsScreen from "../screens/TagsScreen";
 import TagSongsScreen from "../screens/TagSongsScreen";
 import CategoriesScreen from "../screens/CategoriesScreen";
@@ -183,6 +185,20 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="ArtistSongs"
         component={ArtistSongsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="Albums"
+        component={AlbunsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="AlbumSongs"
+        component={AlbunSongsScreen}
         options={({ route }) => ({ 
           title: route.params.title
          })}
