@@ -163,7 +163,30 @@ export default function TabOneScreen({ navigation }) {
 							)
 						})
 					}
+					<Block flex row>
+						<Card
+							navigateTo="Ritmos"
+							item={{ id: 1, title: 'Ritmos', cta: 'Hinos Separados pelo ritmo', image: 'https://coletanea.s3.us-east-2.amazonaws.com/5006_148e0b3a74.jpg' }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+						<View style={{marginHorizontal: 5}} />
+						<Card
+							navigateTo="Autores"
+							item={{ id: 1, title: 'Autores', cta: 'Composições de cada autor', image: 'https://coletanea.s3.us-east-2.amazonaws.com/compositor_5da2fb6c41.jpg' }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+					</Block>
+
+					<Block flex>
+						<Card
+							navigateTo="Tags"
+							item={{ id: 1, title: 'Seleção Especial', cta: 'Hinos selecionados por tema', image: 'https://coletanea.s3.us-east-2.amazonaws.com/20150619172440_57178033_13bf7ec07f.jpg' }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+					</Block>
+
 				</Block>
+				
 			</ScrollView>
 		);
 	};

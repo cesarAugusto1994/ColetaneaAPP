@@ -6,6 +6,12 @@ import * as React from "react";
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
 import TabOneScreen from "../screens/TabOneScreen";
+import RithymsScreen from "../screens/RithymsScreen";
+import RithymSongsScreen from "../screens/RithymSongsScreen";
+import AuthorsScreen from "../screens/AuthorsScreen";
+import AuthorSongsScreen from "../screens/AuthorSongsScreen";
+import TagsScreen from "../screens/TagsScreen";
+import TagSongsScreen from "../screens/TagSongsScreen";
 import CategoriesScreen from "../screens/CategoriesScreen";
 import CategoryAddScreen from "../screens/CategoryAddScreen";
 import SongsScreen from "../screens/SongsScreen";
@@ -122,6 +128,48 @@ function TabOneNavigator() {
         name="TabOneScreen"
         component={TabOneScreen}
         options={{ headerTitle: "Minha Coletânea" }}
+      />
+      <TabOneStack.Screen
+        name="Ritmos"
+        component={RithymsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="RithymSongs"
+        component={RithymSongsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="Autores"
+        component={AuthorsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="AuthorSongs"
+        component={AuthorSongsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="Tags"
+        component={TagsScreen}
+        options={({ route }) => ({ 
+          title: 'Seleção Especial'
+         })}
+      />
+      <TabOneStack.Screen
+        name="TagSongs"
+        component={TagSongsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
       />
       <TabOneStack.Screen
         name="Categorias"
