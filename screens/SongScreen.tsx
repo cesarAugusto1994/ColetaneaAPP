@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { StyleSheet, SafeAreaView, ScrollView, FlatList, Platform, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, SafeAreaView, ScrollView, FlatList, Platform, Dimensions, TouchableOpacity, Alert, Linking } from 'react-native';
 import WebView from 'react-native-webview';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, FontAwesome5, Entypo } from '@expo/vector-icons';
 import HTMLView from 'react-native-htmlview';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { Card, ListItem, Button } from 'react-native-elements';
@@ -227,6 +227,10 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 		await handleGetVersion(version === 'normal' ? 'simplificada' : 'normal', showChord);
 	};
 
+	const openSpotify = () => {
+		Linking.openURL("https://open.spotify.com/track/4OkMK49i3NApR1KsAIsTf6?si=e7cb3f6011174635")
+	}
+
 	const renderContent = () =>
 		<View
 			style={{
@@ -273,6 +277,17 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 											Versão: {version} (Trocar)
 										</Text>
 									</TouchableHighlight>}
+							{
+								data.spotify && (
+									<TouchableOpacity onPress={openSpotify} style={styles.earOnSpotify}>
+										<Entypo name="spotify" size={24} color="black" />
+										<Text style={styles.descriptionsSong}>
+											{` `}Ouvir no Spotify
+										</Text>
+									</TouchableOpacity>
+								)
+							}
+							
 						</View>
 
 						{data.videoHash &&
@@ -712,7 +727,6 @@ const ThirdRoute = ({ data, currentUser }) => {
 
 	const renderItem = ({ item }) =>
 		<ListItem bottomDivider>
-			{/* <Avatar title={item.nome.substring(0,2)} source={{uri: item.avatar_url}} /> */}
 			<ListItem.Content>
 				<ListItem.Title>
 					{item.name}
@@ -823,6 +837,7 @@ const ThirdRoute = ({ data, currentUser }) => {
 		</SafeAreaView>
 	);
 };
+
 const initialLayout = { width: Dimensions.get('window').width };
 
 export default function SongScreen({ route, navigation }) {
@@ -972,7 +987,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		backgroundColor: '#ecf0f1',
-		height: 300,
+		height: 350,
 		width: '100%',
 	},
 	navbar: { flexDirection: 'row', width: '100%', padding: 10 },
@@ -1068,5 +1083,10 @@ const styles = StyleSheet.create({
 	uploadContainer: {
 		marginHorizontal: 10,
 		alignItems: 'center',
+	},
+	earOnSpotify: {
+		flexDirection: 'row',
+		paddingVertical: 5,
+		alignItems: 'center'
 	}
 });

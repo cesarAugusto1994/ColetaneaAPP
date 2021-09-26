@@ -10,6 +10,8 @@ import RithymsScreen from "../screens/RithymsScreen";
 import RithymSongsScreen from "../screens/RithymSongsScreen";
 import AuthorsScreen from "../screens/AuthorsScreen";
 import AuthorSongsScreen from "../screens/AuthorSongsScreen";
+import ArtistsScreen from "../screens/ArtistsScreen";
+import ArtistSongsScreen from "../screens/ArtistSongsScreen";
 import TagsScreen from "../screens/TagsScreen";
 import TagSongsScreen from "../screens/TagSongsScreen";
 import CategoriesScreen from "../screens/CategoriesScreen";
@@ -167,6 +169,20 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name="TagSongs"
         component={TagSongsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="Artistas"
+        component={ArtistsScreen}
+        options={({ route }) => ({ 
+          title: route.params.title
+         })}
+      />
+      <TabOneStack.Screen
+        name="ArtistSongs"
+        component={ArtistSongsScreen}
         options={({ route }) => ({ 
           title: route.params.title
          })}

@@ -177,7 +177,13 @@ export default function TabOneScreen({ navigation }) {
 						/>
 					</Block>
 
-					<Block flex>
+					<Block flex row>
+						<Card
+							navigateTo="Artistas"
+							item={{ id: 1, title: 'Artistas', cta: 'Músicas do artista', image: 'https://coletanea.s3.us-east-2.amazonaws.com/photo_1511671782779_c97d3d27a1d4_4f9c97c1d7.jfif' }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+						<View style={{marginHorizontal: 5}} />
 						<Card
 							navigateTo="Tags"
 							item={{ id: 1, title: 'Seleção Especial', cta: 'Hinos selecionados por tema', image: 'https://coletanea.s3.us-east-2.amazonaws.com/20150619172440_57178033_13bf7ec07f.jpg' }}
