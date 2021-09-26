@@ -41,7 +41,6 @@ export default function CategoriesScreen({ navigation, route }) {
 					Authorization: await getToken(),
 				},
 			});
-			console.log({response})
 			if (response) {
 				setData(response.data);
 				setRefreshing(false);
