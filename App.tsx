@@ -5,6 +5,8 @@ import * as Updates from "expo-updates";
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
+import { Provider as RRProvider } from 'react-redux';
+import store from './store';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -26,8 +28,10 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
+        <RRProvider store={store}>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </RRProvider>
       </SafeAreaProvider>
     );
   }

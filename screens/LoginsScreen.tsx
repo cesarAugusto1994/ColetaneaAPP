@@ -54,7 +54,7 @@ export default function CategoriesScreen({ navigation, route }) {
 	const renderItem = ({ item }) =>
 		<ListItem key="2" bottomDivider>
 			{
-				item.avatar && <Avatar rounded size="medium" source={{uri: `https://minhacoletanea.com${item.avatar.url}`}} />
+				item.avatar && <Avatar rounded size="medium" source={{uri: item.avatar.url}} />
 			}
 			<ListItem.Content>
 				<ListItem.Title>{item.users_permissions_user.name} ({item.users_permissions_user.username})</ListItem.Title>

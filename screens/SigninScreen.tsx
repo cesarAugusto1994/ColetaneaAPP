@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { StyleSheet, Text, Alert, Dimensions, View, ImageBackground } from 'react-native';
 import { Card, Divider } from 'react-native-elements';
-import api from '../services/api/axios';
+import { loginClient as api } from '../services/api/axios';
 import { onSignIn } from '../services/services/auth';
 import { Block, theme } from 'galio-framework';
 import { Button, Input, Icon } from '../components/galio';
@@ -11,7 +11,7 @@ import { sendPushNotification } from '../utils/pushNotifications'
 
 const { width } = Dimensions.get('screen');
 
-const image = require('../assets/images/splash-9.png');
+const image = require('../assets/images/splash.png');
 
 export default function NotFoundScreen({ navigation }) {
 	const [name, setName] = React.useState('');
@@ -247,6 +247,8 @@ export default function NotFoundScreen({ navigation }) {
 				// The request was made and the server responded with a status code
 				// that falls out of the range of 2xx
 
+				console.log("login", error.response)
+
 				if (error.response.data) {
 					const messages = error.response.data.data;
 
@@ -277,7 +279,7 @@ export default function NotFoundScreen({ navigation }) {
 				// The request was made but no response was received
 				// `error.request` is an instance of XMLHttpRequest in the browser and an instance of
 				// http.ClientRequest in node.js
-				// console.log(error.request);
+				console.log(error.request);
 			} else {
 				// Something happened in setting up the request that triggered an Error
 				// console.log('Error', error.message);

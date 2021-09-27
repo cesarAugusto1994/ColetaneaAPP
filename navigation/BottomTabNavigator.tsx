@@ -1,7 +1,10 @@
+import * as React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import * as React from "react";
+
+import { Loading, Search, Playing, Home, Songs, Favourite, Recent, Playlists, Playlist } from '../screens/player/screens';
+import { SCREENS } from '../constants';
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
@@ -66,6 +69,15 @@ export default function BottomTabNavigator() {
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
+      defaultNavigationOptions={{
+        headerStyle: {
+            borderBottomWidth: 0,
+            elevation: 0,
+        },
+        headerTitleStyle: {
+            fontWeight: '600',
+        },
+      }}
       tabBarOptions={{
         activeTintColor: Colors[colorScheme].tint,
         inactiveTintColor: "#d44b42"
@@ -87,6 +99,14 @@ export default function BottomTabNavigator() {
             <TabBarIcon name="ios-book-outline" color={color} />
         }}
       /> */}
+      <BottomTab.Screen
+        name="Player"
+        component={PlayerNavigator}
+        options={{
+          tabBarIcon: ({ color }) =>
+            <TabBarIcon name="ios-play" color={color} />
+        }}
+      />
       <BottomTab.Screen
         name="Descobrir"
         component={TabDiscoverNavigator}
@@ -437,3 +457,18 @@ function TabConfigsNavigator() {
     </TabConfigsStack.Navigator>
   );
 }
+
+const Stack = createStackNavigator();
+const PlayerNavigator = () => (
+	<Stack.Navigator headerMode="none" initialRouteName={SCREENS.LOADING}>
+		<Stack.Screen name={SCREENS.LOADING} component={Loading} />
+		<Stack.Screen name={SCREENS.SEARCH} component={Search} />
+		<Stack.Screen name={SCREENS.PLAYING} component={Playing} />
+		<Stack.Screen name={SCREENS.HOME} component={Home} />
+		<Stack.Screen name={SCREENS.SONGS} component={Songs} />
+		<Stack.Screen name={SCREENS.FAVOURITE} component={Favourite} />
+		<Stack.Screen name={SCREENS.RECENT} component={Recent} />
+		<Stack.Screen name={SCREENS.PLAYLISTS} component={Playlists} />
+		<Stack.Screen name={SCREENS.PLAYLIST} component={Playlist} />
+	</Stack.Navigator>
+);

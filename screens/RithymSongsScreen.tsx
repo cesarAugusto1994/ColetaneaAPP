@@ -45,9 +45,7 @@ export default function CategoriesScreen({ navigation, route }) {
 					Authorization: await getToken(),
 				},
 			});
-			console.log({response})
 			if (response && response.data) {
-
 				const songs = response.data.musicas;
 				songs.map(song => {
 					if(song.numero) {

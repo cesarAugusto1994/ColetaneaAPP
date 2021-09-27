@@ -81,8 +81,7 @@ export default function TabOneScreen({ navigation, route }) {
 				{
 					data.imagem && data.imagem.url && (
 						<Block center>
-							{console.log(`https://minhacoletanea.com${data.imagem?.url}`)}
-                			<Image source={{uri: `https://minhacoletanea.com${data.imagem?.url}`}} />
+                			<Image source={{uri: data.imagem?.url}} />
               			</Block>
 					)
 				}

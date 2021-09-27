@@ -19,6 +19,16 @@ import { isSignedIn } from '../services/services/auth';
 const { width } = Dimensions.get('screen');
 import registerForPushNotificationsAsync, { registerUserToken, sendPushNotification } from '../utils/pushNotifications'
 import * as Notifications from 'expo-notifications';
+import { Ads } from '../components/components';
+
+import {
+	AdMobBanner as AdMobBannerComponent,
+	AdMobInterstitial,
+	PublisherBanner as PublisherBannerComponent,
+	AdMobRewarded,
+	setTestDeviceIDAsync, //
+} from 'expo-ads-admob';
+
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
@@ -110,6 +120,11 @@ export default function TabOneScreen({ navigation }) {
 		getCollections();
 	}, []);
 
+	const bannerError = (error) => {
+		// Do something!
+		console.log({error})
+	};
+
 	React.useEffect(() => {
 
     if(currentUser) {
@@ -147,7 +162,7 @@ export default function TabOneScreen({ navigation }) {
 
 	const renderArticles = () => {
     
-		if (!data.length) return <Text>Nada</Text>
+		if (!data.length) return <Text>Carregando...</Text>
 
 		return (
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
@@ -163,6 +178,16 @@ export default function TabOneScreen({ navigation }) {
 							)
 						})
 					}
+
+					{
+						<AdMobBannerComponent
+							bannerSize="smartBannerLandscape" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
+							adUnitID={Ads.adUnitID?.banner}
+							servePersonalizedAds // true or false
+							onDidFailToReceiveAdWithError={bannerError}
+						/>
+					}
+
 					<Block flex row>
 						<Card
 							navigateTo="Ritmos"
@@ -196,6 +221,15 @@ export default function TabOneScreen({ navigation }) {
 							// style={{ marginRight: theme.SIZES.BASE }}
 						/>
 					</Block>
+
+					{
+						<AdMobBannerComponent
+							bannerSize="smartBannerPortrait" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
+							adUnitID={Ads.adUnitID?.banner}
+							servePersonalizedAds // true or false
+							onDidFailToReceiveAdWithError={bannerError}
+						/>
+					}
 
 				</Block>
 				

@@ -21,6 +21,15 @@ import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 
+import {
+	AdMobBanner as AdMobBannerComponent,
+	AdMobInterstitial,
+	PublisherBanner as PublisherBannerComponent,
+	AdMobRewarded,
+	setTestDeviceIDAsync, //
+} from 'expo-ads-admob';
+import { Ads } from '../components/components';
+
 const _ = require('lodash');
 
 const tones = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'Bb', 'B'];
@@ -231,6 +240,10 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 		Linking.openURL("https://open.spotify.com/track/4OkMK49i3NApR1KsAIsTf6?si=e7cb3f6011174635")
 	}
 
+	const bannerError = (error) => {
+		// Do something!
+	};
+
 	const renderContent = () =>
 		<View
 			style={{
@@ -256,6 +269,7 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 			{
 				showHeader && (
 					<View style={[styles.navbar, { backgroundColor: darkMode ? '#000000' : '#f5f5f5' }]}>
+						
 						<View style={{ flex: 1, backgroundColor: darkMode ? '#000000' : '#f5f5f5' }}>
 							{/* {data.numero &&
 								<Text style={[styles.descriptionsSong]}>Número: {data.numero || ' '}</Text>} */}
@@ -315,6 +329,16 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 						{},
 					]}
 				>
+					<View>
+						{
+							<AdMobBannerComponent
+								bannerSize="banner" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
+								adUnitID={Ads.adUnitID?.banner}
+								servePersonalizedAds // true or false
+								onDidFailToReceiveAdWithError={bannerError}
+							/>
+						}
+					</View>
 					<ScrollView
 						contentContainerStyle={{ paddingVertical: 20, marginLeft: 15 }}
 						showsVerticalScrollIndicator={false}
@@ -322,7 +346,9 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 						{data.letra
 							? <HTMLView value={song} stylesheet={styleSheetWebView} />
 							: <Text>Letra não encontrada.</Text>}
+							
 					</ScrollView>
+					
 				</View>
 
 				<View
@@ -620,7 +646,6 @@ const ThirdRoute = ({ data, currentUser }) => {
 					},
 				}
 			);
-			console.log({response})
 			if (response && response.data) {
 				// alert('Sucesso');
 			}
