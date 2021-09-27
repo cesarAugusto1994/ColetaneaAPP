@@ -29,6 +29,7 @@ import {
 	setTestDeviceIDAsync, //
 } from 'expo-ads-admob';
 
+const _ = require('lodash');
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
@@ -167,7 +168,7 @@ export default function TabOneScreen({ navigation }) {
 			<ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.articles} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
 				<Block flex>
 					{
-						data.map((item, index) => {
+						_.take(data, 2).map((item, index) => {
 							return (
 								<Card
 									key={index}
@@ -177,6 +178,20 @@ export default function TabOneScreen({ navigation }) {
 							)
 						})
 					}
+
+					<Block flex row>
+						<Card
+							navigateTo="Categorias"
+							item={{ id: data[2].id, title: data[2].nome, cta: data[2].descricao, image: data[2].imagem?.url }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+						<View style={{marginHorizontal: 5}} />
+						<Card
+							navigateTo="Categorias"
+							item={{ id: data[3].id, title: data[3].nome, cta: data[3].descricao, image: data[3].imagem?.url }}
+							// style={{ marginRight: theme.SIZES.BASE }}
+						/>
+					</Block>
 
 					{
 						<AdMobBannerComponent
