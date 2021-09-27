@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "minhacoletanea",
+  "private_key_id": "fb1315c4c80030e23681f8c552c40fab764affd4",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCgnjSjg8cyqmhi\n0in3biljmVnfoVI0qGNv0kFnyiJ+eeezyFbPsgTeu5IiD7kZGbOHrCixqB/Ly1W0\nnoRT1T5+F1eag8ROLG+4JPBaWe3UeJhvWY/iYaSIfmGsRSeMwDgyvxHz4N/iYiSu\nMf3xfULF4ipw1C6Lf/0+nLqKQOF4wwjaB1JuweeWVw52C7Ngi2FbY4Ylb1yFjBaE\nzbRP0NYHX1Zs3ifRwrY5bS8PU639o2hv6jkXi8XBN/UIK92snmGqygYtPtt27gno\nt+hJKXd95MnbSfVbhsPymKQMF2lrYkTkSg1ouinHCQL+3sxIvlW+rllGzjIfHEbB\nSeIcSNSnAgMBAAECggEACihHGuocAEu/gzRYPBIG4woRIW/Rw4u8khdBVJ93U/lA\nmmF6f/L5lN5WzPmikoBKFrPf9PA1Zo1q05vMsYKES7QNMbPQh8MOo54OZyBVxoCD\n31LSIxZasdkQMzVCXYfQZgEoUPxxHB9pw2xc61cpEFuPpIf+k4raCIofz9tvhtPx\nArj7oZnSFW9EkUU5yDL5Uym70NI7+PGnJZY7xbMSDIb2R5WTZNaG1OFnP+QP9KaN\nQoCu05weL+qjfz3xkZhKz3X73VdxqkOPZSLc3P4TBwrVJZzO0xUvr2pEQy1rK/IK\nlMr8FSBKDZXXxkoeg+T/iFfyjYpi0WT8DlZUxMY9TQKBgQDSZStKo6Yo3Sr9rA1L\n7cgVGwCbqagrQZnXlx5xfd9FrcYmdgBzpzc61cXAg6npC6gDZ59TwWmkl02wnE60\ngDXi5nxmjeQla4bMygNt5CJyvkDpsKsuXmVkPSTB1Rkd1cZSgR7ENyiCNWEHvRjw\nYu+ui5U044DTdOwabNdC4cA6wwKBgQDDbuYzTeAgfL2fiK+tQF/xCqzK4q53hCWh\ntmi63xwrOo8ZodHQjd+pgVmoOCH7ArChGVgf97kyfNmoJ3V2iUkvMXYH7fd6u9y+\nY7cqQkFrZpv9C/R0SZF/i1RW/ehwQKIfPdtVil6HrFi9skKU9KGBOMBTRWENRG/E\nWnomtim4TQKBgGj4pQLWZ36X6m0qPHAXsO4mzMTdftQmJNWVxlCllpIzQ1vJICyT\nz1CBe+qzRkDJ2gfo2Wt2YnkGLHLjablRBpGwoXyhaqTo4xal69QWMMHC/qwZwy6d\nVkUO5Jn48lEaaZqcZXdMdd+RNlogFKNLGX6ikc0TfSEDgxEkILpz2+71AoGADKZW\n/CckRLYOSA8+38X079MzEAbQKChDj04RRVc/qYSm0o/o1sj4Gy6mMP9BI9Auwp6z\nV45fTGdMZ1f2gG+ubwGSlDzQ8f7K8P/fUTrspRkFK8HkVsqUQl8wXFke/HUSiVcl\npUnJiJqdO9oX+TBEa+rSeBFbkNJHMbxxf6P221kCgYEAjUF7iBWH5XqAeW+euOc9\nPjOE2dJUeVE2E0pTHpyWnXZgB5YaSMZ/A4XpuKWl2P3EMOxeVhvtZT9iLfbXmayJ\nu01jzKUn+OydHJ6a93a2OdY3y1Qv4V0wGGX7VWWDYX9/tglGLi84rOta5gKLYzen\nLEgpZqdZ2gSBmD6+8tW+H9E=\n-----END PRIVATE KEY-----\n",
+  "client_email": "minha-coletanea@minhacoletanea.iam.gserviceaccount.com",
+  "client_id": "118224698417984737949",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/minha-coletanea%40minhacoletanea.iam.gserviceaccount.com"
+}

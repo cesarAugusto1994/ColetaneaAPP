@@ -210,7 +210,7 @@ function TabOneNavigator() {
          })}
       />
       <TabOneStack.Screen
-        name="Albums"
+        name="Albuns"
         component={AlbunsScreen}
         options={({ route }) => ({ 
           title: route.params.title

@@ -19,15 +19,15 @@ import {
 } from 'expo-ads-admob';
 
 export const adUnitID = Object.freeze({
-	banner: 'ca-app-pub-3940256099942544/6300978111', // Your Admob unit ID
-	interstitial: 'ca-app-pub-3940256099942544/1033173712', // Your Admob unit ID
+	banner: 'ca-app-pub-7909550263509114/1058842015', // Your Admob unit ID
+	interstitial: 'ca-app-pub-7909550263509114/2894328551', // Your Admob unit ID
 	reward: 'ca-app-pub-3940256099942544/5224354917', // Your Admob unit ID
 });
 
-// Set global test device ID
-(async () => {
-	await setTestDeviceIDAsync('EMULATOR');
-})();
+// // Set global test device ID
+// (async () => {
+// 	await setTestDeviceIDAsync('EMULATOR');
+// })();
 
 export const AdMobBanner = ({ bannerSize = 'fullBanner' }) => {
 	// TODO: Add events! Kindly see: https://docs.expo.io/versions/latest/sdk/admob/#admobinterstitials

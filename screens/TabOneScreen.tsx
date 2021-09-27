@@ -122,7 +122,6 @@ export default function TabOneScreen({ navigation }) {
 
 	const bannerError = (error) => {
 		// Do something!
-		console.log({error})
 	};
 
 	React.useEffect(() => {
@@ -181,7 +180,7 @@ export default function TabOneScreen({ navigation }) {
 
 					{
 						<AdMobBannerComponent
-							bannerSize="smartBannerLandscape" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
+							bannerSize="fullBanner" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
 							adUnitID={Ads.adUnitID?.banner}
 							servePersonalizedAds // true or false
 							onDidFailToReceiveAdWithError={bannerError}
@@ -196,8 +195,8 @@ export default function TabOneScreen({ navigation }) {
 						/>
 						<View style={{marginHorizontal: 5}} />
 						<Card
-							navigateTo="Albums"
-							item={{ id: 1, title: 'Albums', cta: 'Lançamento das músicas', image: 'https://coletanea.s3.us-east-2.amazonaws.com/vitrola_gq_874a3d20e4.jpg' }}
+							navigateTo="Albuns"
+							item={{ id: 1, title: 'Albuns', cta: 'Lançamento das músicas', image: 'https://coletanea.s3.us-east-2.amazonaws.com/vitrola_gq_874a3d20e4.jpg' }}
 							// style={{ marginRight: theme.SIZES.BASE }}
 						/>
 						<View style={{marginHorizontal: 5}} />
@@ -224,7 +223,7 @@ export default function TabOneScreen({ navigation }) {
 
 					{
 						<AdMobBannerComponent
-							bannerSize="smartBannerPortrait" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
+							bannerSize="smartBannerLandscape" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
 							adUnitID={Ads.adUnitID?.banner}
 							servePersonalizedAds // true or false
 							onDidFailToReceiveAdWithError={bannerError}

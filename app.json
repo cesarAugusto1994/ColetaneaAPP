@@ -2,7 +2,7 @@
   "expo": {
     "name": "Minha Coletânea",
     "slug": "Coletanea",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "minhacoletanea",
@@ -21,10 +21,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.novatec.coletaneaicm",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.0.1",
       "usesIcloudStorage": true
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
