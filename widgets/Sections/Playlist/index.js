@@ -13,7 +13,7 @@ const Index = ({ songs, playlists, style = {} }) => {
 	return (
 		playlists &&
 		playlists.length > 0 && (
-			<Container style={style} title="Your playlist">
+			<Container style={style} title="Sua Playlist">
 				{playlists.map((playlist, key) => (
 					<Card.Playlist
 						key={key}

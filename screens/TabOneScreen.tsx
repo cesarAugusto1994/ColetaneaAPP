@@ -261,9 +261,13 @@ export default function TabOneScreen({ navigation }) {
 						{renderArticles()}
 					</Block>
 				:	<View style={styles.notfound}>
-						<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
-						<CardRNE.Divider />
-						<Button title="Atualizar" onPress={onRefresh} />
+						{
+							!refreshing && data.length === 0 && (
+								<CardRNE.Title style={styles.notfoundTitle}>NADA ENCONTRADO.</CardRNE.Title>
+							)
+						}
+						{/* <CardRNE.Divider />
+						<Button title="Atualizar" onPress={onRefresh} /> */}
 					</View>
 			}
 		</SafeAreaView>

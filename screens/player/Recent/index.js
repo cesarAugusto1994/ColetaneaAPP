@@ -22,7 +22,7 @@ const Index = ({ songs }) => {
 						},
 						middle: {
 							show: true,
-							text: 'Recently Played',
+							text: 'Tocadas Recentemente',
 						},
 						right: {
 							show: false,

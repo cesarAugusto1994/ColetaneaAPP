@@ -46,11 +46,16 @@ const Index = ({ songs, dispatch, style = {}, audios = [], indicator = true, use
 	};
 
 	const onPlayPress = (song, index) => {
-		navigate(SCREENS.PLAYING, {
-			forcePlay: true,
-			song,
-			index,
-		});
+
+		console.log({song, index})
+
+		if(index >= 0) {
+			navigate(SCREENS.PLAYING, {
+				forcePlay: true,
+				song,
+				index,
+			});
+		}
 	};
 
 	useEffect(() => {
