@@ -27,10 +27,11 @@
     "android": {
       "versionCode": 2,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.novatec.coletaneaicm",
+      "googleServicesFile": "./google-services.json",
       "config": {
         "googleSignIn": {
             "apiKey": "AIzaSyCPSooaM6dgbp5KUh4dObN5cGbJj0jluwY",
@@ -39,7 +40,18 @@
       }
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/icon.png",
+      "config": {
+        "firebase": {
+          "appId": "1:725556770670:web:1fae159fa46da91546737f",
+          "apiKey": "AIzaSyA9Y0jdnywsBLFB_pHdRuO4Q9plngFJvC0",
+          "authDomain": "minhacoletanea.firebaseapp.com",
+          "projectId": "minhacoletanea",
+          "storageBucket": "minhacoletanea.appspot.com",
+          "messagingSenderId": "725556770670",
+          "measurementId": "G-NW3G8LFE8X"
+        }
+      }
     }
   }
 }

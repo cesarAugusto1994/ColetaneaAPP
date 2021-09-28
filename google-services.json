@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "725556770670",
+    "project_id": "minhacoletanea",
+    "storage_bucket": "minhacoletanea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725556770670:android:368efdd14971512446737f",
+        "android_client_info": {
+          "package_name": "com.novatec.coletaneaicm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "725556770670-8k6agonvmhp267chpl0h7u384qu6p2eg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.novatec.coletaneaicm",
+            "certificate_hash": "7392554856221c9f1cd1cb4625823cc0e3dc7273"
+          }
+        },
+        {
+          "client_id": "725556770670-lenk9vl1vht006tvr9blhej3l9qt5lv1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxc4KaMgLqWkY8haupV3cX_uVGXjVGbqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "725556770670-lenk9vl1vht006tvr9blhej3l9qt5lv1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

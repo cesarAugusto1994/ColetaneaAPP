@@ -16,10 +16,11 @@ import { Card } from '../components/galio';
 import api from '../services/api/axios';
 import { Block, theme, Text } from 'galio-framework';
 import { isSignedIn } from '../services/services/auth';
-const { width } = Dimensions.get('screen');
 import registerForPushNotificationsAsync, { registerUserToken, sendPushNotification } from '../utils/pushNotifications'
 import * as Notifications from 'expo-notifications';
 import { Ads } from '../components/components';
+
+import * as Analytics from 'expo-firebase-analytics';
 
 import {
 	AdMobBanner as AdMobBannerComponent,
@@ -30,6 +31,7 @@ import {
 } from 'expo-ads-admob';
 
 const _ = require('lodash');
+const { width } = Dimensions.get('screen');
 
 Notifications.setNotificationHandler({
 	handleNotification: async () => ({
@@ -52,7 +54,9 @@ export default function TabOneScreen({ navigation }) {
 
 	const getCurrentUser = async () => {
 		const parseUser = await getUser()
-		setCurrentUser(JSON.parse(parseUser))
+		const parsedUser = JSON.parse(parseUser)
+		setCurrentUser(parsedUser)
+		await Analytics.setUserId(parsedUser.id);
 	}
 
 	React.useEffect(() => {
@@ -73,7 +77,7 @@ export default function TabOneScreen({ navigation }) {
 	React.useEffect(() => {
 
 		navigation.setOptions({
-			title: 'Coletânea ICM',
+			title: 'Minha Coletânea',
 			headerTintColor: '#d44b42',
 			headerStyle: {
 				borderBottomWidth: 0,
