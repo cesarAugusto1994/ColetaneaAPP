@@ -379,7 +379,7 @@ export default function NotFoundScreen({ navigation }) {
 									Registrar-se
 								</Button>
 							</Block>
-							<Block center style={{ marginTop: 8 }}>
+							{/* <Block center style={{ marginTop: 8 }}>
 								<Button
 									color="red"
 									textStyle={{ fontSize: 12 }}
@@ -390,7 +390,7 @@ export default function NotFoundScreen({ navigation }) {
 								>
 									Login com Google
 								</Button>
-							</Block>
+							</Block> */}
 						</Card>
 					: <Card containerStyle={{ width: '100%' }}>
 							<Card.Title>REGISTRAR-SE</Card.Title>

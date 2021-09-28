@@ -30,23 +30,23 @@ const Loading = ({ songs, dispatch, navigation: { replace } }) => {
 
 			dispatch(playerActions.player())
 
-			if (recents && recents.length > 0) {
+			// if (recents && recents.length > 0) {
 
-				const current = recents[0]
+			// 	const current = recents[0]
 
-				if(current >= 0) {
-					dispatch(playerActions.playerSetCurrentSong({
-						detail: songs[current],
-					}));
-				}
+			// 	if(current >= 0) {
+			// 		dispatch(playerActions.playerSetCurrentSong({
+			// 			detail: songs[current],
+			// 		}));
+			// 	}
 
-				// dispatch({
-				// 	type: DISPATCHES.SET_CURRENT_SONG,
-				// 	payload: {
-				// 		detail: songs[recents[0]],
-				// 	},
-				// });
-			}
+			// 	// dispatch({
+			// 	// 	type: DISPATCHES.SET_CURRENT_SONG,
+			// 	// 	payload: {
+			// 	// 		detail: songs[recents[0]],
+			// 	// 	},
+			// 	// });
+			// }
 
 			await Ads.interstitialAds();
 			resolve();
