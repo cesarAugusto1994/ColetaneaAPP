@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { StyleSheet, SafeAreaView, FlatList, ScrollView, View, RefreshControl } from 'react-native';
+import { StyleSheet, SafeAreaView, FlatList, View, TouchableHighlight } from 'react-native';
 import { ListItem, Card, Avatar } from 'react-native-elements';
-import { getToken } from '../services/services/auth';
+import { getToken, getUser } from '../services/services/auth';
 import api from '../services/api/axios';
-import moment from 'moment'
-import _ from 'lodash'
+import _ from 'lodash';
+import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
 
 export default function CategoriesScreen({ navigation, route }) {
 	const [data, setData] = React.useState([]);
+	const [refreshing, setRefreshing] = React.useState(false);
+	const [currentUser, setCurrentUser] = React.useState(null)
 
 	React.useEffect(() => {
 		navigation.setOptions({
@@ -21,10 +24,19 @@ export default function CategoriesScreen({ navigation, route }) {
 		});
 	}, []);
 
+	const getCurrentUser = async () => {
+		const parseUser = await getUser()
+		setCurrentUser(JSON.parse(parseUser))
+	}
+
+	React.useEffect(() => {
+		getCurrentUser()
+	}, [])
+
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get(`sugestoes?_sort=id:DESC`, {
+			const response = await api.get(`midias`, {
 				headers: {
 					Authorization: await getToken(),
 				},
@@ -40,10 +52,14 @@ export default function CategoriesScreen({ navigation, route }) {
 	};
 
 	React.useEffect(() => {
+		if (route.params && route.params.reload) {
+			getCollections();
+		}
+	}, [route.params])
+
+	React.useEffect(() => {
 		getCollections();
 	}, []);
-
-	const [refreshing, setRefreshing] = React.useState(false);
 
 	const onRefresh = React.useCallback(() => {
 		getCollections();
@@ -51,15 +67,35 @@ export default function CategoriesScreen({ navigation, route }) {
 
 	const keyExtractor = (item, index) => index.toString();
 
-	const renderItem = ({ item }) =>
-		<ListItem key="2" bottomDivider>
+	const renderItem = ({ item }) => {
+		return (<ListItem
+			bottomDivider
+			// onPress={() => {
+			// 	navigation.navigate('AuthorSongs', {
+			// 		id: item.id,
+			// 		title: item.nome,
+			// 	});
+			// }}
+		>
+			{
+				item.imagem && <Avatar rounded size="medium" source={{uri: item.imagem !== null ? item.imagem.url : 'https://coletanea.s3.us-east-2.amazonaws.com/musicdot_362668c1a5.jpg'}} />
+			}
 			<ListItem.Content>
-				<ListItem.Title>{item.user.name}</ListItem.Title>
-				{/* <ListItem.Subtitle>{item.user.username}</ListItem.Subtitle> */}
-				<ListItem.Subtitle>{item.texto}</ListItem.Subtitle>
-				<ListItem.Subtitle>{item.created_at ? moment(item.created_at).format('DD/MM/YYYY hh:mm:ss') : ''}</ListItem.Subtitle>
+				<ListItem.Title>
+					{item.nome}
+				</ListItem.Title>
+					{item.created_at && <ListItem.Subtitle>{moment(item.created_at).format('DD/MM/YY HH:mm')}</ListItem.Subtitle>}
 			</ListItem.Content>
-		</ListItem>
+			<ListItem.Chevron />
+		</ListItem>)};
+
+	if (refreshing)
+		return (
+			<View style={styles.notfound}>
+				<Card.Title style={styles.notfoundTitle}>Carregando os Mídias...</Card.Title>
+				<Card.Divider />
+			</View>
+		);
 
 	return (
 		<SafeAreaView style={styles.container}>

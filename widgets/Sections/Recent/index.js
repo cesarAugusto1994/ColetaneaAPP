@@ -12,9 +12,6 @@ const Index = ({ recents, songs, style = {} }) => {
 	const [audios, setAudios] = useState([]);
 
 	const handlePress = (song, index) => {
-
-		console.log({song, index})
-
 		if(index >= 0) {
 			navigate(SCREENS.PLAYING, {
 				forcePlay: true,

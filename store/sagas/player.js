@@ -21,10 +21,10 @@ export default function* playerStoreSaga() {
 
     response.data.map(dt => {
       dt.title = dt.nome
-      // dt.author = dt.autores && Array.isArray(dt.autores) ? dt.autores[0].nome : ""
-      dt.img = dt.imagem.url
+      dt.author = Array.isArray(dt.autores) && dt.autores.length > 0 ? dt.autores[0].nome : ""
+      dt.img = dt.imagem ? dt.imagem.url : 'https://coletanea.s3.us-east-2.amazonaws.com/musicdot_362668c1a5.jpg'
       dt.uri = dt.anexo.url
-      dt.durationMillis = dt.duracao ? dt.duracao*1000 : 0
+      dt.durationMillis = dt.duracao ? dt.duracao : 0
     })
 
     const resp = { songs: response.data }

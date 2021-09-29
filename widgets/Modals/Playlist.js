@@ -30,7 +30,6 @@ const Playlist = ({ storedPlaylists, dispatch, visible = false, onClose = () => 
 	};
 
 	const addToPlaylist = async (name) => {
-		console.log("addToPlaylist2", name)
 		let lists = await Storage.get('playlists', true);
 
 		for (let i = 0; i < lists.length; i++) {
@@ -62,8 +61,6 @@ const Playlist = ({ storedPlaylists, dispatch, visible = false, onClose = () => 
 			name: input || 'Default',
 			songs: [songIndex],
 		};
-
-		console.log("createPlaylist")
 
 		if (playlists.filter((i) => i?.name.toLowerCase() === playlist?.name.toLowerCase()).length >= 1) {
 			return Alert.alert('Playlist', 'Playlist already exists!', [

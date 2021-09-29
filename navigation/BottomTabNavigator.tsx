@@ -19,6 +19,9 @@ import AlbunsScreen from "../screens/AlbunsScreen";
 import AlbunSongsScreen from "../screens/AlbunSongsScreen";
 import TagsScreen from "../screens/TagsScreen";
 import TagSongsScreen from "../screens/TagSongsScreen";
+
+import MediasScreen from "../screens/MediasScreen";
+
 import CategoriesScreen from "../screens/CategoriesScreen";
 import CategoryAddScreen from "../screens/CategoryAddScreen";
 import SongsScreen from "../screens/SongsScreen";
@@ -417,6 +420,13 @@ function TabConfigsNavigator() {
         component={AboutScreen}
         options={({ route }) => ({ 
           title: "Sobre o APP",
+        })}
+      />
+      <TabOneStack.Screen
+        name="Medias"
+        component={MediasScreen}
+        options={({ route }) => ({ 
+          title: "Mídias"
         })}
       />
       <TabOneStack.Screen

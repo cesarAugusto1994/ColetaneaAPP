@@ -53,6 +53,10 @@ export default function TabConfigsScreen({navigation}) {
 		navigation.navigate('Users');
 	};
 
+	const navigateToMedias = () => {
+		navigation.navigate('Medias');
+	};
+
 	const navigateToLogins = () => {
 		navigation.navigate('Logins');
 	};
@@ -123,6 +127,16 @@ export default function TabConfigsScreen({navigation}) {
 						<ListItem key="7" bottomDivider onPress={navigateToErrorList}>
 							<ListItem.Content>
 								<ListItem.Title>Sugestões e Erros</ListItem.Title>
+							</ListItem.Content>
+						</ListItem>
+					)
+				}
+
+				{
+					currentUser && currentUser.role && currentUser.role.id === 3 && (
+						<ListItem key="4" bottomDivider onPress={navigateToMedias}>
+							<ListItem.Content>
+								<ListItem.Title>Mídias</ListItem.Title>
 							</ListItem.Content>
 						</ListItem>
 					)

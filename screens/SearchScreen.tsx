@@ -105,7 +105,7 @@ export default function NotFoundScreen({
   return (
     <View style={styles.container}>
       <SearchBar
-        // lightTheme 
+        lightTheme
         containerStyle={{width: '100%'}}
         style={{width: '100%'}}
         autoFocus

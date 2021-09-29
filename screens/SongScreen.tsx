@@ -726,6 +726,10 @@ const ThirdRoute = ({ data, currentUser }) => {
 		return ["audio/mpeg"].includes(item.mime)
 	}
 
+	const canCreateMedia = item => {
+		return !data.midia && item.mime === "audio/mpeg"
+	}
+
 	async function playSound(item) {
 		const { sound } = await Audio.Audio.Sound.createAsync({uri: item.url});
 		// const { sound } = await Audio.Audio.Sound.createAsync({uri: `http://192.168.15.29:1337${item.url}`});
@@ -749,6 +753,64 @@ const ThirdRoute = ({ data, currentUser }) => {
 	}, [sound]);
 
 	const keyExtractor = (item, index) => index.toString();
+
+	const handleCreateMedia = async item => {
+
+		try {
+			setSaving(true);
+
+			const soundObject = new Audio.Audio.Sound();
+			await soundObject.loadAsync({uri: item.url});
+
+			const soundStatus = await soundObject.getStatusAsync()
+
+			
+			const mediaData = {
+				nome: data.nome,
+				duracao: soundStatus.durationMillis,
+				anexo: item.id,
+				musica: data.id
+			}
+			
+			const response = await api.post(
+				`midias`,
+				mediaData,
+				{
+					headers: {
+						Authorization: await getToken(),
+					},
+				});
+
+			if (response && response.data) {
+				console.log("response", response.data)
+				data.midia = response.data.musica.midia
+				
+				Alert.alert('Criar Mídia', 'Mídia criada com sucesso.');
+			}
+			setSaving(false);
+		} catch (error) {
+			setSaving(false);
+			console.log('error', error);
+		}
+
+	}
+
+	const askCreateMedia = item => {
+
+		Alert.alert(
+			"Criar Mídia?",
+			"Deseja criar mídia?",
+			[
+			  {
+				text: "Cancelar",
+				onPress: () => {},
+				style: "cancel"
+			  },
+			  { text: "Sim", onPress: () => handleCreateMedia(item) }
+			]
+		  );
+
+	}
 
 	const renderItem = ({ item }) =>
 		<ListItem bottomDivider>
@@ -775,6 +837,17 @@ const ThirdRoute = ({ data, currentUser }) => {
 								<Button
 									title={isPlaying ? 'Pausar' : 'Play'}
 									onPress={() => isPlaying ? stopSound() : playSound(item)}
+								/>
+							)
+						}
+
+						{
+							canCreateMedia(item) && currentUser && currentUser.role && currentUser.role.id === 3 && (
+								<Button
+									title="Adicionar Mídia"
+									onPress={() => askCreateMedia(item)}
+									type="clear"
+									containerStyle={{marginLeft: 10}}
 								/>
 							)
 						}

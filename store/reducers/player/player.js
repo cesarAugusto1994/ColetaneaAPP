@@ -41,9 +41,9 @@ const initialState = {
 		soundObj: {},
 		detail: {
 			id: 1,
-			title: 'O meu vive é Cristo',
+			title: 'O MEU VIVER É CRISTO',
 			author: 'Igreja Cristã Maranata',
-			img: 'https://coletanea.s3.us-east-2.amazonaws.com/93039_20200921080256_0b3cb34b14.jpg',
+			img: 'https://coletanea.s3.us-east-2.amazonaws.com/musicdot_362668c1a5.jpg',
 			uri: 'https://coletanea.s3.us-east-2.amazonaws.com/O_meu_viver_e_Cristo_681a7970c8.mp3',
 			durationMillis: 260000,
 		},
