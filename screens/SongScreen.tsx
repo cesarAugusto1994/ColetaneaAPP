@@ -329,7 +329,7 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 						{},
 					]}
 				>
-					<View>
+					{/* <View>
 						{
 							<AdMobBannerComponent
 								bannerSize="banner" // Banner size (banner | fullBanner | largeBanner | leaderboard | mediumRectangle | smartBannerLandscape | smartBannerPortrait)
@@ -338,7 +338,7 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 								onDidFailToReceiveAdWithError={bannerError}
 							/>
 						}
-					</View>
+					</View> */}
 					<ScrollView
 						contentContainerStyle={{ paddingVertical: 20, marginLeft: 15 }}
 						showsVerticalScrollIndicator={false}
@@ -434,17 +434,21 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 									<Ionicons name="musical-notes-outline" size={15} color={darkMode? '#FFF' : '#333'} />
 								</TouchableOpacity>}
 
-								<TouchableOpacity
-									style={darkMode ? styles.btnUpDark : styles.btnUp}
-									onPress={() => {
-										navigation.navigate('LetraEditor', {
-											id: data.id,
-											title: data.nome,
-										});
-									}}
-								>
-									<Ionicons name="build-outline" size={15} color={darkMode? '#FFF' : '#333'} />
-								</TouchableOpacity>
+								{
+									(currentUser && currentUser.role && currentUser.role.id === 3) && (
+										<TouchableOpacity
+											style={darkMode ? styles.btnUpDark : styles.btnUp}
+											onPress={() => {
+												navigation.navigate('LetraEditor', {
+													id: data.id,
+													title: data.nome,
+												});
+											}}
+										>
+											<Ionicons name="build-outline" size={15} color={darkMode? '#FFF' : '#333'} />
+										</TouchableOpacity>
+									)
+								}
 
 							</>
 
@@ -813,65 +817,87 @@ const ThirdRoute = ({ data, currentUser }) => {
 	}
 
 	const renderItem = ({ item }) =>
-		<ListItem bottomDivider>
-			<ListItem.Content>
-				<ListItem.Title>
-					{item.name}
-				</ListItem.Title>
-				<ListItem.Subtitle>
-					Tam: {item.size} kbs
-				</ListItem.Subtitle>
-				<View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
-
-					<View style={{flexDirection: 'row', marginVertical: 10}}>
-
-						<Button
-							title="Baixar"
-							type="outline"
-							onPress={() => requestDownloadFile(item)}
-							containerStyle={{marginRight: 10}}
-						/>
-
-						{
-							fileCanBePlayed(item) && (
-								<Button
-									title={isPlaying ? 'Pausar' : 'Play'}
-									onPress={() => isPlaying ? stopSound() : playSound(item)}
-								/>
-							)
-						}
-
-						{
-							canCreateMedia(item) && currentUser && currentUser.role && currentUser.role.id === 3 && (
-								<Button
-									title="Adicionar Mídia"
-									onPress={() => askCreateMedia(item)}
-									type="clear"
-									containerStyle={{marginLeft: 10}}
-								/>
-							)
-						}
-
-					</View>
-
-					<View>
-
+			<ListItem.Swipeable
+				// leftContent={
+				// 	<Button
+				// 	title="Info"
+				// 	icon={{ name: 'info', color: 'white' }}
+				// 	buttonStyle={{ minHeight: '100%' }}
+				// 	/>
+				// }
+				rightContent={
+					<>
 						{
 							(currentUser && currentUser.role && currentUser.role.id === 3) && (
 								<Button
 									title="Deletar"
-									type="clear"
+									icon={{ name: 'delete', color: 'white' }}
 									onPress={() => requestDeleteFile(item)}
-									titleStyle={{color: 'red'}}
+									buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
 								/>
 							)
 						}
+					</>
+				}
+			>
+				<ListItem.Content>
+					<ListItem.Title>
+						{item.name}
+					</ListItem.Title>
+					<ListItem.Subtitle>
+						Tam: {item.size} kbs
+					</ListItem.Subtitle>
+					<View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%'}}>
 
+						<View style={{flexDirection: 'row', marginVertical: 10}}>
+
+							<Button
+								title="Baixar"
+								type="outline"
+								onPress={() => requestDownloadFile(item)}
+								containerStyle={{marginRight: 10}}
+							/>
+
+							{
+								fileCanBePlayed(item) && (
+									<Button
+										title={isPlaying ? 'Pausar' : 'Play'}
+										onPress={() => isPlaying ? stopSound() : playSound(item)}
+									/>
+								)
+							}
+
+							{
+								canCreateMedia(item) && currentUser && currentUser.role && currentUser.role.id === 3 && (
+									<Button
+										title="Adicionar Mídia"
+										onPress={() => askCreateMedia(item)}
+										type="clear"
+										containerStyle={{marginLeft: 10}}
+									/>
+								)
+							}
+
+						</View>
+
+						{/* <View>
+
+							{
+								(currentUser && currentUser.role && currentUser.role.id === 3) && (
+									<Button
+										title="Deletar"
+										type="clear"
+										onPress={() => requestDeleteFile(item)}
+										titleStyle={{color: 'red'}}
+									/>
+								)
+							}
+
+						</View> */}
+					
 					</View>
-				
-				</View>
-			</ListItem.Content>
-		</ListItem>;
+				</ListItem.Content>
+			</ListItem.Swipeable>;
 
 	return (
 		<SafeAreaView style={styles.containerSafe}>
@@ -887,7 +913,7 @@ const ThirdRoute = ({ data, currentUser }) => {
 					(currentUser && currentUser.role && currentUser.role.id === 3) && (
 						<View style={{flexDirection:'row'}}>
 							<Button title="Enviar Documento" onPress={pickDocument} containerStyle={styles.buttonSendFile} />
-							<Button title="Enviar mp3" onPress={pickSong} buttonStyle={{backgroundColor: 'crimson'}} containerStyle={styles.buttonSendSong} />
+							<Button title="Enviar Música" onPress={pickSong} buttonStyle={{backgroundColor: 'crimson'}} containerStyle={styles.buttonSendSong} />
 						</View>
 					)
 				}

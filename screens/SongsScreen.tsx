@@ -75,7 +75,7 @@ export default function CategoriesScreen({ navigation, route }) {
 					delete song.anexos
 					delete song.videos
 				});
-				const sort = _.sortBy(songs, 'numero')
+				const sort = _.sortBy(songs, 'nome')
 				setData(sort);
 
 				setRefreshing(false);

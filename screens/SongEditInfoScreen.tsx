@@ -46,7 +46,7 @@ const tones = [
 
 export default function MainScreen({ navigation, route }) {
 	const [data, setData] = React.useState(null);
-	const [categories, setCategories] = React.useState([]);
+	const [collections, setCollections] = React.useState([]);
 	const [rhythms, setRhythms] = React.useState([]);
 
 	const [refreshing, setRefreshing] = React.useState(false);
@@ -91,16 +91,16 @@ export default function MainScreen({ navigation, route }) {
 		}
 	};
 
-	const getCategories = async () => {
+	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get(`categorias`, {
+			const response = await api.get(`colecoes`, {
 				headers: {
 					Authorization: await getToken(),
 				},
 			});
 			if (response) {
-				setCategories(_.sortBy(response.data, 'colecao_id.id'));
+				setCollections(_.sortBy(response.data, 'id'));
 				setRefreshing(false);
 			}
 		} catch (error) {
@@ -129,7 +129,7 @@ export default function MainScreen({ navigation, route }) {
 
 	React.useEffect(() => {
 		getSong();
-		getCategories();
+		getCollections();
 		getRhythms();
 	}, []);
 
@@ -300,12 +300,15 @@ export default function MainScreen({ navigation, route }) {
 							setSelectedCategory(itemValue);
 						}}
 					>
-						{categories.map(category =>
-							<Picker.Item
-								key={category.id}
-								label={`${category.colecao_id && category.colecao_id.nome}: ${category.nome}`}
-								value={category.id}
-							/>
+						{collections.map(collection =>
+						   _.sortBy(collection.categorias, 'nome').map(category => (
+								<Picker.Item
+									key={category.id}
+									label={`${collection.nome}: ${category.nome}`}
+									value={category.id}
+								/>
+						   ))
+							
 						)}
 					</Picker>
 				</Block>

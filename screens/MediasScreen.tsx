@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, SafeAreaView, FlatList, View, TouchableHighlight } from 'react-native';
-import { ListItem, Card, Avatar } from 'react-native-elements';
+import { StyleSheet, SafeAreaView, FlatList, View, Alert } from 'react-native';
+import { ListItem, Card, Avatar, Button } from 'react-native-elements';
 import { getToken, getUser } from '../services/services/auth';
 import api from '../services/api/axios';
 import _ from 'lodash';
@@ -51,6 +51,42 @@ export default function CategoriesScreen({ navigation, route }) {
 		}
 	};
 
+	const askDeleteMedia = item => {
+
+		Alert.alert(
+			"Deletar Mídia?",
+			"ao deletar, não será possivel recuperar a mídia!",
+			[
+			  {
+				text: "Cancelar",
+				onPress: () => {},
+				style: "cancel"
+			  },
+			  { text: "Sim", onPress: () => deleteMedia(item) }
+			]
+		  );
+
+	}
+
+	const deleteMedia = async item => {
+		try {
+			const response = await api.delete(
+				`midias/${item.id}`,
+				{
+					headers: {
+						Authorization: await getToken(),
+					},
+				}
+			);
+			if (response && response.data) {
+				setData(data.filter(filter => filter.id !== item.id))
+				Alert.alert('Deletar mídia', 'Mídia deletada com Sucesso');
+			}
+		} catch (error) {
+			console.log('error', error.response);
+		}
+	};
+
 	React.useEffect(() => {
 		if (route.params && route.params.reload) {
 			getCollections();
@@ -68,26 +104,37 @@ export default function CategoriesScreen({ navigation, route }) {
 	const keyExtractor = (item, index) => index.toString();
 
 	const renderItem = ({ item }) => {
-		return (<ListItem
-			bottomDivider
-			// onPress={() => {
-			// 	navigation.navigate('AuthorSongs', {
-			// 		id: item.id,
-			// 		title: item.nome,
-			// 	});
-			// }}
-		>
-			{
-				item.imagem && <Avatar rounded size="medium" source={{uri: item.imagem !== null ? item.imagem.url : 'https://coletanea.s3.us-east-2.amazonaws.com/musicdot_362668c1a5.jpg'}} />
-			}
-			<ListItem.Content>
-				<ListItem.Title>
-					{item.nome}
-				</ListItem.Title>
-					{item.created_at && <ListItem.Subtitle>{moment(item.created_at).format('DD/MM/YY HH:mm')}</ListItem.Subtitle>}
-			</ListItem.Content>
-			<ListItem.Chevron />
-		</ListItem>)};
+		return (
+			<ListItem.Swipeable
+				// leftContent={
+				// 	<Button
+				// 	title="Info"
+				// 	icon={{ name: 'info', color: 'white' }}
+				// 	buttonStyle={{ minHeight: '100%' }}
+				// 	/>
+				// }
+				rightContent={
+					<Button
+					title="Deletar"
+					icon={{ name: 'delete', color: 'white' }}
+					onPress={() => askDeleteMedia(item)}
+					buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }}
+					/>
+				}
+			>
+				{
+					item.imagem && <Avatar rounded size="medium" source={{uri: item.imagem !== null ? item.imagem.url : 'https://coletanea.s3.us-east-2.amazonaws.com/musicdot_362668c1a5.jpg'}} />
+				}
+				<ListItem.Content>
+					<ListItem.Title>
+						{item.nome}
+					</ListItem.Title>
+						{item.created_at && <ListItem.Subtitle>{moment(item.created_at).format('DD/MM/YY HH:mm')}</ListItem.Subtitle>}
+				</ListItem.Content>
+				<ListItem.Chevron />
+			</ListItem.Swipeable>
+		)
+	};
 
 	if (refreshing)
 		return (
