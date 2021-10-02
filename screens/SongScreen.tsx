@@ -46,6 +46,7 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 	const [allChords, setAllChords] = React.useState([]);
 	const [song, setSong] = React.useState('');
 	const [version, setVesrion] = React.useState('normal');
+	const [status, setStatus] = React.useState('Carregando...')
 	const sheetRef = React.useRef(null);
 	const [chordColor, setChordColor] = React.useState('#fcba03');
 
@@ -343,9 +344,9 @@ const FirstRoute = ({ data, showHeader, handleShowHeader, navigation, currentUse
 						contentContainerStyle={{ paddingVertical: 20, marginLeft: 15 }}
 						showsVerticalScrollIndicator={false}
 					>
-						{data.letra
+						{song
 							? <HTMLView value={song} stylesheet={styleSheetWebView} />
-							: <Text>Letra não encontrada.</Text>}
+							: <Text>{status}</Text>}
 							
 					</ScrollView>
 					
