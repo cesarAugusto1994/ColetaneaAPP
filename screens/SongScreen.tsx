@@ -29,6 +29,8 @@ import {
 	setTestDeviceIDAsync, //
 } from 'expo-ads-admob';
 import { Ads } from '../components/components';
+import { SCREENS } from '../constants';
+import { useNavigation } from '@react-navigation/core';
 
 const _ = require('lodash');
 
@@ -508,6 +510,8 @@ const SecondRoute = ({ data }) => {
 };
 
 const ThirdRoute = ({ data, currentUser }) => {
+
+	const { navigate } = useNavigation();
 	
 	const [downloadProgress, setDownloadProgress] = React.useState(0);
 	const [saving, setSaving] = React.useState(false);
@@ -735,11 +739,11 @@ const ThirdRoute = ({ data, currentUser }) => {
 	}
 
 	async function playSound(item) {
-		const { sound } = await Audio.Audio.Sound.createAsync({uri: item.url});
+		const { sound: soundObject } = await Audio.Audio.Sound.createAsync({uri: item.url});
 		// const { sound } = await Audio.Audio.Sound.createAsync({uri: `http://192.168.15.29:1337${item.url}`});
 		setIsPlaying(true)
-		setSound(sound);
-		await sound.playAsync(); 
+		setSound(soundObject);
+		await soundObject.playAsync(); 
 	}
 
 	async function stopSound() {
@@ -765,10 +769,8 @@ const ThirdRoute = ({ data, currentUser }) => {
 
 			const soundObject = new Audio.Audio.Sound();
 			await soundObject.loadAsync({uri: item.url});
-
 			const soundStatus = await soundObject.getStatusAsync()
 
-			
 			const mediaData = {
 				nome: data.nome,
 				duracao: soundStatus.durationMillis,
@@ -861,7 +863,7 @@ const ThirdRoute = ({ data, currentUser }) => {
 							{
 								fileCanBePlayed(item) && (
 									<Button
-										title={isPlaying ? 'Pausar' : 'Play'}
+										title={isPlaying ? 'Parar' : 'Play'}
 										onPress={() => isPlaying ? stopSound() : playSound(item)}
 									/>
 								)

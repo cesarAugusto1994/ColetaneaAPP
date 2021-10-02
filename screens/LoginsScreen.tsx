@@ -51,16 +51,24 @@ export default function CategoriesScreen({ navigation, route }) {
 
 	const keyExtractor = (item, index) => index.toString();
 
-	const renderItem = ({ item }) =>
-		<ListItem key="2" bottomDivider>
-			{
-				item.avatar && <Avatar rounded size="medium" source={{uri: item.avatar.url}} />
-			}
-			<ListItem.Content>
-				<ListItem.Title>{item.users_permissions_user.name} ({item.users_permissions_user.username})</ListItem.Title>
-				<ListItem.Subtitle>{item.published_at ? moment(item.published_at).format('DD/MM/YYYY hh:mm:ss') : "Não Informado"}</ListItem.Subtitle>
-			</ListItem.Content>
-		</ListItem>
+	const renderItem = ({ item }) =>{
+
+		if(!item.users_permissions_user) {
+			return null
+		}
+
+		return (
+			<ListItem key="2" bottomDivider>
+				{
+					item.avatar && <Avatar rounded size="medium" source={{uri: item.avatar.url}} />
+				}
+				<ListItem.Content>
+					<ListItem.Title>{item.users_permissions_user.name} ({item.users_permissions_user.username})</ListItem.Title>
+					<ListItem.Subtitle>{item.published_at ? moment(item.published_at).format('DD/MM/YYYY hh:mm:ss') : "Não Informado"}</ListItem.Subtitle>
+				</ListItem.Content>
+			</ListItem>
+		)
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>

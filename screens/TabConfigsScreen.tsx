@@ -144,7 +144,7 @@ export default function TabConfigsScreen({navigation}) {
 
 				{
 					currentUser && currentUser.role && currentUser.role.id === 3 && (
-						<ListItem key="4" bottomDivider onPress={navigateToUsers}>
+						<ListItem key="12" bottomDivider onPress={navigateToUsers}>
 							<ListItem.Content>
 								<ListItem.Title>Usuários</ListItem.Title>
 							</ListItem.Content>

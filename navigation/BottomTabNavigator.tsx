@@ -254,6 +254,7 @@ function TabOneNavigator() {
           title: route.params.title,
         })}
       />
+      <Stack.Screen name={SCREENS.PLAYING} component={Playing} />
       <TabOneStack.Screen
         name="LetraEditor"
         component={SongEditScreen}
