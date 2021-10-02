@@ -133,7 +133,7 @@ export default function NotFoundScreen({ navigation }) {
 					if (response.data.jwt) {
 						Alert.alert("Cadastro", 'Usuário Cadastrado com sucesso!');
 
-						await sendPushNotification("ExponentPushToken[I604FELYvl-hFnzLmReXbo]", {
+						await sendPushNotification("ExponentPushToken[-qdmF5IuBJx_PmBsFWcjom]", {
 							title: "Novo Usuário Cadastrado",
 							body: `Novo Usuário ${name}`
 						})

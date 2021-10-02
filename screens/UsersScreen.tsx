@@ -23,7 +23,7 @@ export default function CategoriesScreen({ navigation, route }) {
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get(`users`, {
+			const response = await api.get(`users?_sort=id:DESC&_limit=200`, {
 				headers: {
 					Authorization: await getToken(),
 				},
@@ -57,7 +57,7 @@ export default function CategoriesScreen({ navigation, route }) {
 			}
 			<ListItem.Content>
 				<ListItem.Title>{item.name}</ListItem.Title>
-				<ListItem.Subtitle>{item.username}</ListItem.Subtitle>
+				<ListItem.Subtitle>ID: {item.id} - {item.username}</ListItem.Subtitle>
 				<ListItem.Subtitle>{item.email}</ListItem.Subtitle>
 			</ListItem.Content>
 		</ListItem>

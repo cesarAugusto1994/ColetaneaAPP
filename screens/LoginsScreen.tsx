@@ -24,7 +24,7 @@ export default function CategoriesScreen({ navigation, route }) {
 	const getCollections = async () => {
 		setRefreshing(true);
 		try {
-			const response = await api.get(`logins?_sort=id:DESC`, {
+			const response = await api.get(`logins?_sort=id:DESC&_limit=50`, {
 				headers: {
 					Authorization: await getToken(),
 				},
