@@ -328,7 +328,7 @@ export default function NotFoundScreen({ navigation }) {
 											family="ArgonExtra"
 										/>
 									}
-									onChangeText={text => setEmail(text)}
+									onChangeText={text => setEmail(text.trim())}
 								/>
 							</Block>
 
@@ -348,7 +348,7 @@ export default function NotFoundScreen({ navigation }) {
 											family="ArgonExtra"
 										/>
 									}
-									onChangeText={text => setPassword(text)}
+									onChangeText={text => setPassword(text.trim())}
 								/>
 							</Block>
 
@@ -426,7 +426,7 @@ export default function NotFoundScreen({ navigation }) {
 											family="ArgonExtra"
 										/>
 									}
-									onChangeText={text => setUsername(text)}
+									onChangeText={text => setUsername(text.trim())}
 								/>
 							</Block>
 
@@ -445,7 +445,7 @@ export default function NotFoundScreen({ navigation }) {
 											family="ArgonExtra"
 										/>
 									}
-									onChangeText={text => setEmail(text)}
+									onChangeText={text => setEmail(text.trim())}
 								/>
 							</Block>
 
@@ -464,7 +464,7 @@ export default function NotFoundScreen({ navigation }) {
 											family="ArgonExtra"
 										/>
 									}
-									onChangeText={text => setPassword(text)}
+									onChangeText={text => setPassword(text.trim())}
 								/>
 							</Block>
 
@@ -483,7 +483,7 @@ export default function NotFoundScreen({ navigation }) {
 											family="ArgonExtra"
 										/>
 									}
-									onChangeText={text => setPasswordRepeat(text)}
+									onChangeText={text => setPasswordRepeat(text.trim())}
 								/>
 							</Block>
 

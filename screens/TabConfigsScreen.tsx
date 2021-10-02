@@ -33,7 +33,7 @@ export default function TabConfigsScreen({navigation}) {
 
 	const logout = () => {
 		onSignOut().then(() => {
-			navigation.navigate('NotFound');
+			navigation.replace('NotFound');
 		});
 	};
 
