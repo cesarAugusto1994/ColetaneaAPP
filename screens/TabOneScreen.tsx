@@ -57,6 +57,10 @@ export default function TabOneScreen({ navigation }) {
 		const parsedUser = JSON.parse(parseUser)
 		setCurrentUser(parsedUser)
 		await Analytics.setUserId(parsedUser.id);
+		await Analytics.setUserProperty('id', parsedUser.id);
+		await Analytics.setUserProperty('name', parsedUser.name);
+		await Analytics.setUserProperty('username', parsedUser.username);
+		await Analytics.setUserProperty('email', parsedUser.email);
 	}
 
 	React.useEffect(() => {
