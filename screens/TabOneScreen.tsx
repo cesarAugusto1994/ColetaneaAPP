@@ -61,6 +61,12 @@ export default function TabOneScreen({ navigation }) {
 		await Analytics.setUserProperty('name', parsedUser.name);
 		await Analytics.setUserProperty('username', parsedUser.username);
 		await Analytics.setUserProperty('email', parsedUser.email);
+
+		await Analytics.logEvent('Loaded', {
+			name: 'home',
+			screen: 'TabOneScreen',
+			purpose: `${parsedUser.name} acessou a Home`,
+		});
 	}
 
 	React.useEffect(() => {
